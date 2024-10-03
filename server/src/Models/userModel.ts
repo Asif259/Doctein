@@ -1,13 +1,15 @@
-import { Schema, model, Document } from 'mongoose';
+import { Document } from 'mongoose';
+import mongoose = require("mongoose")
+const {Schema, Model} = mongoose;
 
 interface IUser extends Document {
   email: string;
   password: string;
   role: 'Doctor' | 'Staff' | 'Patient';
-  userId: Schema.Types.ObjectId;
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new mongoose.Schema<IUser>({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { 
@@ -20,4 +22,4 @@ const userSchema = new Schema<IUser>({
   }
 }, { timestamps: true });
 
-export default model<IUser>('User', userSchema);
+export = mongoose.model<IUser>('User', userSchema);
