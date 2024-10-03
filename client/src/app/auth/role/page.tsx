@@ -10,15 +10,15 @@ export default function Login() {
 
   const handleRoleSelection = (selectedRole: "doctor" | "patient") => {
     setRole(selectedRole);
-    router.push(`/auth/register/${selectedRole}`);
+    router.push(`/auth/register?role=${selectedRole}`);
   };
 
   return (
-    <div className=" flex justify-center items-center bg-gray-100">
-      <div className="h-[90vh] mt-8 flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
+    <div className="h-[100dvh] flex justify-center items-center bg-gray-100">
+      <div className="h-[90dvh] flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Left Section - Doctor */}
         <div
-          className="w-1/2 bg-primary flex flex-col items-center justify-center cursor-pointer hover:bg-primary-800"
+          className="w-1/2 bg-primary flex flex-col items-center justify-center cursor-pointer hover:bg-primary-700"
           onClick={() => handleRoleSelection("doctor")}
         >
           <h2 className="text-white text-3xl font-bold">Log in as Doctor</h2>

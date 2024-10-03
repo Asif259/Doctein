@@ -10,6 +10,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        "icon-sm": "0.75rem",
+        "icon-md": "1rem",
+        "icon-lg": "1.25rem",
+        "icon-xl": "1.5rem",
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
@@ -17,7 +23,7 @@ const config: Config = {
         secondary: "#3F72AF",
         accent: "#DBE2EF",
         neutral: "#F9F7F7",
-        danger: "#FF5C58"
+        danger: "#FF5C58",
       },
     },
   },
