@@ -6,7 +6,7 @@ const { Schema, Model } = mongoose;
 interface IUser extends Document {
   email: string;
   password: string;
-  role: 'Doctor' | 'Staff' | 'Patient';
+  role: 'doctor' | 'staff' | 'patient';
   userId: mongoose.Schema.Types.ObjectId;
   reset: {
     otp: string;
@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema<IUser>(
     role: {
       type: String,
       required: true,
-      enum: ['Doctor', 'Staff', 'Patient'],
+      enum: ['doctor', 'staff', 'patient'],
     },
     userId: {
       type: Schema.Types.ObjectId,

@@ -1,11 +1,49 @@
 "use client";
+import { useState } from 'react'; 
+import { useRouter } from 'next/navigation'; 
 import { useSearchParams } from "next/navigation"; 
 import InputComponent from '../../../components/auth/input-component';
 import PasswordComponent from '../../../components/auth/pass-component';
+import axios from 'axios'; 
 
 export default function Login() {
   const searchParams = useSearchParams(); 
   const role = searchParams.get('role');
+  const router = useRouter(); 
+
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState(''); 
+  const [error, setError] = useState(''); // State for error messages
+  const [success, setSuccess] = useState(''); // State for success messages
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setError('');
+    setSuccess('');
+
+    if (!email || !password) {
+      setError('Please enter your email and password.');
+      return; 
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/v1/login', {
+        email,
+        password,
+      });
+
+      setSuccess(response.data.data);
+
+      setEmail('');
+      setPassword('');
+
+      router.push('/dashboard'); 
+
+    } catch (err: any) {
+      setError(err.response?.data?.data || 'Login failed. Please try again.'); // Handle error
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -17,18 +55,27 @@ export default function Login() {
           <p className="text-gray-600">
             Enter your credentials to login as a {role}
           </p>
-          <form className="mt-4">
+
+          {error && <div className="text-red-500 mb-4">{error}</div>} {/* Error message display */}
+          {success && <div className="text-green-500 mb-4">{success}</div>} {/* Success message display */}
+
+          <form className="mt-4" onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
               <InputComponent 
-              placeholder="Enter your email" 
-              type="email"
-              value={email} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}  />
+                placeholder="Enter your email" 
+                type="email"
+                value={email} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}  
+              />
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
-              <PasswordComponent placeholder="Enter your password" />
+              <PasswordComponent 
+                placeholder="Enter your password" 
+                value={password} 
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
+              />
             </div>
 
             {/* Forgot Password Link */}
