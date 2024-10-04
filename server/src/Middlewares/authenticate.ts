@@ -34,4 +34,4 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
   });
 };
 
-export default authenticateToken;
+export = authenticateToken;

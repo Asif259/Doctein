@@ -10,7 +10,7 @@ export const setAuthCookies = (req: Request, res: Response) => {
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     sameSite: 'strict',
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    maxAge: 20 * 1000, // 15 minutes
   });
 
   // Set the refresh token as an HTTP-only cookie

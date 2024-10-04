@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 import express = require("express");
 import cors = require("cors");
 // import helmet = require("helmet");
@@ -6,7 +7,8 @@ import bodyParser = require("body-parser");
 import mongoose = require("mongoose");
 import dotenv = require("dotenv");
 const cookieParser = require('cookie-parser');
-import router = require("./src/Routes/authRoutes"); // Ensure this path is correct
+import router = require("./src/Routes/authRoutes"); 
+import authenticateToken from "./src/Middlewares/authenticate";
 
 dotenv.config();
 
@@ -28,4 +30,9 @@ mongoose
 
 // Use API router
 app.use("/api/v1", router); 
+
+// Dummy route to test middleware
+app.get('/', authenticateToken, (req: Request, res: Response) => {
+  res.send('Hello World!');
+});
 export = app;
