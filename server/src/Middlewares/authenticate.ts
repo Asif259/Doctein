@@ -1,37 +1,41 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
-const User = require('../Models/userModel'); 
+import { generateAccessToken, verifyToken, refreshToken } from '../Helpers/tokenHelper'; 
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
 const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.accessToken ;
+  const accessToken = req.cookies.accessToken;
+  const refreshTokenCookie = req.cookies.refreshToken;
 
-  if (!token) {
-    return res.status(401).json({success: true, message: 'Access token required' });
+  // Function to verify and refresh token
+  const handleRefreshToken = async () => {
+    const newAccessToken = refreshToken(refreshTokenCookie);
+    if (!newAccessToken) {
+      return null;
+    }
+    res.cookie('accessToken', newAccessToken, { httpOnly: true, sameSite: 'strict', maxAge: 20 * 1000, });
+    return verifyToken(newAccessToken, JWT_SECRET); 
+  };
+
+  // Verify access token
+  if (accessToken) {
+    const decodedToken = verifyToken(accessToken, JWT_SECRET);
+    if (decodedToken) {
+      req.headers.user = decodedToken; 
+      return next();
+    }
   }
 
-  jwt.verify(token, JWT_SECRET, async (err: any, decodedToken: any) => {
-    if (err) {
-      return res.status(403).json({success: false, message: 'Invalid or expired token' });
+  // If access token is invalid, check refresh token
+  if (refreshTokenCookie) {
+    const decodedUser = await handleRefreshToken();
+    if (decodedUser) {
+      req.headers.user = decodedUser; 
+      return next();
     }
+  }
 
-    try {
-      const userId = decodedToken.user_id;
-      const user = await User.findOne({ _id: userId });
-
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      req.headers.user = decodedToken;
-
-      next();
-    } catch (error) {
-      console.error('Error checking user:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  });
+  return res.status(403).json({ success: false, message: 'Access and refresh tokens are invalid' });
 };
 
 export = authenticateToken;

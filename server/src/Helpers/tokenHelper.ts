@@ -28,16 +28,7 @@ export const verifyToken = (token: string, secret: string): any => {
   }
 };
 
-export const authenticateToken = (req: any, res: any, next: any) => {
-  const token = req.cookies.accessToken;
-  if (!token) return res.sendStatus(401);
 
-  const user = verifyToken(token, JWT_SECRET); 
-  if (!user) return res.sendStatus(403);
-
-  req.user = user; 
-  next();
-};
 
 export const refreshToken = (refreshToken: string): string | null => {
   const user = verifyToken(refreshToken, REFRESH_TOKEN_SECRET);
