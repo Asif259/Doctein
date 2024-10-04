@@ -6,12 +6,32 @@ const User = require("../../Models/userModel");
 
 dotenv.config();
 
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validatePassword = (password: string): boolean => {
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 characters, letters and numbers
+  return passwordRegex.test(password);
+};
+
 // Register User
 export const registerUser = async (
   req: Request,
   res: Response
 ): Promise<Response<any, Record<string, any>> | void> => {
   const { email, password, confirmPassword, role } = req.body;
+
+  if (!validateEmail(email)) {
+    return res.status(400).json({ data: "Invalid email format" });
+  }
+
+  if (!validatePassword(password)) {
+    return res.status(400).json({
+      data: "Password must be at least 8 characters long and contain letters and numbers",
+    });
+  }
 
   if (password !== confirmPassword) {
     return res.status(400).json({ data: "Passwords do not match" });
@@ -45,6 +65,18 @@ export const loginUser = async (
 ): Promise<Response<any, Record<string, any>> | void> => {
   const { email, password } = req.body;
 
+  // Validate email
+  if (!validateEmail(email)) {
+    return res.status(400).json({ data: "Invalid email format" });
+  }
+
+  // Validate password
+  if (!validatePassword(password)) {
+    return res.status(400).json({
+      data: "Password must be at least 8 characters long and contain letters and numbers",
+    });
+  }
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -60,17 +92,15 @@ export const loginUser = async (
     req.body.user = user; // Pass the user data to the setAuthCookies middleware
 
     setAuthCookies(req, res); // Set access and refresh tokens as cookies
-
   } catch (error) {
     console.error("Error logging in user:", error);
     return res.status(500).json({ data: "Internal server error" });
   }
 };
 
+// Logout User
 export const logoutUser = (req: any, res: Response) => {
-
   res.clearCookie('accessToken');
   res.clearCookie('refreshToken');
-
   res.json({ message: 'Logged out successfully' });
 };
