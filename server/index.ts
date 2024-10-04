@@ -27,6 +27,5 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Use API router
-app.use("/api/v1", router); // This should correctly use your routes
-
+app.use("/api/v1", router); 
 export = app;

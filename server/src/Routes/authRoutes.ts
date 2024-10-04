@@ -13,10 +13,6 @@ router.get('/protected', authenticateToken, (req: any, res: any) => {
   return res.json({ data: "Access granted to protected route" });
 });
 
-router.post('/logout', (req: any, res: any) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-  return res.json({ message: 'Logged out' });
-});
+router.post('/logout', authController.logoutUser);
 
 module.exports = router;

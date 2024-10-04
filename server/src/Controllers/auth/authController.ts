@@ -66,3 +66,11 @@ export const loginUser = async (
     return res.status(500).json({ data: "Internal server error" });
   }
 };
+
+export const logoutUser = (req: any, res: Response) => {
+
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+
+  res.json({ message: 'Logged out successfully' });
+};
