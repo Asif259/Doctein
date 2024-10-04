@@ -1,20 +1,22 @@
-const {Router} = require('express');
-
+const { Router } = require('express');
 const authController = require("../Controllers/auth/authController");
 const tokenController = require("../Controllers/auth/tokenController");
-const authVerify = require("../Middlewares/authVerify")
-const tokenHelpers = require("../Helpers/tokenHelper")
+const { authenticateToken } = require("../Helpers/tokenHelper"); // Import the middleware
+
 const router = Router();
 
 router.post('/register', authController.registerUser);
-
-router.post('/login', authController.loginUser, authVerify.setAuthCookies);
+router.post('/login', authController.loginUser);
 router.post('/refresh-token', tokenController.refreshAccessToken);
 
-router.get('/protected', tokenHelpers.authenticateToken)
-router.post('/logout', (req: any, res: any) => {
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    return res.json({ message: 'Logged out' });
+router.get('/protected', authenticateToken, (req: any, res: any) => {
+  return res.json({ data: "Access granted to protected route" });
 });
-export = router;
+
+router.post('/logout', (req: any, res: any) => {
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+  return res.json({ message: 'Logged out' });
+});
+
+module.exports = router;

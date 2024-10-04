@@ -15,5 +15,5 @@ export const refreshAccessToken = (req: Request, res: Response) => {
         maxAge: 15 * 60 * 1000, 
     });
 
-    return res.json({ message: 'Access token refreshed', accessToken: newAccessToken }); // Respond with success message
+    return res.json({ data: 'Access token refreshed', accessToken: newAccessToken }); // Respond with success message
 };

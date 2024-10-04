@@ -1,13 +1,10 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { generateAccessToken, generateRefreshToken } from "../../Helpers/tokenHelper"; // Import correctly
+import { setAuthCookies } from "../../Middlewares/authVerify"; // Import the middleware
 const User = require("../../Models/userModel");
 
 dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET || "";
-const SALT_ROUNDS = process.env.SALT_ROUNDS || "10";
 
 // Register User
 export const registerUser = async (
@@ -26,7 +23,7 @@ export const registerUser = async (
       return res.status(400).json({ data: "User already exists" });
     }
 
-    const saltRounds = parseInt(SALT_ROUNDS, 10);
+    const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = new User({ email, password: hashedPassword, role });
@@ -59,14 +56,11 @@ export const loginUser = async (
       return res.status(401).json({ data: "Invalid credentials" });
     }
 
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
+    // Call the setAuthCookies function to handle token generation and cookie setting
+    req.body.user = user; // Pass the user data to the setAuthCookies middleware
 
-    res.cookie("refreshToken", refreshToken, { httpOnly: true });
+    setAuthCookies(req, res); // Set access and refresh tokens as cookies
 
-    return res
-      .status(200)
-      .json({ data: "Login successful", accessToken, refreshToken, user });
   } catch (error) {
     console.error("Error logging in user:", error);
     return res.status(500).json({ data: "Internal server error" });
