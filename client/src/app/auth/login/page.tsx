@@ -1,10 +1,9 @@
 "use client";
 import { useSearchParams } from "next/navigation"; 
-import Link from 'next/link'; 
 import InputComponent from '../../../components/auth/input-component';
 import PasswordComponent from '../../../components/auth/pass-component';
 
-export default function Register() {
+export default function Login() {
   const searchParams = useSearchParams(); 
   const role = searchParams.get('role');
 
@@ -13,40 +12,48 @@ export default function Register() {
       <div className="flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Register as {role}
+            Login as {role}
           </h2>
           <p className="text-gray-600">
-            Enter your credentials to register as a {role}
+            Enter your credentials to login as a {role}
           </p>
           <form className="mt-4">
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
-              <InputComponent placeholder="Enter your email" type="email" />
+              <InputComponent 
+              placeholder="Enter your email" 
+              type="email"
+              value={email} 
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}  />
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
               <PasswordComponent placeholder="Enter your password" />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700">Confirm password</label>
-              <PasswordComponent placeholder="Re-enter your password" />
+
+            {/* Forgot Password Link */}
+            <div className="mb-4 text-right">
+              <a href="/auth/forgot-password" className="text-primary hover:underline">
+                Forgot your password?
+              </a>
             </div>
+
             <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
-              Register
+              Login
             </button>
           </form>
 
           <p className="mt-4 text-gray-600">
-            Already have an account? 
-            <Link href={`/auth/login?role=${role}`} className="text-primary hover:underline ml-1">
-              Login
-            </Link>
+            Don't have an account? 
+            <a href={`/auth/register?role=${role}`} className="text-primary hover:underline ml-1">
+              Register
+            </a>
           </p>
         </div>
 
         <div className="md:block w-full md:w-1/2 bg-primary p-8 m-3 rounded-lg">
           <h2 className="text-2xl font-semibold text-white">
-            Welcome, {role}
+            Welcome back, {role}
           </h2>
         </div>
       </div>

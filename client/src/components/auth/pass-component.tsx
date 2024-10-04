@@ -1,9 +1,15 @@
-"use client"
+"use client";
 import React from "react";
 import { Input } from "@nextui-org/react";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 
-export default function PasswordComponent({ placeholder }: { placeholder: string }) {
+interface PasswordComponentProps {
+  placeholder: string;
+  value: string;  
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;  
+}
+
+export default function PasswordComponent({ placeholder, value, onChange }: PasswordComponentProps) {
   const [isVisible, setIsVisible] = React.useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -29,6 +35,8 @@ export default function PasswordComponent({ placeholder }: { placeholder: string
           </button>
         }
         type={isVisible ? "text" : "password"}
+        value={value}  // Added value to the input
+        onChange={onChange}  // Added onChange to the input
         className="w-full"
         style={{ color: 'black' }}
       />

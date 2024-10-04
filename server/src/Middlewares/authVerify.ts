@@ -17,7 +17,7 @@ export const setAuthCookies = (req: Request, res: Response) => {
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 2 * 60 * 1000, // 7 days
   });
 
   return res.json({status:"success", data: 'Login successful' });
