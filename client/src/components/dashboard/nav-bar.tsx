@@ -12,14 +12,14 @@ import {
   DropdownMenu,
   Avatar,
 } from "@nextui-org/react";
+import React from "react";
 
 export default function NavBar() {
   return (
     <Navbar>
-      <NavbarBrand>
-        <p className="font-bold text-inherit">ACME</p>
+      <NavbarBrand className="mt-4">
+        <p className="font-bold text-2xl">Dochub</p>
       </NavbarBrand>
-
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
           <Link color="foreground" href="#">
