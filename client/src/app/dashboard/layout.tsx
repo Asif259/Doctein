@@ -14,13 +14,13 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="h-svh flex flex-col">
-      <header className="bg-secondary flex justify-between">
+    <div className="h-dvh flex flex-col">
+      <header className="bg-secondary h-[8dvh] flex justify-between">
         <NavBar />
       </header>
-      <div className="flex flex-row flex-grow">
+      <div className="flex flex-row h-[92dvh]">
         <LeftSidebar />
-        <main className="flex-grow bg-cyan-300 p-4">{children}</main>
+        <main className="flex-grow overflow-y-scroll bg-cyan-300">{children}</main>
       </div>
     </div>
   );
