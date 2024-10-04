@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from 'next/link'; 
 import InputComponent from '../../../components/auth/input-component';
 import PasswordComponent from '../../../components/auth/pass-component';
-import axios from 'axios'; 
+import { registerUser } from '../../../api/api';
 
 export default function Register() {
   const searchParams = useSearchParams(); 
@@ -50,23 +50,14 @@ export default function Register() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/v1/register', {
-        email,
-        password,
-        confirmPassword,
-        role,
-      });
-      console.log(response);
-
-      setSuccess(response.data.data); 
+      const data = await registerUser(email, password, confirmPassword, role as string); // Use the API function
+      setSuccess(data.data);
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      
-      router.push(`/auth/login?role=${role}`);
-
+      router.push(`/auth/login?role=${role}`);  // Redirect to login page on success
     } catch (err: any) {
-      setError(err.response?.data?.data || 'Registration failed. Please try again.');
+      setError(err.message);
     }
   };
 

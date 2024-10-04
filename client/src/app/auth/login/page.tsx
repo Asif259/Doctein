@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from "next/navigation"; 
 import InputComponent from '../../../components/auth/input-component';
 import PasswordComponent from '../../../components/auth/pass-component';
-import axios from 'axios'; 
+import { loginUser } from '../../../api/api';
 
 export default function Login() {
   const searchParams = useSearchParams(); 
@@ -28,20 +28,16 @@ export default function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/v1/login', {
-        email,
-        password,
-      });
-
-      setSuccess(response.data.data);
+      const data = await loginUser(email, password); // Use the loginUser API function
+      setSuccess(data.data);
 
       setEmail('');
       setPassword('');
 
-      router.push('/dashboard'); 
+      router.push('/dashboard');  // Redirect to dashboard after successful login
 
     } catch (err: any) {
-      setError(err.response?.data?.data || 'Login failed. Please try again.'); // Handle error
+      setError(err.message || 'Login failed. Please try again.'); // Handle error
     }
   };
 
