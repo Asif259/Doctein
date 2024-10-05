@@ -20,8 +20,8 @@ export default function DashboardLayout({
       </header>
       <div className="flex flex-row h-[91dvh]">
         <LeftSidebar />
-        <main className="flex-grow overflow-y-scroll bg-cyan-300">
-          <div className="flex bg-gray-100">
+        <main className="flex-grow overflow-y-scroll bg-gray-100">
+          <div className="flex">
             <main className="flex-1 overflow-y-auto p-8">{children}</main>
           </div>
         </main>

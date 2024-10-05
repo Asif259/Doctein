@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -12,8 +12,10 @@ import {
   Chip,
   Tooltip,
   ChipProps,
+  Input,
+  Button,
 } from "@nextui-org/react";
-import { DeleteIcon, EditIcon, EyeIcon } from "lucide-react";
+import { DeleteIcon, EditIcon, EyeIcon, PlusIcon } from "lucide-react";
 
 const statusColorMap: Record<string, ChipProps["color"]> = {
   active: "success",
@@ -84,6 +86,8 @@ const users = [
 type User = (typeof users)[0];
 
 export default function Page() {
+  const [search, setSearch] = React.useState("");
+  const [filteredUsers, setFilteredUsers] = React.useState<User[]>(users);
   const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
     const cellValue = user[columnKey as keyof User];
 
@@ -143,10 +147,40 @@ export default function Page() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!search) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const searchValue = search.toLowerCase();
+    const filtered = users.filter((user) =>
+      Object.values(user).some((value) =>
+        String(value).toLowerCase().includes(searchValue),
+      ),
+    );
+
+    setFilteredUsers(filtered);
+  }, [search]);
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-8">Patients</h1>
-
+      <div className="flex justify-between gap-4">
+        <Input
+          isClearable
+          type="search"
+          variant="bordered"
+          placeholder="Search patients by name, email, etc."
+          defaultValue=""
+          onChange={(e) => setSearch(e.target.value)}
+          onClear={() => console.log("input cleared")}
+          className="max-w-xs mb-4"
+        />
+        <Button startContent={<PlusIcon />} color="primary" variant="solid">
+          Add Patient
+        </Button>
+      </div>
       <Table aria-label="Example table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
@@ -158,7 +192,7 @@ export default function Page() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody items={filteredUsers}>
           {(item) => (
             <TableRow key={item.id}>
               {(columnKey) => (
