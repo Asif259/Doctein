@@ -1,0 +1,57 @@
+{
+  "patients": [
+    {
+      "id": 1,
+      "name": "John Doe",
+      "age": 25,
+      "condition": "Diabetes"
+    },
+    {
+      "id": 2,
+      "name": "Jane Doe",
+      "age": 30,
+      "condition": "Hypertension"
+    },
+    {
+      "id": 3,
+      "name": "John Smith",
+      "age": 35,
+      "condition": "Asthma"
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "patient": "John Doe",
+      "date": "2021-06-01",
+      "time": "10:00 AM",
+      "status": "Pending"
+    },
+    {
+      "id": 2,
+      "patient": "Jane Doe",
+      "date": "2021-06-02",
+      "time": "11:00 AM",
+      "status": "Confirmed"
+    },
+    {
+      "id": 3,
+      "patient": "John Smith",
+      "date": "2021-06-03",
+      "time": "12:00 PM",
+      "status": "Cancelled"
+    }
+  ],
+  "staffs": [
+    {
+      "id": 1,
+      "name": "Dr. John",
+      "role": "assistant"
+    },
+    {
+      "id": 2,
+      "name": "Dr. Jane",
+      "role": "nurse"
+    }
+  ]
+}

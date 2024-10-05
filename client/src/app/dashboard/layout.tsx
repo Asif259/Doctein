@@ -15,12 +15,16 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="h-dvh flex flex-col">
-      <header className="bg-secondary h-[8dvh] flex justify-between">
+      <header className="bg-primary text-white h-[9dvh] flex justify-between">
         <NavBar />
       </header>
-      <div className="flex flex-row h-[92dvh]">
+      <div className="flex flex-row h-[91dvh]">
         <LeftSidebar />
-        <main className="flex-grow overflow-y-scroll bg-cyan-300">{children}</main>
+        <main className="flex-grow overflow-y-scroll bg-cyan-300">
+          <div className="flex bg-gray-100">
+            <main className="flex-1 overflow-y-auto p-8">{children}</main>
+          </div>
+        </main>
       </div>
     </div>
   );

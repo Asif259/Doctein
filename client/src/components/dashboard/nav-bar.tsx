@@ -16,24 +16,32 @@ import React from "react";
 
 export default function NavBar() {
   return (
-    <Navbar>
-      <NavbarBrand className="mt-4">
+    <Navbar
+      classNames={{
+        base: "items-center",
+      }}
+    >
+      <NavbarBrand>
         <p className="font-bold text-2xl">Dochub</p>
       </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
-        <NavbarItem>
-          <Link color="foreground" href="#">
+      <NavbarContent className="hidden sm:flex gap-4e" justify="center">
+        <NavbarItem isActive>
+          <Link className="text-white" href="#">
             Dashboard
           </Link>
         </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" color="primary">
+        <NavbarItem>
+          <Link className="text-white" href="#">
             Workflow Builder
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            CRM
+          <Link
+            title="Patient Relationship Management"
+            className="text-white"
+            href="#"
+          >
+            PRM
           </Link>
         </NavbarItem>
       </NavbarContent>

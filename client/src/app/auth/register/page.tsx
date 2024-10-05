@@ -2,9 +2,9 @@
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import InputComponent from "../../../components/auth/input-component";
-import PasswordComponent from "../../../components/auth/pass-component";
-import { registerUser } from "../../../api/api";
+import InputComponent from "@/components/auth/input-component";
+import PasswordComponent from "@/components/auth/pass-component";
+import { registerUser } from "@/api/api";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -42,7 +42,7 @@ export default function Register() {
           values.email,
           values.password,
           values.confirmPassword,
-          role as string
+          role as string,
         );
         setSubmitting(false);
         router.push(`/auth/login?role=${role}`); // Redirect to login page on success
@@ -75,7 +75,7 @@ export default function Register() {
               <InputComponent
                 placeholder="Enter your email"
                 type="email"
-                {...formik.getFieldProps("email")} 
+                {...formik.getFieldProps("email")}
               />
               {formik.touched.email && formik.errors.email ? (
                 <div className="text-red-500">{formik.errors.email}</div>
@@ -95,7 +95,7 @@ export default function Register() {
               <label className="block text-gray-700">Confirm password</label>
               <PasswordComponent
                 placeholder="Re-enter your password"
-                {...formik.getFieldProps("confirmPassword")} 
+                {...formik.getFieldProps("confirmPassword")}
               />
               {formik.touched.confirmPassword &&
               formik.errors.confirmPassword ? (
