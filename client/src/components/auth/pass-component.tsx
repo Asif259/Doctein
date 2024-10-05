@@ -7,9 +7,10 @@ interface PasswordComponentProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  name: string;
 }
 
-const PasswordComponent = ({ placeholder, value, onChange, onBlur, ...props}: PasswordComponentProps) => {
+const PasswordComponent = ({ placeholder, value, onChange, onBlur, name, ...props}: PasswordComponentProps) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
@@ -17,6 +18,7 @@ const PasswordComponent = ({ placeholder, value, onChange, onBlur, ...props}: Pa
   return (
     <div className="relative w-full">
       <input
+        name={name}
         className="w-full px-4 py-2 border rounded-lg"
         placeholder={placeholder}
         type={isVisible ? "text" : "password"} 

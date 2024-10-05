@@ -2,7 +2,8 @@
 import { useRouter } from 'next/navigation';  
 import { useFormik } from 'formik';
 import * as Yup from 'yup'; 
-import InputComponent from '../../../components/auth/input-component';
+import InputComponent from '@/components/auth/input-component';
+import { sendOtp } from '@/api/api';
 
 export default function ForgotPassword() {
   const router = useRouter();  
@@ -16,11 +17,17 @@ export default function ForgotPassword() {
         .email('Invalid email address')
         .required('Email is required'),
     }),
-    onSubmit: async (values, { setSubmitting }) => {
-      console.log("OTP sent to: ", values.email);
-      
-      router.push(`/auth/enter-otp?email=${values.email}`);
-      setSubmitting(false);
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        await sendOtp(values.email);
+        console.log("OTP sent to:", values.email);
+        router.push(`/auth/enter-otp?email=${values.email}`);
+      } catch (error: any) {
+        console.error("Error sending OTP:", error);
+        setErrors({ email: error.message });
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
 
