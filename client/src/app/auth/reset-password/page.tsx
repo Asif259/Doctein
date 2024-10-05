@@ -3,11 +3,12 @@ import { useSearchParams, useRouter } from "next/navigation";
 import PasswordComponent from "../../../components/auth/pass-component";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { resetPassword } from '@/api/api';
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get("email"); /
+  const email = searchParams.get("email"); 
 
   const validationSchema = Yup.object({
     newPassword: Yup.string()
@@ -28,10 +29,11 @@ export default function ResetPassword() {
     validationSchema,
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
+        await resetPassword(email as string, values.newPassword);
         console.log("New password set for:", email);
-        router.push(`/auth/login?email=${email}`);
+        router.push(`/auth`);
       } catch (err: any) {
-        setErrors({ confirmPassword: err.message }); 
+        setErrors({ confirmPassword: err.message });
         setSubmitting(false);
       }
     },
@@ -52,10 +54,11 @@ export default function ResetPassword() {
         <form className="mt-4" onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <PasswordComponent
+              name="newPassword"
               placeholder="Enter your new password"
               value={formik.values.newPassword}
               onChange={formik.handleChange}
-              name="newPassword"
+              onBlur={formik.handleBlur} // Add this line
             />
             {formik.touched.newPassword && formik.errors.newPassword && (
               <div className="text-red-500">{formik.errors.newPassword}</div>
@@ -64,10 +67,11 @@ export default function ResetPassword() {
 
           <div className="mb-4">
             <PasswordComponent
+            name="confirmPassword"
               placeholder="Re-enter your new password"
               value={formik.values.confirmPassword}
               onChange={formik.handleChange}
-              name="confirmPassword" // Use the name to connect Formik
+              onBlur={formik.handleBlur}
             />
             {formik.touched.confirmPassword && formik.errors.confirmPassword && (
               <div className="text-red-500">{formik.errors.confirmPassword}</div>

@@ -2,7 +2,8 @@
 import { useSearchParams, useRouter } from 'next/navigation'; 
 import { useFormik } from 'formik';
 import * as Yup from 'yup'; 
-import InputComponent from '../../../components/auth/input-component';
+import InputComponent from '@/components/auth/input-component';
+import { verifyOtp } from '@/api/api';
 
 export default function EnterOTP() {
   const searchParams = useSearchParams();
@@ -16,14 +17,26 @@ export default function EnterOTP() {
     validationSchema: Yup.object({
       otp: Yup.string()
         .required('OTP is required')
-        .length(6, 'OTP must be exactly 6 characters long'), // Adjust length as needed
+        .length(6, 'OTP must be exactly 6 characters long'),
     }),
-    onSubmit: async (values, { setSubmitting }) => {
-      console.log("OTP entered: ", values.otp);
-      
-      router.push('/auth/reset-password');
-      setSubmitting(false);
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        if (email) {
+          await verifyOtp(email, values.otp); 
+          console.log("OTP verified:", values.otp);
+          router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+        } else {
+          throw new Error("Email is missing");
+        }
+      } catch (error) {
+        const err = error as { response?: { data?: { data?: string } } };
+        setErrors({ otp: err.response?.data?.data || 'Failed to verify OTP. Please try again.' });
+        console.error("Error verifying OTP:", err);
+      } finally {
+        setSubmitting(false);
+      }
     },
+    
   });
 
   return (
