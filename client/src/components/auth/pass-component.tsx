@@ -1,45 +1,44 @@
 "use client";
-import React from "react";
-import { Input } from "@nextui-org/react";
+import React, { useState } from "react";
 import { PiEyeBold, PiEyeClosedBold } from "react-icons/pi";
 
 interface PasswordComponentProps {
   placeholder: string;
-  value: string;  
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;  
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-export default function PasswordComponent({ placeholder, value, onChange }: PasswordComponentProps) {
-  const [isVisible, setIsVisible] = React.useState(false);
+const PasswordComponent = ({ placeholder, value, onChange, onBlur, ...props}: PasswordComponentProps) => {
+  const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => setIsVisible(!isVisible);
 
   return (
-    <div className="flex-wrap md:flex-nowrap gap-4 w-full">
-      <Input
-        variant="underlined"
+    <div className="relative w-full">
+      <input
+        className="w-full px-4 py-2 border rounded-lg"
         placeholder={placeholder}
-        endContent={
-          <button
-            className="focus:outline-none"
-            type="button"
-            onClick={toggleVisibility}
-            style={{ color: 'black' }} 
-            aria-label="toggle password visibility"
-          >
-            {isVisible ? (
-              <PiEyeBold className="text-2xl text-default-400 pointer-events-none" />
-            ) : (
-              <PiEyeClosedBold className="text-2xl text-default-400 pointer-events-none" />
-            )}
-          </button>
-        }
-        type={isVisible ? "text" : "password"}
-        value={value}  // Added value to the input
-        onChange={onChange}  // Added onChange to the input
-        className="w-full"
-        style={{ color: 'black' }}
+        type={isVisible ? "text" : "password"} 
+        value={value} 
+        onChange={onChange} 
+        onBlur={onBlur} 
+        {...props} 
       />
+      <button
+        type="button"
+        className="absolute inset-y-0 right-4 flex items-center"
+        onClick={toggleVisibility}
+        aria-label="toggle password visibility"
+      >
+        {isVisible ? (
+          <PiEyeBold className="text-2xl" />
+        ) : (
+          <PiEyeClosedBold className="text-2xl" />
+        )}
+      </button>
     </div>
   );
-}
+};
+
+export default PasswordComponent;

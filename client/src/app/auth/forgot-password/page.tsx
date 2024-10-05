@@ -1,18 +1,28 @@
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';  // Use router for navigation
+import { useRouter } from 'next/navigation';  
+import { useFormik } from 'formik';
+import * as Yup from 'yup'; 
 import InputComponent from '../../../components/auth/input-component';
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const router = useRouter();  // Initialize router
+  const router = useRouter();  
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("OTP sent to: ", email);
-
-    router.push(`/auth/enter-otp?email=${email}`);
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required'),
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      console.log("OTP sent to: ", values.email);
+      
+      router.push(`/auth/enter-otp?email=${values.email}`);
+      setSubmitting(false);
+    },
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -23,20 +33,27 @@ export default function ForgotPassword() {
         <p className="text-gray-600">
           Enter your email address to receive a one-time password (OTP).
         </p>
-        <form className="mt-4" onSubmit={handleSubmit}>
-  <div className="mb-4">
-    <InputComponent 
-      placeholder="Enter your email" 
-      type="email" 
-      value={email}  
-      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}  // Correctly passing onChange
-    />
-  </div>
-  <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
-    Send OTP
-  </button>
-</form>
 
+        <form className="mt-4" onSubmit={formik.handleSubmit}>
+          <div className="mb-4">
+            <InputComponent
+              placeholder="Enter your email"
+              type="email"
+              {...formik.getFieldProps('email')}
+            />
+            {formik.touched.email && formik.errors.email ? (
+              <div className="text-red-500">{formik.errors.email}</div>
+            ) : null}
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            disabled={formik.isSubmitting}
+          >
+            {formik.isSubmitting ? 'Sending OTP...' : 'Send OTP'}
+          </button>
+        </form>
       </div>
     </div>
   );

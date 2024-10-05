@@ -1,6 +1,7 @@
 "use client";
-import { useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';  // Use search params and router
+import { useSearchParams, useRouter } from 'next/navigation'; 
+import { useFormik } from 'formik';
+import * as Yup from 'yup'; 
 import InputComponent from '../../../components/auth/input-component';
 
 export default function EnterOTP() {
@@ -8,15 +9,22 @@ export default function EnterOTP() {
   const router = useRouter();
   const email = searchParams.get('email');  
 
-  const [otp, setOtp] = useState('');  
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("OTP entered: ", otp);
-
-    
-    router.push('/auth/reset-password'); 
-  };
+  const formik = useFormik({
+    initialValues: {
+      otp: '',
+    },
+    validationSchema: Yup.object({
+      otp: Yup.string()
+        .required('OTP is required')
+        .length(6, 'OTP must be exactly 6 characters long'), // Adjust length as needed
+    }),
+    onSubmit: async (values, { setSubmitting }) => {
+      console.log("OTP entered: ", values.otp);
+      
+      router.push('/auth/reset-password');
+      setSubmitting(false);
+    },
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -27,17 +35,25 @@ export default function EnterOTP() {
         <p className="text-gray-600">
           An OTP has been sent to {email}. Please enter it below.
         </p>
-        <form className="mt-4" onSubmit={handleSubmit}>
+
+        <form className="mt-4" onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <InputComponent 
               placeholder="Enter OTP" 
               type="text" 
-              value={otp} 
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setOtp(e.target.value)} 
+              {...formik.getFieldProps('otp')} 
             />
+            {formik.touched.otp && formik.errors.otp ? (
+              <div className="text-red-500">{formik.errors.otp}</div>
+            ) : null}
           </div>
-          <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
-            Verify OTP
+
+          <button
+            type="submit"
+            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            disabled={formik.isSubmitting}
+          >
+            {formik.isSubmitting ? 'Verifying...' : 'Verify OTP'}
           </button>
         </form>
       </div>

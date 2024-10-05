@@ -1,65 +1,57 @@
 "use client";
-import { useState } from 'react';  
-import { useRouter } from 'next/navigation'; 
-import { useSearchParams } from "next/navigation"; 
-import Link from 'next/link'; 
-import InputComponent from '../../../components/auth/input-component';
-import PasswordComponent from '../../../components/auth/pass-component';
-import { registerUser } from '../../../api/api';
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import InputComponent from "../../../components/auth/input-component";
+import PasswordComponent from "../../../components/auth/pass-component";
+import { registerUser } from "../../../api/api";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function Register() {
-  const searchParams = useSearchParams(); 
-  const role = searchParams.get('role');
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
   const router = useRouter();
 
-  const [email, setEmail] = useState('');  
-  const [password, setPassword] = useState('');  
-  const [confirmPassword, setConfirmPassword] = useState('');  
-  const [error, setError] = useState('');  
-  const [success, setSuccess] = useState('');  
+  // Formik validation schema
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .matches(/[A-Za-z]/, "Password must contain letters")
+      .matches(/\d/, "Password must contain numbers")
+      .required("Password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password")], "Passwords must match")
+      .required("Confirm password is required"),
+  });
 
-  const validateEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePassword = (password: string): boolean => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 characters, letters and numbers
-    return passwordRegex.test(password);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setError('');
-    setSuccess('');
-
-    if (!validateEmail(email)) {
-      setError("Invalid email format.");
-      return;
-    }
-
-    if (!validatePassword(password)) {
-      setError("Password must be at least 8 characters long and contain letters and numbers.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
-    try {
-      const data = await registerUser(email, password, confirmPassword, role as string); // Use the API function
-      setSuccess(data.data);
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      router.push(`/auth/login?role=${role}`);  // Redirect to login page on success
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+  // Formik form handling
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        const data = await registerUser(
+          values.email,
+          values.password,
+          values.confirmPassword,
+          role as string
+        );
+        setSubmitting(false);
+        router.push(`/auth/login?role=${role}`); // Redirect to login page on success
+      } catch (err: any) {
+        setErrors({ email: err.message });
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -72,52 +64,68 @@ export default function Register() {
             Enter your credentials to register as a {role}
           </p>
 
-          {error && <div className="text-red-500 mb-4">{error}</div>} {/* Error message display */}
-          {success && <div className="text-green-500 mb-4">{success}</div>} {/* Success message display */}
+          {/* Error and Success message displays */}
+          {formik.errors.email && formik.touched.email && (
+            <div className="text-red-500 mb-4">{formik.errors.email}</div>
+          )}
 
-          <form className="mt-4" onSubmit={handleSubmit}>
+          <form className="mt-4" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
-              <InputComponent 
-                placeholder="Enter your email" 
-                type="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
+              <InputComponent
+                placeholder="Enter your email"
+                type="email"
+                {...formik.getFieldProps("email")} 
               />
+              {formik.touched.email && formik.errors.email ? (
+                <div className="text-red-500">{formik.errors.email}</div>
+              ) : null}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
-              <PasswordComponent 
-                placeholder="Enter your password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
+              <PasswordComponent
+                placeholder="Enter your password"
+                {...formik.getFieldProps("password")}
               />
+              {formik.touched.password && formik.errors.password ? (
+                <div className="text-red-500">{formik.errors.password}</div>
+              ) : null}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Confirm password</label>
-              <PasswordComponent 
-                placeholder="Re-enter your password" 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)} 
+              <PasswordComponent
+                placeholder="Re-enter your password"
+                {...formik.getFieldProps("confirmPassword")} 
               />
+              {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword ? (
+                <div className="text-red-500">
+                  {formik.errors.confirmPassword}
+                </div>
+              ) : null}
             </div>
-            <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
+            <button
+              type="submit"
+              className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+              disabled={formik.isSubmitting}
+            >
               Register
             </button>
           </form>
 
           <p className="mt-4 text-gray-600">
-            Already have an account? 
-            <Link href={`/auth/login?role=${role}`} className="text-primary hover:underline ml-1">
+            Already have an account?
+            <Link
+              href={`/auth/login?role=${role}`}
+              className="text-primary hover:underline ml-1"
+            >
               Login
             </Link>
           </p>
         </div>
 
         <div className="md:block w-full md:w-1/2 bg-primary p-8 m-3 rounded-lg">
-          <h2 className="text-2xl font-semibold text-white">
-            Welcome, {role}
-          </h2>
+          <h2 className="text-2xl font-semibold text-white">Welcome, {role}</h2>
         </div>
       </div>
     </div>

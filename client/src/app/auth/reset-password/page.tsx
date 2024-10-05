@@ -1,66 +1,84 @@
 "use client";
-import { useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';  // Use search params and router
-import InputComponent from '../../../components/auth/input-component';
-import PasswordComponent from '../../../components/auth/pass-component';  // Assuming this is your password input component
+import { useSearchParams, useRouter } from "next/navigation"; 
+import PasswordComponent from "../../../components/auth/pass-component";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get('email');  // Get email from query params
+  const email = searchParams.get("email"); /
 
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const validationSchema = Yup.object({
+    newPassword: Yup.string()
+      .min(8, "Password must be at least 8 characters")
+      .matches(/[A-Za-z]/, "Password must contain letters")
+      .matches(/\d/, "Password must contain numbers")
+      .required("New password is required"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("newPassword")], "Passwords must match")
+      .required("Confirm password is required"),
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword !== confirmPassword) {
-      setError("Passwords do not match!");
-      return;
-    }
-
-    // Add logic to update the password via backend API
-    console.log("New password set for:", email);
-
-    // After successful password reset, redirect to login
-    router.push(`/auth/login?email=${email}`);
-  };
+  const formik = useFormik({
+    initialValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting, setErrors }) => {
+      try {
+        console.log("New password set for:", email);
+        router.push(`/auth/login?email=${email}`);
+      } catch (err: any) {
+        setErrors({ confirmPassword: err.message }); 
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
       <div className="flex flex-col w-10/12 md:w-1/3 bg-white rounded-xl shadow-lg overflow-hidden p-8">
-        <h2 className="text-2xl font-semibold text-gray-800">
-          Reset Password
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Reset Password</h2>
         <p className="text-gray-600">
           Reset your password for the account associated with {email}.
         </p>
 
-        {error && (
-          <div className="text-red-500 mb-4">
-            {error}
-          </div>
+        {formik.errors.confirmPassword && (
+          <div className="text-red-500 mb-4">{formik.errors.confirmPassword}</div>
         )}
 
-        <form className="mt-4" onSubmit={handleSubmit}>
+        <form className="mt-4" onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <PasswordComponent
               placeholder="Enter your new password"
-              value={newPassword}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPassword(e.target.value)}
+              value={formik.values.newPassword}
+              onChange={formik.handleChange}
+              name="newPassword"
             />
+            {formik.touched.newPassword && formik.errors.newPassword && (
+              <div className="text-red-500">{formik.errors.newPassword}</div>
+            )}
           </div>
 
           <div className="mb-4">
             <PasswordComponent
               placeholder="Re-enter your new password"
-              value={confirmPassword}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              name="confirmPassword" // Use the name to connect Formik
             />
+            {formik.touched.confirmPassword && formik.errors.confirmPassword && (
+              <div className="text-red-500">{formik.errors.confirmPassword}</div>
+            )}
           </div>
 
-          <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
+          <button
+            type="submit"
+            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            disabled={formik.isSubmitting}
+          >
             Reset Password
           </button>
         </form>

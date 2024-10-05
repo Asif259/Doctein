@@ -1,7 +1,7 @@
 "use client";
-import { useState } from 'react'; 
-import { useRouter } from 'next/navigation'; 
-import { useSearchParams } from "next/navigation"; 
+import { useRouter, useSearchParams } from 'next/navigation'; 
+import { useFormik } from 'formik';
+import * as Yup from 'yup'; // For form validation
 import InputComponent from '../../../components/auth/input-component';
 import PasswordComponent from '../../../components/auth/pass-component';
 import { loginUser } from '../../../api/api';
@@ -11,35 +11,28 @@ export default function Login() {
   const role = searchParams.get('role');
   const router = useRouter(); 
 
-  const [email, setEmail] = useState(''); 
-  const [password, setPassword] = useState(''); 
-  const [error, setError] = useState(''); // State for error messages
-  const [success, setSuccess] = useState(''); // State for success messages
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setError('');
-    setSuccess('');
-
-    if (!email || !password) {
-      setError('Please enter your email and password.');
-      return; 
-    }
-
-    try {
-      const data = await loginUser(email, password); // Use the loginUser API function
-      setSuccess(data.data);
-
-      setEmail('');
-      setPassword('');
-
-      router.push('/dashboard');  // Redirect to dashboard after successful login
-
-    } catch (err: any) {
-      setError(err.message || 'Login failed. Please try again.'); // Handle error
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string().email('Invalid email address').required('Email is equired'),
+      password: Yup.string()
+        .min(8, 'Password must be at least 8 characters long')
+        .required('Password required'),
+    }),
+    onSubmit: async (values, { setSubmitting, setStatus }) => {
+      try {
+        const data = await loginUser(values.email, values.password);
+        setStatus({ success: true });
+        router.push('/dashboard'); // Redirect to dashboard after login
+      } catch (err: any) {
+        setStatus({ success: false, message: err.message || 'Login failed. Please try again.' });
+      }
+      setSubmitting(false);
+    },
+  });
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
@@ -52,26 +45,35 @@ export default function Login() {
             Enter your credentials to login as a {role}
           </p>
 
-          {error && <div className="text-red-500 mb-4">{error}</div>} {/* Error message display */}
-          {success && <div className="text-green-500 mb-4">{success}</div>} {/* Success message display */}
+          {/* General error message display */}
+          {formik.status?.message && !formik.status.success && (
+            <div className="text-red-500 mb-4">{formik.status.message}</div>
+          )}
+          {formik.status?.success && (
+            <div className="text-green-500 mb-4">Login successful!</div>
+          )}
 
-          <form className="mt-4" onSubmit={handleSubmit}>
+          <form className="mt-4" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
               <InputComponent 
                 placeholder="Enter your email" 
                 type="email"
-                value={email} 
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}  
+                {...formik.getFieldProps('email')} // Spread Formik props
               />
+              {formik.touched.email && formik.errors.email ? (
+                <div className="text-red-500">{formik.errors.email}</div>
+              ) : null}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
               <PasswordComponent 
                 placeholder="Enter your password" 
-                value={password} 
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)} 
+                {...formik.getFieldProps('password')} // Spread Formik props
               />
+              {formik.touched.password && formik.errors.password ? (
+                <div className="text-red-500">{formik.errors.password}</div>
+              ) : null}
             </div>
 
             {/* Forgot Password Link */}
@@ -81,8 +83,12 @@ export default function Login() {
               </a>
             </div>
 
-            <button className="w-full bg-primary text-white py-2 px-4 rounded-lg">
-              Login
+            <button
+              type="submit"
+              className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+              disabled={formik.isSubmitting}
+            >
+              {formik.isSubmitting ? 'Logging in...' : 'Login'}
             </button>
           </form>
 

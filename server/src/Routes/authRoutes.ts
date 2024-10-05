@@ -1,21 +1,18 @@
 const { Router } = require('express');
 const authController = require("../Controllers/auth/authController");
 const tokenController = require("../Controllers/auth/tokenController");
-//const { authenticateToken } = require("../Helpers/tokenHelper"); // Import the middleware
-//const authenticateToken = require("../Middlewares/authenticate");
+const forgetPassController = require("../Controllers/auth/forgetPassword"); 
 
 const router = Router();
 
 router.post('/register', authController.registerUser);
 router.post('/login', authController.loginUser);
 router.post('/refresh-token', tokenController.refreshAccessToken);
-
-/*router.get('/protected', authenticateToken, (req: any, res: any) => {
-  return res.json({ data: "Access granted to protected route" });
-});*/
-
 router.post('/logout', authController.logoutUser);
 
+// Password Reset Routes
+router.post('/forgot-password/send-otp', forgetPassController.sendOtp); // Send OTP
+router.post('/forgot-password/verify-otp', forgetPassController.verifyOtpHandler); // Verify OTP
+router.post('/forgot-password/reset-password', forgetPassController.resetPassword); // Reset Password
 
-  
-export = router;
+module.exports = router;
