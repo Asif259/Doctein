@@ -8,7 +8,6 @@ import { loginUser } from '../../../api/api';
 
 export default function Login() {
   const searchParams = useSearchParams(); 
-  const role = searchParams.get('role');
   const router = useRouter(); 
 
   const formik = useFormik({
@@ -39,10 +38,10 @@ export default function Login() {
       <div className="flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Login as {role}
+            Login
           </h2>
           <p className="text-gray-600">
-            Enter your credentials to login as a {role}
+            Enter your credentials to login
           </p>
 
           {/* General error message display */}
@@ -94,7 +93,7 @@ export default function Login() {
 
           <p className="mt-4 text-gray-600">
             Don't have an account? 
-            <a href={`/auth/register?role=${role}`} className="text-primary hover:underline ml-1">
+            <a href={`/auth`} className="text-primary hover:underline ml-1">
               Register
             </a>
           </p>
@@ -102,7 +101,7 @@ export default function Login() {
 
         <div className="md:block w-full md:w-1/2 bg-primary p-8 m-3 rounded-lg">
           <h2 className="text-2xl font-semibold text-white">
-            Welcome back, {role}
+            Welcome back
           </h2>
         </div>
       </div>

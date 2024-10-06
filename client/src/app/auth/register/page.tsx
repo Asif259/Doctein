@@ -45,7 +45,7 @@ export default function Register() {
           role as string,
         );
         setSubmitting(false);
-        router.push(`/auth/login?role=${role}`); // Redirect to login page on success
+        router.push(`/auth/login`); // Redirect to login page on success
       } catch (err: any) {
         setErrors({ email: err.message });
         setSubmitting(false);
