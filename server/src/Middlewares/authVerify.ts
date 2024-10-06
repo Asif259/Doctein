@@ -1,5 +1,8 @@
-import { Request, Response } from 'express';
-import { generateAccessToken, generateRefreshToken } from "../Helpers/tokenHelper";
+import { Request, Response } from "express";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../Helpers/tokenHelper";
 
 export const setAuthCookies = (req: Request, res: Response) => {
   const { user } = req.body;
@@ -7,18 +10,20 @@ export const setAuthCookies = (req: Request, res: Response) => {
   const refreshToken = generateRefreshToken(user);
 
   // Set the access token as an HTTP-only cookie
-  res.cookie('accessToken', accessToken, {
+  res.cookie("accessToken", accessToken, {
     httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 20 * 1000, // 20sec
+    secure: false,
+    sameSite: "lax",
+    maxAge: 15 * 60 * 1000, // 20sec
   });
 
   // Set the refresh token as an HTTP-only cookie
-  res.cookie('refreshToken', refreshToken, {
+  res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 2 * 60 * 1000, // 7 days
+    secure: false,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  return res.json({status:"success", data: 'Login successful' });
+  return res.json({ status: "success", data: "Login successful" });
 };
