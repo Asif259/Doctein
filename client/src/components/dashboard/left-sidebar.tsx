@@ -4,9 +4,9 @@ import React from "react";
 import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 import {
   Calendar,
+  CircleUserIcon,
   Home,
   LogOut,
-  Settings,
   UserPlus,
   Users,
 } from "lucide-react";
@@ -75,15 +75,15 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/settings" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard/profile" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
         >
           <Link
             color="foreground"
-            href="/dashboard/settings"
+            href="/dashboard/profile"
             className="flex items-center"
           >
-            <Settings className="w-5 h-5 mr-2" />
-            Settings
+            <CircleUserIcon className="w-5 h-5 mr-2" />
+            Profile
           </Link>
         </NavbarItem>
       </NavbarContent>
