@@ -47,7 +47,7 @@ export const registerUser = async (
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const user = new User({ email, password: hashedPassword, role });
+    const user = new User({ email, password: hashedPassword, role , archive: {password: hashedPassword}});
     await user.save();
 
     return res.status(201).json({ data: "User registered successfully", user });

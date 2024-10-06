@@ -13,6 +13,7 @@ interface IUser extends Document {
     attempt: number;
     lastReset: Date | string | null;
   };
+  
   active: boolean; 
 }
 
