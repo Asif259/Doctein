@@ -6,7 +6,6 @@ interface IPatient extends Document {
   address: string;
   phone: string;
   prescription: Schema.Types.ObjectId[];
-  medicalHistory: Schema.Types.ObjectId[];
   userId: Schema.Types.ObjectId;
 }
 
@@ -16,7 +15,6 @@ const patientSchema = new Schema<IPatient>({
   address: { type: String },
   phone: { type: String, required: true },
   prescription: [{ type: Schema.Types.ObjectId, ref: "Prescription" }],
-  medicalHistory: [{ type: Schema.Types.ObjectId, ref: "MedicalHistory" }],
   userId: { type: Schema.Types.ObjectId, required: true, unique: true },
 });
 

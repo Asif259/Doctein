@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
+import { Button, Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 import {
   Calendar,
   CircleUserIcon,
@@ -11,23 +11,31 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
+import { logoutUser } from "@/api/api";
 
 function LeftSidebar() {
   const currentPath = usePathname();
+  const router = useRouter();
+  const handleLogout = async () => {
+    const res = await logoutUser();
+    console.log(res.message);
+    router.push("/auth/login");
+  };
   return (
     <Navbar
       classNames={{
-        base: "w-64 h-full bg-white shadow-md",
+        base: "w-64 h-full bg-gradient-to-br from-secondary-300 to-secondary-400 shadow-md",
         wrapper: "flex flex-col items-between h-full",
         brand: "flex-grow-0 items-center justify-start h-16",
         content: "flex flex-col w-full",
-        item: "flex flex-col border-1 px-2 py-3 w-full rounded-md hover:bg-gray-100",
+        item: "flex flex-col border-1 border-secondary-900 p-2 w-full rounded-md hover:bg-secondary-300",
       }}
     >
       <NavbarContent className="mt-4 items-start">
         <NavbarItem
-          className={`${currentPath === "/dashboard" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard" ? "bg-gradient-to-br from-secondary-800 to-secondary-900 text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"
@@ -39,7 +47,7 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/patients" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard/patients" ? "bg-gradient-to-l from-secondary-600 to-secondary-900 text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"
@@ -51,7 +59,7 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/appointments" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard/appointments" ? "bg-gradient-to-l from-secondary-600 to-secondary-900  text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"
@@ -63,7 +71,7 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/staffs" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard/staffs" ? "bg-gradient-to-l from-secondary-600 to-secondary-900  text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"
@@ -75,7 +83,7 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/profile" ? "bg-primary text-white hover:bg-opacity-90 hover:bg-primary" : ""}`}
+          className={`${currentPath === "/dashboard/profile" ? "bg-gradient-to-l from-secondary-600 to-secondary-900  text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"
@@ -88,11 +96,15 @@ function LeftSidebar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent className="mb-4 !flex-grow-0 h-fit w-full">
-        <NavbarItem className="text-red-600 hover:bg-red-500 hover:text-white">
-          <Link href="#" className="flex items-center">
+        <NavbarItem className="text-red-600 hover:bg-red-500 border-danger-600 hover:text-white">
+          <span
+            onClick={handleLogout}
+            color="danger"
+            className="flex items-center cursor-pointer"
+          >
             <LogOut className="w-5 h-5 mr-2" />
             Logout
-          </Link>
+          </span>
         </NavbarItem>
       </NavbarContent>
     </Navbar>

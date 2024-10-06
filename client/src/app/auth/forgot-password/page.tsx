@@ -1,21 +1,21 @@
 "use client";
-import { useRouter } from 'next/navigation';  
-import { useFormik } from 'formik';
-import * as Yup from 'yup'; 
-import InputComponent from '@/components/auth/input-component';
-import { sendOtp } from '@/api/api';
+import { useRouter } from "next/navigation";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import InputComponent from "@/components/auth/input-component";
+import { sendOtp } from "@/api/api";
 
 export default function ForgotPassword() {
-  const router = useRouter();  
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
-      email: '',
+      email: "",
     },
     validationSchema: Yup.object({
       email: Yup.string()
-        .email('Invalid email address')
-        .required('Email is required'),
+        .email("Invalid email address")
+        .required("Email is required"),
     }),
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
@@ -46,7 +46,7 @@ export default function ForgotPassword() {
             <InputComponent
               placeholder="Enter your email"
               type="email"
-              {...formik.getFieldProps('email')}
+              {...formik.getFieldProps("email")}
             />
             {formik.touched.email && formik.errors.email ? (
               <div className="text-red-500">{formik.errors.email}</div>
@@ -55,10 +55,10 @@ export default function ForgotPassword() {
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
             disabled={formik.isSubmitting}
           >
-            {formik.isSubmitting ? 'Sending OTP...' : 'Send OTP'}
+            {formik.isSubmitting ? "Sending OTP..." : "Send OTP"}
           </button>
         </form>
       </div>

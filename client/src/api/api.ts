@@ -35,7 +35,20 @@ export const loginUser = async (email: string, password: string) => {
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    throw new Error(error.message);
+  }
+};
+
+export const authenticateUser = async () => {
+  try {
+    const response = await axios.get(`/authenticate`);
+    console.log("User authentication response", response.data);
+    if (response.data.success) {
+      return response.data;
+    }
+    return false;
+  } catch (e) {
+    return false;
   }
 };
 
@@ -62,6 +75,15 @@ export const verifyOtp = async (email: string, otp: string) => {
   }
 };
 
+//Activate user
+export const activateUser = async (email: string) => {
+  try {
+    const response = await axios.post('/activate', { email });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to activate user');
+  }
+};
 
 //Reset password
 export const resetPassword = async (email: string, newPassword: string) => {
@@ -76,13 +98,11 @@ export const resetPassword = async (email: string, newPassword: string) => {
   }
 };
 
-
-// Activate user API call
-export const activateUser = async (email: string) => {
+export const logoutUser = async () => {
   try {
-    const response = await axios.post('/activate', { email });
+    const response = await axios.post(`/logout`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to activate user');
+    throw new Error(error.response?.data?.data);
   }
 };
