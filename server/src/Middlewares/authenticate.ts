@@ -1,9 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { generateAccessToken, verifyToken, refreshToken } from '../Helpers/tokenHelper'; 
+import { Request, Response, NextFunction } from "express";
+import { verifyToken, refreshToken } from "../Helpers/tokenHelper";
 
-const JWT_SECRET = process.env.JWT_SECRET || '';
+const JWT_SECRET = process.env.JWT_SECRET || "";
 
-const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
+const authenticateToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
   const accessToken = req.cookies.accessToken;
   const refreshTokenCookie = req.cookies.refreshToken;
 
@@ -13,15 +17,19 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
     if (!newAccessToken) {
       return null;
     }
-    res.cookie('accessToken', newAccessToken, { httpOnly: true, sameSite: 'strict', maxAge: 20 * 1000, });
-    return verifyToken(newAccessToken, JWT_SECRET); 
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 20 * 1000,
+    });
+    return verifyToken(newAccessToken, JWT_SECRET);
   };
 
   // Verify access token
   if (accessToken) {
     const decodedToken = verifyToken(accessToken, JWT_SECRET);
     if (decodedToken) {
-      req.headers.user = decodedToken; 
+      req.headers.user = decodedToken;
       return next();
     }
   }
@@ -30,12 +38,14 @@ const authenticateToken = async (req: Request, res: Response, next: NextFunction
   if (refreshTokenCookie) {
     const decodedUser = await handleRefreshToken();
     if (decodedUser) {
-      req.headers.user = decodedUser; 
+      req.headers.user = decodedUser;
       return next();
     }
   }
 
-  return res.status(403).json({ success: false, message: 'Access and refresh tokens are invalid' });
+  return res
+    .status(403)
+    .json({ success: false, message: "Access and refresh tokens are invalid" });
 };
 
-export = authenticateToken;
+export default authenticateToken;

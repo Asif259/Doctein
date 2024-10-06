@@ -1,17 +1,17 @@
-import { Document } from 'mongoose';
-import mongoose = require('mongoose');
+import { Document } from "mongoose";
+import mongoose = require("mongoose");
 
-const { Schema, Model } = mongoose;
+const { Schema } = mongoose;
 
 interface IUser extends Document {
   email: string;
   password: string;
-  role: 'doctor' | 'staff' | 'patient';
+  role: "doctor" | "staff" | "patient";
   userId: mongoose.Schema.Types.ObjectId;
   reset: {
-    otp: string;
+    otp: string | null;
     attempt: number;
-    lastReset: Date;
+    lastReset: Date | string | null;
   };
 }
 
@@ -22,18 +22,18 @@ const userSchema = new mongoose.Schema<IUser>(
     role: {
       type: String,
       required: true,
-      enum: ['doctor', 'staff', 'patient'],
+      enum: ["doctor", "staff", "patient"],
     },
     userId: {
       type: Schema.Types.ObjectId,
     },
     reset: {
-      otp: { type: String },
+      otp: { type: String, default: null },
       attempt: { type: Number, default: 0 },
-      lastReset: { type: Date },
+      lastReset: { type: Date, default: null },
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export = mongoose.model<IUser>('User', userSchema);
+export = mongoose.model<IUser>("User", userSchema);

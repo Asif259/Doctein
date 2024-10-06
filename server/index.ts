@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from "express";
 import express = require("express");
 import cors = require("cors");
 // import helmet = require("helmet");
@@ -6,8 +6,8 @@ import hpp = require("hpp");
 import bodyParser = require("body-parser");
 import mongoose = require("mongoose");
 import dotenv = require("dotenv");
-const cookieParser = require('cookie-parser');
-import router = require("./src/Routes/authRoutes"); 
+import cookieParser from "cookie-parser";
+import router from "./src/Routes/authRoutes";
 import authenticateToken from "./src/Middlewares/authenticate";
 
 dotenv.config();
@@ -29,10 +29,10 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Use API router
-app.use("/api/v1", router); 
+app.use("/api/v1", router);
 
 // Dummy route to test middleware
-app.get('/', authenticateToken, (req: Request, res: Response) => {
-  res.send('Hello World!');
+app.get("/", authenticateToken, (_req: Request, res: Response) => {
+  res.send("Hello World!");
 });
 export = app;

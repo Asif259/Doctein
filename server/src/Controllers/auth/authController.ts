@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { setAuthCookies } from "../../Middlewares/authVerify"; // Import the middleware
-const User = require("../../Models/userModel");
+import User from "../../Models/userModel";
 
 dotenv.config();
 
@@ -19,8 +19,8 @@ const validatePassword = (password: string): boolean => {
 // Register User
 export const registerUser = async (
   req: Request,
-  res: Response
-): Promise<Response<any, Record<string, any>> | void> => {
+  res: Response,
+): Promise<any> => {
   const { email, password, confirmPassword, role } = req.body;
 
   if (!validateEmail(email)) {
@@ -49,9 +49,7 @@ export const registerUser = async (
     const user = new User({ email, password: hashedPassword, role });
     await user.save();
 
-    return res
-      .status(201)
-      .json({ data: "User registered successfully", user });
+    return res.status(201).json({ data: "User registered successfully", user });
   } catch (error) {
     console.error("Error registering user:", error);
     return res.status(500).json({ data: "Error registering user", error });
@@ -59,10 +57,7 @@ export const registerUser = async (
 };
 
 // Login User
-export const loginUser = async (
-  req: Request,
-  res: Response
-): Promise<Response<any, Record<string, any>> | void> => {
+export const loginUser = async (req: Request, res: Response): Promise<any> => {
   const { email, password } = req.body;
 
   // Validate email
@@ -99,8 +94,8 @@ export const loginUser = async (
 };
 
 // Logout User
-export const logoutUser = (req: any, res: Response) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
-  res.json({ message: 'Logged out successfully' });
+export const logoutUser = (_req: any, res: Response) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.json({ message: "Logged out successfully" });
 };
