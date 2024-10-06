@@ -22,7 +22,8 @@ function PatientTab() {
       id: 0,
       name: "",
       age: "",
-      condition: "",
+      phone: "",
+      address: "",
     },
     onSubmit: (values: patient) => {
       console.log(values);
@@ -50,11 +51,19 @@ function PatientTab() {
               {...formik.getFieldProps("age")}
             />
             <Input
-              label="Patient Condition"
-              placeholder="Enter patient condition"
-              {...formik.getFieldProps("condition")}
+              label="Phone"
+              placeholder="phone number"
+              {...formik.getFieldProps("phone")}
             />
-            <Button color="primary" type="submit">
+            <Input
+              label="Address"
+              placeholder="patient address"
+              {...formik.getFieldProps("address")}
+            />
+            <Button
+              className="bg-secondary-600 text-secondary-100"
+              type="submit"
+            >
               Add Patient
             </Button>
           </form>
@@ -70,14 +79,16 @@ function PatientTab() {
             <TableHeader>
               <TableColumn>Name</TableColumn>
               <TableColumn>Age</TableColumn>
-              <TableColumn>Condition</TableColumn>
+              <TableColumn>Phone</TableColumn>
+              <TableColumn>Address</TableColumn>
             </TableHeader>
             <TableBody>
               {patients.map((patient) => (
                 <TableRow key={patient.id}>
                   <TableCell>{patient.name}</TableCell>
                   <TableCell>{patient.age}</TableCell>
-                  <TableCell>{patient.condition}</TableCell>
+                  <TableCell>{patient.phone}</TableCell>
+                  <TableCell>{patient.address}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

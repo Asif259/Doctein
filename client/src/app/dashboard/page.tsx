@@ -9,7 +9,7 @@ import {
   Tabs,
   Divider,
 } from "@nextui-org/react";
-import { Calendar, UserPlusIcon, Users } from "lucide-react";
+import { Calendar, CalendarClockIcon, UserPlusIcon, Users } from "lucide-react";
 import PatientTab from "@/app/dashboard/patient-tab";
 import AppointmentTab from "@/app/dashboard/appointment-tab";
 import StaffTab from "@/app/dashboard/staff-tab";
@@ -23,7 +23,7 @@ export default function Page() {
     {
       title: "Upcoming Appointments",
       count: appointments.length,
-      icon: <Calendar className="h-4 w-4" />,
+      icon: <CalendarClockIcon className="h-4 w-4" />,
     },
     {
       title: "Total Appointments",
@@ -45,7 +45,7 @@ export default function Page() {
   return (
     <>
       {/* Main Content */}
-      <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+      <h1 className="text-3xl text-secondary-900 font-bold mb-8">Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         {analytics.map((item, index) => (
           <Card

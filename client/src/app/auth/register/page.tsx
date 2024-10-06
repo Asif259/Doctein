@@ -19,7 +19,7 @@ export default function Register() {
       .email("Invalid email format")
       .required("Email is required"),
     password: Yup.string()
-      .min(8, "Password must be at least 8 characters")
+      .min(6, "Password must be at least 6 characters")
       .matches(/[A-Za-z]/, "Password must contain letters")
       .matches(/\d/, "Password must contain numbers")
       .required("Password is required"),
@@ -45,7 +45,7 @@ export default function Register() {
           role as string,
         );
         setSubmitting(false);
-        router.push(`/auth/login?role=${role}`); // Redirect to login page on success
+        if (data.status === "success") router.push(`/auth/login?role=${role}`); // Redirect to login page on success
       } catch (err: any) {
         setErrors({ email: err.message });
         setSubmitting(false);
@@ -106,7 +106,7 @@ export default function Register() {
             </div>
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+              className="w-full bg-primary-900 text-white py-2 px-4 rounded-lg"
               disabled={formik.isSubmitting}
             >
               Register
@@ -117,14 +117,14 @@ export default function Register() {
             Already have an account?
             <Link
               href={`/auth/login?role=${role}`}
-              className="text-primary hover:underline ml-1"
+              className="text-primary-900 hover:underline ml-1"
             >
               Login
             </Link>
           </p>
         </div>
 
-        <div className="md:block w-full md:w-1/2 bg-primary p-8 m-3 rounded-lg">
+        <div className="md:block w-full md:w-1/2 bg-primary-900 p-8 m-3 rounded-lg">
           <h2 className="text-2xl font-semibold text-white">Welcome, {role}</h2>
         </div>
       </div>

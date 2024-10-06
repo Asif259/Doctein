@@ -1,14 +1,14 @@
 "use client";
-import { useSearchParams, useRouter } from "next/navigation"; 
+import { useSearchParams, useRouter } from "next/navigation";
 import PasswordComponent from "../../../components/auth/pass-component";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { resetPassword } from '@/api/api';
+import { resetPassword } from "@/api/api";
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const email = searchParams.get("email"); 
+  const email = searchParams.get("email");
 
   const validationSchema = Yup.object({
     newPassword: Yup.string()
@@ -48,7 +48,9 @@ export default function ResetPassword() {
         </p>
 
         {formik.errors.confirmPassword && (
-          <div className="text-red-500 mb-4">{formik.errors.confirmPassword}</div>
+          <div className="text-red-500 mb-4">
+            {formik.errors.confirmPassword}
+          </div>
         )}
 
         <form className="mt-4" onSubmit={formik.handleSubmit}>
@@ -67,20 +69,23 @@ export default function ResetPassword() {
 
           <div className="mb-4">
             <PasswordComponent
-            name="confirmPassword"
+              name="confirmPassword"
               placeholder="Re-enter your new password"
               value={formik.values.confirmPassword}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.confirmPassword && formik.errors.confirmPassword && (
-              <div className="text-red-500">{formik.errors.confirmPassword}</div>
-            )}
+            {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword && (
+                <div className="text-red-500">
+                  {formik.errors.confirmPassword}
+                </div>
+              )}
           </div>
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
             disabled={formik.isSubmitting}
           >
             Reset Password

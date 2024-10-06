@@ -1,34 +1,41 @@
 "use client";
-import { useRouter, useSearchParams } from 'next/navigation'; 
-import { useFormik } from 'formik';
-import * as Yup from 'yup'; // For form validation
-import InputComponent from '../../../components/auth/input-component';
-import PasswordComponent from '../../../components/auth/pass-component';
-import { loginUser } from '../../../api/api';
+import { useRouter, useSearchParams } from "next/navigation";
+import { useFormik } from "formik";
+import * as Yup from "yup"; // For form validation
+import InputComponent from "@/components/auth/input-component";
+import PasswordComponent from "@/components/auth/pass-component";
+import { loginUser } from "@/api/api";
 
 export default function Login() {
-  const searchParams = useSearchParams(); 
-  const role = searchParams.get('role');
-  const router = useRouter(); 
+  const searchParams = useSearchParams();
+  const role = searchParams.get("role");
+  const router = useRouter();
 
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email('Invalid email address').required('Email is equired'),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is equired"),
       password: Yup.string()
-        .min(8, 'Password must be at least 8 characters long')
-        .required('Password required'),
+        .min(8, "Password must be at least 8 characters long")
+        .required("Password required"),
     }),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
         const data = await loginUser(values.email, values.password);
-        setStatus({ success: true });
-        router.push('/dashboard'); // Redirect to dashboard after login
+        if (data.status === "success") {
+          setStatus({ success: true });
+          router.push("/dashboard"); // Redirect to dashboard after login
+        }
       } catch (err: any) {
-        setStatus({ success: false, message: err.message || 'Login failed. Please try again.' });
+        setStatus({
+          success: false,
+          message: err.message || "Login failed. Please try again.",
+        });
       }
       setSubmitting(false);
     },
@@ -56,10 +63,10 @@ export default function Login() {
           <form className="mt-4" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
-              <InputComponent 
-                placeholder="Enter your email" 
+              <InputComponent
+                placeholder="Enter your email"
                 type="email"
-                {...formik.getFieldProps('email')} // Spread Formik props
+                {...formik.getFieldProps("email")} // Spread Formik props
               />
               {formik.touched.email && formik.errors.email ? (
                 <div className="text-red-500">{formik.errors.email}</div>
@@ -67,9 +74,9 @@ export default function Login() {
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
-              <PasswordComponent 
-                placeholder="Enter your password" 
-                {...formik.getFieldProps('password')} // Spread Formik props
+              <PasswordComponent
+                placeholder="Enter your password"
+                {...formik.getFieldProps("password")} // Spread Formik props
               />
               {formik.touched.password && formik.errors.password ? (
                 <div className="text-red-500">{formik.errors.password}</div>
@@ -78,29 +85,35 @@ export default function Login() {
 
             {/* Forgot Password Link */}
             <div className="mb-4 text-right">
-              <a href="/auth/forgot-password" className="text-primary hover:underline">
+              <a
+                href="/auth/forgot-password"
+                className="text-primary-800 hover:underline"
+              >
                 Forgot your password?
               </a>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+              className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
               disabled={formik.isSubmitting}
             >
-              {formik.isSubmitting ? 'Logging in...' : 'Login'}
+              {formik.isSubmitting ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className="mt-4 text-gray-600">
-            Don't have an account? 
-            <a href={`/auth/register?role=${role}`} className="text-primary hover:underline ml-1">
+            Don't have an account?
+            <a
+              href={`/auth/register?role=${role}`}
+              className="text-primary-800 hover:underline ml-1"
+            >
               Register
             </a>
           </p>
         </div>
 
-        <div className="md:block w-full md:w-1/2 bg-primary p-8 m-3 rounded-lg">
+        <div className="md:block w-full md:w-1/2 bg-primary-800 p-8 m-3 rounded-lg">
           <h2 className="text-2xl font-semibold text-white">
             Welcome back, {role}
           </h2>
