@@ -94,6 +94,25 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+export const activateUser = async (req: Request,res: Response): Promise<any> => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { active: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ data: 'User not found' });
+    }
+
+    return res.status(200).json({ data: 'User activated successfully', user });
+  } catch (error) {
+    return res.status(500).json({ data: 'Server error' });
+  }
+};
+
 // Logout User
 export const logoutUser = (_req: any, res: Response) => {
   res.clearCookie("accessToken");

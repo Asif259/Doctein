@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
-import { registerUser } from "@/api/api";
+import { registerUser, sendOtp } from "@/api/api";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -45,7 +45,8 @@ export default function Register() {
           role as string,
         );
         setSubmitting(false);
-        router.push(`/auth/login`); // Redirect to login page on success
+        await sendOtp(values.email);
+        router.push(`/auth/enter-otp?email=${values.email}&from=register`);
       } catch (err: any) {
         setErrors({ email: err.message });
         setSubmitting(false);
