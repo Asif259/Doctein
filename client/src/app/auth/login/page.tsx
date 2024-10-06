@@ -4,12 +4,22 @@ import { useFormik } from "formik";
 import * as Yup from "yup"; // For form validation
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
-import { loginUser } from "@/api/api";
+import { authenticateUser, loginUser } from "@/api/api";
+import { useAuthStore } from "@/store/authStore";
+import { useEffect } from "react";
 
 export default function Login() {
+  const { login } = useAuthStore((state) => state);
   const searchParams = useSearchParams();
   const role = searchParams.get("role");
   const router = useRouter();
+
+  (async () => {
+    console.log(document.cookie);
+    const data = await authenticateUser();
+    if (data.success) router.push("/dashboard");
+    return;
+  })();
 
   const formik = useFormik({
     initialValues: {
@@ -29,6 +39,7 @@ export default function Login() {
         const data = await loginUser(values.email, values.password);
         if (data.status === "success") {
           setStatus({ success: true });
+          login(); // Set user as logged in
           router.push("/dashboard"); // Redirect to dashboard after login
         }
       } catch (err: any) {

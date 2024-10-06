@@ -94,8 +94,18 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+export const isLoggedIn = (req: Request, res: Response): any => {
+  const { user } = req.headers;
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "User not logged in" });
+  }
+  return res.json({ success: true, data: user });
+};
+
 // Logout User
-export const logoutUser = (_req: any, res: Response) => {
+export const logoutUser = (_req: any, res: Response): any => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
   res.json({ message: "Logged out successfully" });

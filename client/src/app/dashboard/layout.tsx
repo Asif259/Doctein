@@ -2,17 +2,18 @@ import React from "react";
 import { Metadata } from "next";
 import NavBar from "@/components/dashboard/nav-bar";
 import LeftSidebar from "@/components/dashboard/left-sidebar";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import WithAuth from "@/components/auth/withAuth";
 
 export const metadata: Metadata = {
   title: "Dashboard | Dochub",
   description: "Coming soon",
 };
 
-export default function DashboardLayout({
+function DashboardLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <div className="h-dvh flex flex-col">
       <header className="bg-primary-900 text-white h-[9dvh] flex justify-between">
@@ -22,10 +23,14 @@ export default function DashboardLayout({
         <LeftSidebar />
         <main className="flex-grow overflow-y-scroll bg-secondary-200">
           <div className="flex">
-            <main className="flex-1 overflow-y-auto p-8">{children}</main>
+            <main className="flex-1 overflow-y-auto p-8">
+              <WithAuth>{children}</WithAuth>
+            </main>
           </div>
         </main>
       </div>
     </div>
   );
 }
+
+export default DashboardLayout;

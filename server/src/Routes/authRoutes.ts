@@ -2,11 +2,13 @@ import { Router } from "express";
 import * as authController from "../Controllers/auth/authController";
 import * as tokenController from "../Controllers/auth/tokenController";
 import * as forgetPassController from "../Controllers/auth/forgetPassword";
+import authenticateToken from "../Middlewares/authenticate";
 
 const router = Router();
 
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
+router.get("/authenticate", authenticateToken, authController.isLoggedIn);
 router.post("/refresh-token", tokenController.refreshAccessToken);
 router.post("/logout", authController.logoutUser);
 

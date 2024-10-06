@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
+import { Button, Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 import {
   Calendar,
   CircleUserIcon,
@@ -11,10 +11,18 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
+import { logoutUser } from "@/api/api";
 
 function LeftSidebar() {
   const currentPath = usePathname();
+  const router = useRouter();
+  const handleLogout = async () => {
+    const res = await logoutUser();
+    console.log(res.message);
+    router.push("/auth/login");
+  };
   return (
     <Navbar
       classNames={{
@@ -89,10 +97,14 @@ function LeftSidebar() {
       </NavbarContent>
       <NavbarContent className="mb-4 !flex-grow-0 h-fit w-full">
         <NavbarItem className="text-red-600 hover:bg-red-500 border-danger-600 hover:text-white">
-          <Link href="#" className="flex items-center">
+          <span
+            onClick={handleLogout}
+            color="danger"
+            className="flex items-center cursor-pointer"
+          >
             <LogOut className="w-5 h-5 mr-2" />
             Logout
-          </Link>
+          </span>
         </NavbarItem>
       </NavbarContent>
     </Navbar>

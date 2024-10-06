@@ -39,6 +39,19 @@ export const loginUser = async (email: string, password: string) => {
   }
 };
 
+export const authenticateUser = async () => {
+  try {
+    const response = await axios.get(`/authenticate`);
+    console.log("User authentication response", response.data);
+    if (response.data.success) {
+      return response.data;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+};
+
 //Send OTP to the given email
 export const sendOtp = async (email: string) => {
   try {
@@ -69,6 +82,15 @@ export const resetPassword = async (email: string, newPassword: string) => {
       email,
       newPassword,
     });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.data);
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    const response = await axios.post(`/logout`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.data);
