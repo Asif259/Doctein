@@ -12,7 +12,8 @@ const validateEmail = (email: string): boolean => {
 };
 
 const validatePassword = (password: string): boolean => {
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 8 characters, letters and numbers
+  console.log(password);
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // At least 6 characters, letters and numbers
   return passwordRegex.test(password);
 };
 
@@ -29,7 +30,7 @@ export const registerUser = async (
 
   if (!validatePassword(password)) {
     return res.status(400).json({
-      data: "Password must be at least 8 characters long and contain letters and numbers",
+      data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
@@ -68,7 +69,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   // Validate password
   if (!validatePassword(password)) {
     return res.status(400).json({
-      data: "Password must be at least 8 characters long and contain letters and numbers",
+      data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
