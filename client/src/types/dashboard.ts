@@ -1,9 +1,12 @@
 export interface patient {
   id: number;
+  key?: string;
   name: string;
   age: number | string;
+  weight: number | string;
   phone: string;
   address: string;
+  instant?: boolean;
 }
 
 export interface appointment {

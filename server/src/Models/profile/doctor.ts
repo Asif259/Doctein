@@ -16,24 +16,27 @@ interface IDoctor extends Document {
   ];
 }
 
-const doctorSchema = new Schema<IDoctor>({
-  name: { type: String, required: true },
-  phone: { type: String, required: true },
-  userId: {
-    type: Schema.Types.ObjectId,
-    unique: true,
-    required: true,
-  },
-  specialization: { type: String, required: true },
-  experience: { type: String, required: true },
-  qualification: { type: String, required: true },
-  consultationFee: { type: Number, required: true },
-  chamber: [
-    {
-      address: String,
-      consultingHours: Date,
+const doctorSchema = new Schema<IDoctor>(
+  {
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      unique: true,
+      required: true,
     },
-  ],
-});
+    specialization: { type: String, required: true },
+    experience: { type: String, required: true },
+    qualification: { type: String, required: true },
+    consultationFee: { type: Number, required: true },
+    chamber: [
+      {
+        address: String,
+        consultingHours: Date,
+      },
+    ],
+  },
+  { timestamps: true },
+);
 
 export default model<IDoctor>("Doctor", doctorSchema);

@@ -7,7 +7,9 @@ import bodyParser = require("body-parser");
 import mongoose = require("mongoose");
 import dotenv = require("dotenv");
 import cookieParser from "cookie-parser";
-import router from "./src/Routes/authRoutes";
+
+import authRouter from "./src/Routes/authRoutes";
+import userRouter from "./src/Routes/userRoutes";
 import authenticateToken from "./src/Middlewares/authenticate";
 
 dotenv.config();
@@ -34,7 +36,8 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Use API router
-app.use("/api/v1", router);
+app.use("/api/v1", authRouter);
+app.use("/api/v1", userRouter);
 
 // Dummy route to test middleware
 app.get("/", authenticateToken, (_req: Request, res: Response) => {

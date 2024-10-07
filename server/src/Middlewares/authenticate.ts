@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { verifyToken, refreshToken } from "../Helpers/tokenHelper";
 import User, { IUser } from "../Models/userModel";
+import { getDoctorId } from "../Helpers/userRole";
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
@@ -43,8 +44,11 @@ const authenticateToken = async (
           .status(403)
           .json({ success: false, message: "Unauthorized" });
       }
+      const doctorId = await getDoctorId(user);
       req.headers.user = decodedToken;
       req.body.user = user as IUser;
+      req.body.doctorId = doctorId;
+
       return next();
     }
   }

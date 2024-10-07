@@ -8,15 +8,14 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "";
 
 // Generate Access Token
 export const generateAccessToken = (user: any) => {
-  return jwt.sign({ email: user.email, userId: user._id }, JWT_SECRET);
+  const payload = { email: user.email, userId: user._id };
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "2h" });
 };
 
 // Generate Refresh Token
 export const generateRefreshToken = (user: any) => {
-  return jwt.sign(
-    { email: user.email, userId: user._id },
-    REFRESH_TOKEN_SECRET,
-  );
+  const payload = { email: user.email, userId: user._id };
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
 };
 
 // Verify Token and Generate New Access Token
