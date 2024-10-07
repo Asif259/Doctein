@@ -31,12 +31,12 @@ const authenticateToken = async (
     const decodedToken = verifyToken(accessToken, JWT_SECRET);
     console.log("Decoded Token: ", decodedToken);
     if (decodedToken) {
-      const { userId, email } = decodedToken as {
+      const { email } = decodedToken as {
         userId: string;
         email: string;
       };
       console.log("Decoded token:", decodedToken);
-      const user = await User.findOne({ _id: userId, email });
+      const user = await User.findOne({ email });
       if (!user) {
         console.log(new Error("User not found"));
         return res
