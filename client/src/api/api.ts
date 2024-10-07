@@ -75,6 +75,16 @@ export const verifyOtp = async (email: string, otp: string) => {
   }
 };
 
+//Activate user
+export const activateUser = async (email: string) => {
+  try {
+    const response = await axios.post('/activate', { email });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Failed to activate user');
+  }
+};
+
 //Reset password
 export const resetPassword = async (email: string, newPassword: string) => {
   try {

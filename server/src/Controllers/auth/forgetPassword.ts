@@ -125,6 +125,11 @@ const resetPassword = async (req: Request, res: Response): Promise<any> => {
       return res.status(404).json({ success: false, data: "User not found" });
     }
 
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({ success: false, data: "New password must be different from the current password" });
+    }
+
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
     user.password = await bcrypt.hash(newPassword, saltRounds);
     user.reset.otp = null;

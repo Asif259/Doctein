@@ -3,12 +3,13 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup'; 
 import InputComponent from '@/components/auth/input-component';
-import { verifyOtp } from '@/api/api';
+import { verifyOtp, activateUser } from '@/api/api'; 
 
 export default function EnterOTP() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const email = searchParams.get('email');  
+  const from = searchParams.get('from'); 
 
   const formik = useFormik({
     initialValues: {
@@ -24,7 +25,15 @@ export default function EnterOTP() {
         if (email) {
           await verifyOtp(email, values.otp); 
           console.log("OTP verified:", values.otp);
-          router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+      
+          if (from === "register") {
+            await activateUser(email); 
+            //console.log("User activated");
+            router.push(`/auth/login`); 
+          } else {
+            router.push(`/auth/reset-password?email=${encodeURIComponent(email)}`);
+          }
+      
         } else {
           throw new Error("Email is missing");
         }
@@ -63,7 +72,7 @@ export default function EnterOTP() {
 
           <button
             type="submit"
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+            className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
             disabled={formik.isSubmitting}
           >
             {formik.isSubmitting ? 'Verifying...' : 'Verify OTP'}

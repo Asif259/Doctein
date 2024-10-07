@@ -13,6 +13,8 @@ export interface IUser extends Document {
     attempt: number;
     lastReset: Date | string | null;
   };
+  
+  active: boolean; 
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -32,8 +34,9 @@ const userSchema = new mongoose.Schema<IUser>(
       attempt: { type: Number, default: 0 },
       lastReset: { type: Date, default: null },
     },
+    active: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model<IUser>("User", userSchema);

@@ -47,7 +47,7 @@ export const registerUser = async (
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const user = new User({ email, password: hashedPassword, role });
+    const user = new User({ email, password: hashedPassword, role , archive: {password: hashedPassword}});
     await user.save();
 
     return res.status(201).json({ data: "User registered successfully", user });
@@ -91,6 +91,25 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   } catch (error) {
     console.error("Error logging in user:", error);
     return res.status(500).json({ data: "Internal server error" });
+  }
+};
+
+export const activateUser = async (req: Request,res: Response): Promise<any> => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { active: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ data: 'User not found' });
+    }
+
+    return res.status(200).json({ data: 'User activated successfully', user });
+  } catch (error) {
+    return res.status(500).json({ data: 'Server error' });
   }
 };
 

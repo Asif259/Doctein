@@ -21,7 +21,7 @@ export default function Login() {
           className="w-1/2 bg-primary-800 flex flex-col items-center justify-center cursor-pointer hover:bg-primary-900"
           onClick={() => handleRoleSelection("doctor")}
         >
-          <h2 className="text-white text-3xl font-bold">Log in as Doctor</h2>
+          <h2 className="text-white text-3xl font-bold">Register as Doctor</h2>
           <p className="text-white mt-4">Click here to log in as a Doctor</p>
         </div>
 
@@ -30,7 +30,7 @@ export default function Login() {
           className="w-1/2 bg-green-500 flex flex-col items-center justify-center cursor-pointer hover:bg-green-600"
           onClick={() => handleRoleSelection("patient")}
         >
-          <h2 className="text-white text-3xl font-bold">Log in as Patient</h2>
+          <h2 className="text-white text-3xl font-bold">Register as Patient</h2>
           <p className="text-white mt-4">Click here to log in as a Patient</p>
         </div>
       </div>

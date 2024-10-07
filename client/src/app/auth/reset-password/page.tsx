@@ -31,7 +31,7 @@ export default function ResetPassword() {
       try {
         await resetPassword(email as string, values.newPassword);
         console.log("New password set for:", email);
-        router.push(`/auth`);
+        router.push(`/auth/login`);
       } catch (err: any) {
         setErrors({ confirmPassword: err.message });
         setSubmitting(false);
@@ -60,7 +60,7 @@ export default function ResetPassword() {
               placeholder="Enter your new password"
               value={formik.values.newPassword}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur} // Add this line
+              onBlur={formik.handleBlur} 
             />
             {formik.touched.newPassword && formik.errors.newPassword && (
               <div className="text-red-500">{formik.errors.newPassword}</div>
