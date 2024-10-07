@@ -2,38 +2,48 @@ import { Document, Schema, model } from "mongoose";
 
 interface IDoctor extends Document {
   name: string;
-  phone: string;
-  userId: Schema.Types.ObjectId;
+  degrees: string[];
+  designation: string;
   specialization: string;
-  experience: string;
-  qualification: string;
-  consultationFee: number;
-  chamber: [
-    {
-      address: string;
-      consultingHours: Date;
-    },
-  ];
+  consultingHours: string;
+  phone: string[];
+  bmdcNumber: string;
+  digitalSignature: string;
 }
 
 const doctorSchema = new Schema<IDoctor>({
-  name: { type: String, required: true },
-  phone: { type: String, required: true },
-  userId: {
-    type: Schema.Types.ObjectId,
-    unique: true,
+  name: {
+    type: String,
     required: true,
   },
-  specialization: { type: String, required: true },
-  experience: { type: String, required: true },
-  qualification: { type: String, required: true },
-  consultationFee: { type: Number, required: true },
-  chamber: [
-    {
-      address: String,
-      consultingHours: Date,
-    },
-  ],
+  degrees: {
+    type: [String], 
+    required: true,
+  },
+  designation: {
+    type: String,
+    required: true,
+  },
+  specialization: {
+    type: String,
+    required: true,
+  },
+  consultingHours: {
+    type: String, 
+    required: true,
+  },
+  phone: {
+    type: [String],
+    required: true,  
+  },
+  bmdcNumber: {
+    type: String,
+    required: true,
+  },
+  digitalSignature: {
+    type: String, 
+    required: true,
+  },
 });
 
 export default model<IDoctor>("Doctor", doctorSchema);

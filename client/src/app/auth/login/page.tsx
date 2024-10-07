@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup"; // For form validation
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
-import { authenticateUser, loginUser } from "@/api/api";
+import { authenticateUser, loginUser, getUserProfile  } from "@/api/api";
 import { useAuthStore } from "@/store/authStore";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@nextui-org/react";
@@ -21,7 +21,7 @@ export default function Login() {
       const data = await authenticateUser();
       if (data.success) {
         login(); // Set user as logged in
-        router.push("/dashboard"); // Redirect to dashboard
+         router.push("/dashboard"); 
       } else setLoading(false);
     })();
   }, []);
@@ -41,11 +41,24 @@ export default function Login() {
     }),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
+        // Login the user
         const data = await loginUser(values.email, values.password);
         if (data.status === "success") {
           setStatus({ success: true });
           login(); // Set user as logged in
-          router.push("/dashboard"); // Redirect to dashboard
+
+          // Fetch user profile after successful login
+          const userProfile = await getUserProfile();
+
+          // Extract the role from the user profile
+          const userRole = userProfile.role;
+
+          // Redirect based on role
+          if (userRole === "doctor") {
+            router.push("/profile");
+          } else if (userRole === "patient") {
+            router.push("/dashboard");
+          }
         }
       } catch (err: any) {
         setStatus({

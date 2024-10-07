@@ -98,6 +98,17 @@ export const resetPassword = async (email: string, newPassword: string) => {
   }
 };
 
+//Get user profile
+export const getUserProfile = async () => {
+  try {
+    const response = await axios.get(`/getProfile`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.data);
+  }
+};
+
+//logout
 export const logoutUser = async () => {
   try {
     const response = await axios.post(`/logout`);

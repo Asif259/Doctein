@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as authController from "../Controllers/auth/authController";
+import * as userController from "../Controllers/userController";
 import * as tokenController from "../Controllers/auth/tokenController";
 import * as forgetPassController from "../Controllers/auth/forgetPassword";
 import authenticateToken from "../Middlewares/authenticate";
@@ -12,6 +13,7 @@ router.get("/authenticate", authenticateToken, authController.isLoggedIn);
 router.post("/refresh-token", tokenController.refreshAccessToken);
 router.post("/logout", authController.logoutUser);
 router.post('/activate', authController.activateUser);
+router.get("/getProfile", authenticateToken, userController.getUserProfile); // Get user profile
 
 // Password Reset Routes
 router.post("/forgot-password/send-otp", forgetPassController.sendOtp); // Send OTP

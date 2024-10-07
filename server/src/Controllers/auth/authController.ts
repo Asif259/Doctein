@@ -123,6 +123,7 @@ export const isLoggedIn = (req: Request, res: Response): any => {
   return res.json({ success: true, data: user });
 };
 
+
 // Logout User
 export const logoutUser = (_req: any, res: Response): any => {
   res.clearCookie("accessToken");
