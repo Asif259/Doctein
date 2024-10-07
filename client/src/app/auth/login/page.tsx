@@ -6,20 +6,25 @@ import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
 import { authenticateUser, loginUser } from "@/api/api";
 import { useAuthStore } from "@/store/authStore";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Spinner } from "@nextui-org/react";
 
 export default function Login() {
   const { login } = useAuthStore((state) => state);
+  const [loading, setLoading] = useState<boolean>(true);
   const searchParams = useSearchParams();
   const role = searchParams.get("role");
   const router = useRouter();
 
-  (async () => {
-    console.log(document.cookie);
-    const data = await authenticateUser();
-    if (data.success) router.push("/dashboard");
-    return;
-  })();
+  useEffect(() => {
+    (async () => {
+      const data = await authenticateUser();
+      if (data.success) {
+        login(); // Set user as logged in
+        router.push("/dashboard"); // Redirect to dashboard
+      } else setLoading(false);
+    })();
+  }, []);
 
   const formik = useFormik({
     initialValues: {
@@ -29,7 +34,7 @@ export default function Login() {
     validationSchema: Yup.object({
       email: Yup.string()
         .email("Invalid email address")
-        .required("Email is equired"),
+        .required("Email is required"),
       password: Yup.string()
         .min(8, "Password must be at least 8 characters long")
         .required("Password required"),
@@ -40,7 +45,7 @@ export default function Login() {
         if (data.status === "success") {
           setStatus({ success: true });
           login(); // Set user as logged in
-          router.push("/dashboard"); // Redirect to dashboard after login
+          router.push("/dashboard"); // Redirect to dashboard
         }
       } catch (err: any) {
         setStatus({
@@ -51,6 +56,15 @@ export default function Login() {
       setSubmitting(false);
     },
   });
+
+  // Show loading spinner while checking user authentication
+  if (loading) {
+    return (
+      <div className="flex h-dvh w-full justify-center items-center gap-4">
+        <Spinner color="warning" size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">

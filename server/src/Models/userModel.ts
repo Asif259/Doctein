@@ -3,7 +3,7 @@ import mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-interface IUser extends Document {
+export interface IUser extends Document {
   email: string;
   password: string;
   role: "doctor" | "staff" | "patient";
@@ -36,4 +36,4 @@ const userSchema = new mongoose.Schema<IUser>(
   { timestamps: true },
 );
 
-export = mongoose.model<IUser>("User", userSchema);
+export default mongoose.model<IUser>("User", userSchema);

@@ -32,5 +32,5 @@ export const refreshToken = (refreshToken: string): string | null => {
   const user = verifyToken(refreshToken, REFRESH_TOKEN_SECRET);
   if (!user) return null;
 
-  return generateAccessToken({ email: user.email, userId: user.user_id });
+  return generateAccessToken({ email: user.email, userId: user._id });
 };
