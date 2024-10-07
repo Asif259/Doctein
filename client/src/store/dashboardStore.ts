@@ -10,6 +10,7 @@ interface DashboardState {
   toggleSidebar: () => void;
   setTabKey: (key: string) => void;
   addPatient: (newPatient: patient) => void;
+  addPatients: (newPatients: patient[]) => void;
   addAppointment: (newAppointment: appointment) => void;
   addStaff: (newStaff: staff) => void;
 }
@@ -25,6 +26,7 @@ const useDashboardStore = create<DashboardState>((set) => ({
   setTabKey: (key: string) => set({ tabKey: key }),
   addPatient: (newPatient: patient) =>
     set((state) => ({ patients: [...state.patients, newPatient] })),
+  addPatients: (newPatients: patient[]) => set({ patients: newPatients }),
   addAppointment: (newAppointment: appointment) =>
     set((state) => ({ appointments: [...state.appointments, newAppointment] })),
   addStaff: (newStaff: staff) =>

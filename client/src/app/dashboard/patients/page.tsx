@@ -8,163 +8,175 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  User,
   Chip,
   Tooltip,
-  ChipProps,
   Input,
   Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalContent,
 } from "@nextui-org/react";
-import { DeleteIcon, EditIcon, EyeIcon, PlusIcon } from "lucide-react";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
+import { EditIcon, EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { deletePatient, getPatients } from "@/api/dashboard/patientAPI";
+import { patient } from "@/types/dashboard";
+import { useDashboardStore } from "@/store/dashboardStore";
+import PatientForm from "@/app/dashboard/patient-form";
 
 const columns = [
   { name: "NAME", uid: "name" },
-  { name: "ROLE", uid: "role" },
-  { name: "STATUS", uid: "status" },
+  { name: "AGE", uid: "age" },
+  { name: "WEIGHT", uid: "weight" },
+  { name: "PHONE", uid: "phone" },
+  { name: "ADDRESS", uid: "address" },
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const users = [
-  {
-    id: 1,
-    name: "Tony Reichert",
-    role: "CEO",
-    team: "Management",
-    status: "active",
-    age: "29",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    email: "tony.reichert@example.com",
-  },
-  {
-    id: 2,
-    name: "Zoey Lang",
-    role: "Technical Lead",
-    team: "Development",
-    status: "paused",
-    age: "25",
-    avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    email: "zoey.lang@example.com",
-  },
-  {
-    id: 3,
-    name: "Jane Fisher",
-    role: "Senior Developer",
-    team: "Development",
-    status: "active",
-    age: "22",
-    avatar: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-    email: "jane.fisher@example.com",
-  },
-  {
-    id: 4,
-    name: "William Howard",
-    role: "Community Manager",
-    team: "Marketing",
-    status: "vacation",
-    age: "28",
-    avatar: "https://i.pravatar.cc/150?u=a048581f4e29026701d",
-    email: "william.howard@example.com",
-  },
-  {
-    id: 5,
-    name: "Kristen Copper",
-    role: "Sales Manager",
-    team: "Sales",
-    status: "active",
-    age: "24",
-    avatar: "https://i.pravatar.cc/150?u=a092581d4ef9026700d",
-    email: "kristen.cooper@example.com",
-  },
-];
-
-type User = (typeof users)[0];
-
 export default function Page() {
   const [search, setSearch] = React.useState("");
-  const [filteredUsers, setFilteredUsers] = React.useState<User[]>(users);
-  const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
-    const cellValue = user[columnKey as keyof User];
+  const [filteredPatients, setFilteredPatients] = React.useState<patient[]>([]);
+  const { patients, addPatients } = useDashboardStore((state) => state);
+  const [open, setOpen] = React.useState<boolean>(false);
+  const [updatePatient, setUpdatePatient] = React.useState<patient | null>(
+    null,
+  );
 
-    switch (columnKey) {
-      case "name":
-        return (
-          <User
-            avatarProps={{ radius: "lg", src: user.avatar }}
-            description={user.email}
-            name={cellValue}
-          >
-            {user.email}
-          </User>
-        );
-      case "role":
-        return (
-          <div className="flex flex-col">
-            <p className="text-bold text-sm capitalize">{cellValue}</p>
-            <p className="text-bold text-sm capitalize text-default-400">
-              {user.team}
-            </p>
-          </div>
-        );
-      case "status":
-        return (
-          <Chip
-            className="capitalize"
-            color={statusColorMap[user.status]}
-            size="sm"
-            variant="flat"
-          >
-            {cellValue}
-          </Chip>
-        );
-      case "actions":
-        return (
-          <div className="relative flex items-center gap-2">
-            <Tooltip content="Details">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EyeIcon />
-              </span>
-            </Tooltip>
-            <Tooltip content="Edit user">
-              <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                <EditIcon />
-              </span>
-            </Tooltip>
-            <Tooltip color="danger" content="Delete user">
-              <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                <DeleteIcon />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
+  const renderCell = React.useCallback(
+    (patient: patient, columnKey: React.Key) => {
+      const cellValue = patient[columnKey as keyof patient];
+
+      switch (columnKey) {
+        case "name":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        case "age":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        case "weight":
+          return (
+            <Chip className="capitalize" size="sm" variant="flat">
+              {cellValue} kg
+            </Chip>
+          );
+        case "phone":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        case "address":
+          return (
+            <div className="flex flex-col">
+              <p className="text-bold text-sm capitalize">{cellValue}</p>
+            </div>
+          );
+        case "actions":
+          return (
+            <div className="relative flex justify-center items-center gap-2">
+              <Tooltip content="Prescription">
+                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                  <EyeIcon className="size-5" />
+                </span>
+              </Tooltip>
+              <Tooltip content="Edit user">
+                <span
+                  onClick={() => handleUpdate(patient)}
+                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                >
+                  <EditIcon className="size-5" />
+                </span>
+              </Tooltip>
+              <Tooltip
+                content="Delete user"
+                classNames={{
+                  content: "bg-danger-500 text-white",
+                }}
+              >
+                <span
+                  onClick={() => handleDelete(patient)}
+                  className="text-lg text-danger cursor-pointer active:opacity-50"
+                >
+                  <TrashIcon className="size-5" />
+                </span>
+              </Tooltip>
+            </div>
+          );
+        default:
+          return cellValue;
+      }
+    },
+    [],
+  );
+
+  const handleUpdate = (patient: patient) => {
+    setUpdatePatient(patient);
+    setOpen(true);
+  };
+
+  const handleDelete = async (patient: patient) => {
+    console.log("Delete user");
+    console.log(patient);
+    if (!patient) return;
+
+    // Delete patient
+    const res = await deletePatient(patient.key);
+    if (res?.success) {
+      const updatedPatients = patients.filter((p) => p.key !== patient.key);
+      addPatients(updatedPatients);
+      console.log("Patient deleted successfully");
     }
+  };
+
+  useEffect(() => {
+    (async () => {
+      const res = await getPatients();
+      if (res?.success) {
+        console.log("Patients fetched successfully");
+        addPatients(res?.data);
+      }
+    })();
   }, []);
 
   useEffect(() => {
+    setFilteredPatients(patients);
+  }, [patients]);
+
+  useEffect(() => {
     if (!search) {
-      setFilteredUsers(users);
+      setFilteredPatients(patients);
       return;
     }
 
     const searchValue = search.toLowerCase();
-    const filtered = users.filter((user) =>
+    const filtered = patients.filter((user) =>
       Object.values(user).some((value) =>
         String(value).toLowerCase().includes(searchValue),
       ),
     );
 
-    setFilteredUsers(filtered);
+    setFilteredPatients(filtered);
   }, [search]);
 
   return (
     <>
+      <Modal className="p-5" size="lg" isOpen={open} onOpenChange={setOpen}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader>Add Patient</ModalHeader>
+              <ModalBody>
+                <PatientForm patient={updatePatient} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <h1 className="text-3xl font-bold mb-8">Patients</h1>
       <div className="flex justify-between gap-4">
         <Input
@@ -177,7 +189,12 @@ export default function Page() {
           onClear={() => console.log("input cleared")}
           className="max-w-xs mb-4"
         />
-        <Button startContent={<PlusIcon />} color="primary" variant="solid">
+        <Button
+          onClick={() => setOpen(true)}
+          startContent={<PlusIcon />}
+          color="primary"
+          variant="solid"
+        >
           Add Patient
         </Button>
       </div>
@@ -192,9 +209,9 @@ export default function Page() {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={filteredUsers}>
-          {(item) => (
-            <TableRow key={item.id}>
+        <TableBody items={filteredPatients}>
+          {(item: any) => (
+            <TableRow key={item.key}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

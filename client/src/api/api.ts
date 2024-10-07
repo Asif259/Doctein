@@ -1,10 +1,4 @@
-import axios from "axios";
-
-const API_BASE_URL = "http://localhost:5000/api/v1";
-
-axios.defaults.baseURL = API_BASE_URL;
-axios.defaults.withCredentials = true;
-axios.defaults.timeout = 10000;
+import axios from "@/config/axios";
 
 // Register a new user
 export const registerUser = async (

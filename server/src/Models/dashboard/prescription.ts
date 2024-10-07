@@ -20,10 +20,13 @@ const medicineSchema = new Schema<Medicine>({
   instruction: { type: String },
 });
 
-const prescriptionSchema = new Schema<IPrescription>({
-  snapshot: [String],
-  prescription: [medicineSchema],
-  date: { type: Date, default: Date.now },
-});
+const prescriptionSchema = new Schema<IPrescription>(
+  {
+    snapshot: [String],
+    prescription: [medicineSchema],
+    date: { type: Date, default: Date.now },
+  },
+  { timestamps: true },
+);
 
 export default model<IPrescription>("Prescription", prescriptionSchema);
