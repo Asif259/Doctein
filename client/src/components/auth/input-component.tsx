@@ -6,19 +6,35 @@ interface InputComponentProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  isInvalid?: boolean; 
+  errorMessage?: string; 
 }
 
-const InputComponent: React.FC<InputComponentProps> = ({ placeholder, type, value, onChange, onBlur, ...props }) => {
+const InputComponent: React.FC<InputComponentProps> = ({
+  placeholder,
+  type,
+  value,
+  onChange,
+  onBlur,
+  isInvalid,
+  errorMessage,
+  ...props
+}) => {
   return (
-    <input
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      onBlur={onBlur}
-      {...props} 
-      className="w-full border border-gray-300 rounded-lg px-3 py-2"
-    />
+    <div className="relative w-full">
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        className={`w-full border rounded-lg px-3 py-2 ${
+          isInvalid ? 'border-red-500' : 'border-gray-300'
+        }`}
+        {...props}
+      />
+      {isInvalid && <span className="text-red-500">{errorMessage}</span>} 
+    </div>
   );
 };
 

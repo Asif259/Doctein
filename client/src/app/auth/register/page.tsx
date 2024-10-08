@@ -7,6 +7,7 @@ import PasswordComponent from "@/components/auth/pass-component";
 import { registerUser, sendOtp } from "@/api/api";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Register() {
   const searchParams = useSearchParams();
@@ -17,15 +18,15 @@ export default function Register() {
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email format")
-      .required("Email is required"),
+      .required("Please enter a valid email"),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
       .matches(/[A-Za-z]/, "Password must contain letters")
       .matches(/\d/, "Password must contain numbers")
-      .required("Password is required"),
+      .required("Enter your password"),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password")], "Passwords must match")
-      .required("Confirm password is required"),
+      .required("Re-enter your password"),
   });
 
   // Formik form handling
@@ -42,12 +43,16 @@ export default function Register() {
           values.email,
           values.password,
           values.confirmPassword,
-          role as string,
+          role as string
         );
         setSubmitting(false);
+
+        toast.success("Registration successful! Please check your email for OTP.");
+
         await sendOtp(values.email);
         router.push(`/auth/enter-otp?email=${values.email}&from=register`);
       } catch (err: any) {
+        toast.error(err.message || "Registration failed. Please try again.");
         setErrors({ email: err.message });
         setSubmitting(false);
       }
@@ -56,6 +61,8 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
+      <Toaster position="top-right" />
+
       <div className="flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-semibold text-gray-800">
@@ -65,11 +72,6 @@ export default function Register() {
             Enter your credentials to register as a {role}
           </p>
 
-          {/* Error and Success message displays */}
-          {formik.errors.email && formik.touched.email && (
-            <div className="text-red-500 mb-4">{formik.errors.email}</div>
-          )}
-
           <form className="mt-4" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700">Email address</label>
@@ -77,49 +79,50 @@ export default function Register() {
                 placeholder="Enter your email"
                 type="email"
                 {...formik.getFieldProps("email")}
+                isInvalid={formik.touched.email && Boolean(formik.errors.email)}
+                errorMessage={
+                  formik.touched.email && formik.errors.email ? formik.errors.email : undefined
+                }
               />
-              {formik.touched.email && formik.errors.email ? (
-                <div className="text-red-500">{formik.errors.email}</div>
-              ) : null}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Password</label>
               <PasswordComponent
                 placeholder="Enter your password"
                 {...formik.getFieldProps("password")}
+                isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                errorMessage={
+                  formik.touched.password && formik.errors.password ? formik.errors.password : undefined
+                }
               />
-              {formik.touched.password && formik.errors.password ? (
-                <div className="text-red-500">{formik.errors.password}</div>
-              ) : null}
             </div>
             <div className="mb-4">
               <label className="block text-gray-700">Confirm password</label>
               <PasswordComponent
                 placeholder="Re-enter your password"
                 {...formik.getFieldProps("confirmPassword")}
+                isInvalid={
+                  formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)
+                }
+                errorMessage={
+                  formik.touched.confirmPassword && formik.errors.confirmPassword
+                    ? formik.errors.confirmPassword
+                    : undefined
+                }
               />
-              {formik.touched.confirmPassword &&
-              formik.errors.confirmPassword ? (
-                <div className="text-red-500">
-                  {formik.errors.confirmPassword}
-                </div>
-              ) : null}
             </div>
             <button
               type="submit"
               className="w-full bg-primary-900 text-white py-2 px-4 rounded-lg"
               disabled={formik.isSubmitting}
             >
-              Register
+              {formik.isSubmitting ? "Registering..." : "Register"}
             </button>
           </form>
 
           <p className="mt-4 text-gray-600">
             Already have an account?
-            <Link
-              href={`/auth/login?role=${role}`}
-              className="text-primary-900 hover:underline ml-1"
-            >
+            <Link href={`/auth/login?role=${role}`} className="text-primary-900 hover:underline ml-1">
               Login
             </Link>
           </p>

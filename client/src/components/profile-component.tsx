@@ -97,8 +97,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.name && formik.touched.name}
-              validationState={formik.errors.name ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.name && formik.errors.name}
+              errorMessage={
+                formik.touched.name && formik.errors.name && (
+                  <span style={{ color: 'red' }}>{formik.errors.name}</span>
+                )
+              }
             />
 
             {/* Degrees Input */}
@@ -109,8 +112,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.degrees && formik.touched.degrees}
-              validationState={formik.errors.degrees ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.degrees && formik.errors.degrees}
+              errorMessage={
+                formik.touched.degrees && formik.errors.degrees && (
+                  <span style={{ color: 'red' }}>{formik.errors.degrees}</span>
+                )
+              }
             />
 
             {/* Designation Input */}
@@ -121,8 +127,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.designation && formik.touched.designation}
-              validationState={formik.errors.designation ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.designation && formik.errors.designation}
+              errorMessage={
+                formik.touched.designation && formik.errors.designation && (
+                  <span style={{ color: 'red' }}>{formik.errors.designation}</span>
+                )
+              }
             />
 
             {/* Specialization Input */}
@@ -133,8 +142,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.specialization && formik.touched.specialization}
-              validationState={formik.errors.specialization ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.specialization && formik.errors.specialization}
+              errorMessage={
+                formik.touched.specialization && formik.errors.specialization && (
+                  <span style={{ color: 'red' }}>{formik.errors.specialization}</span>
+                )
+              }
             />
 
             {/* Primary Phone Input */}
@@ -145,8 +157,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.phone && formik.touched.phone}
-              validationState={formik.errors.phone ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.phone && formik.errors.phone}
+              errorMessage={
+                formik.touched.phone && formik.errors.phone && (
+                  <span style={{ color: 'red' }}>{formik.errors.phone}</span>
+                )
+              }
             />
 
             {/* Additional Phones */}
@@ -157,7 +172,7 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
                   name={`additionalPhone-${index}`}
                   value={phone}
                   onChange={(e) => handleAdditionalPhoneChange(index, e.target.value)}
-                  isInvalid={!!formik.errors.phone}
+                  isInvalid={!!formik.errors.phone} // Display error if any phone number is invalid
                 />
                 <Button
                   type="button"
@@ -184,8 +199,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.bmdcNumber && formik.touched.bmdcNumber}
-              validationState={formik.errors.bmdcNumber ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.bmdcNumber && formik.errors.bmdcNumber}
+              errorMessage={
+                formik.touched.bmdcNumber && formik.errors.bmdcNumber && (
+                  <span style={{ color: 'red' }}>{formik.errors.bmdcNumber}</span>
+                )
+              }
             />
 
             {/* Digital Signature Input */}
@@ -196,8 +214,11 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.digitalSignature && formik.touched.digitalSignature}
-              validationState={formik.errors.digitalSignature ? 'invalid' : 'valid'}
-              errorMessage={formik.touched.digitalSignature && formik.errors.digitalSignature}
+              errorMessage={
+                formik.touched.digitalSignature && formik.errors.digitalSignature && (
+                  <span style={{ color: 'red' }}>{formik.errors.digitalSignature}</span>
+                )
+              }
             />
 
             <Button type="submit" isLoading={loading} className="w-full bg-primary-600 text-white">
