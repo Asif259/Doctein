@@ -1,45 +1,65 @@
-'use client';
-
-import { useState } from 'react';
-import { Card, CardBody, CardHeader, Avatar, Input, Button } from '@nextui-org/react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { Card, CardBody, CardHeader, Avatar, Button, Input } from '@nextui-org/react'; 
+import React, { useState } from 'react';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 interface DoctorProfileEditProps {
+  email: string;
   name: string;
-  degrees: string[];
+  degrees: string;
   designation: string;
   specialization: string;
-  consultingHours: string;
   phone: string[];
   bmdcNumber: string;
   digitalSignature: string;
+  handleFormSubmit: (formData: any) => void;
+  loading: boolean;
 }
 
-const Profile: React.FC<DoctorProfileEditProps> = ({
+const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
+  email,
   name,
   degrees,
   designation,
   specialization,
-  consultingHours,
   phone,
   bmdcNumber,
   digitalSignature,
+  handleFormSubmit,
+  loading,
 }) => {
-  const [formData, setFormData] = useState({
-    name,
-    degrees: degrees.join(', '),
-    designation,
-    specialization,
-    consultingHours,
-    phone: phone[0], // Use the first phone number for the main input
-    bmdcNumber,
-    digitalSignature,
+  const formik = useFormik({
+    initialValues: {
+      name,
+      degrees,
+      designation,
+      specialization,
+      phone: phone[0],
+      bmdcNumber,
+      digitalSignature,
+    },
+    validationSchema: Yup.object({
+      name: Yup.string().required('Name is required'),
+      degrees: Yup.string().required('Degrees are required'),
+      designation: Yup.string().required('Designation is required'),
+      specialization: Yup.string().required('Specialization is required'),
+      phone: Yup.string()
+        .test('valid-phone', 'Phone number is not valid', (value) => {
+          const phoneNumber = parsePhoneNumberFromString(value || '', 'US'); 
+          return phoneNumber ? phoneNumber.isValid() : false;
+        })
+        .required('Phone number is required'),
+      bmdcNumber: Yup.string().required('BMDC Number is required'),
+      digitalSignature: Yup.string().required('Digital signature is required'),
+    }),
+    onSubmit: (values) => {
+      const updatedPhoneNumbers = [values.phone, ...additionalPhones].filter(Boolean);
+      handleFormSubmit({ ...values, phone: updatedPhoneNumbers });
+    },
   });
 
-  const [additionalPhones, setAdditionalPhones] = useState<string[]>([]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [additionalPhones, setAdditionalPhones] = useState<string[]>(phone.slice(1));
 
   const handleAdditionalPhoneChange = (index: number, value: string) => {
     const updatedPhones = [...additionalPhones];
@@ -55,90 +75,89 @@ const Profile: React.FC<DoctorProfileEditProps> = ({
     }
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const updatedPhoneNumbers = [formData.phone, ...additionalPhones].filter(Boolean);
-    const updatedFormData = { ...formData, phone: updatedPhoneNumbers };
-    console.log('Updated profile data:', updatedFormData);
-    // Logic to submit updated profile info to the backend
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-2xl">
         <CardHeader className="flex flex-col items-center pb-0 pt-6">
           <Avatar
-            src="/placeholder.svg?height=128&width=128"
-            alt={formData.name}
+            src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+            alt={formik.values.name}
             className="w-32 h-32 text-large"
-            fallback={formData.name.split(' ').map(n => n[0]).join('')}
+            fallback={formik.values.name.split(' ').map(n => n[0]).join('')}
           />
-          <h2 className="text-2xl font-bold mt-4 text-slate-900">Edit Profile</h2>
+          <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
         </CardHeader>
         <CardBody className="flex flex-col gap-6">
-          <form onSubmit={handleFormSubmit}>
+          <form onSubmit={formik.handleSubmit}>
+            {/* Name Input */}
             <Input
               label="Full Name"
-              type="text"
               name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.name && formik.touched.name}
+              validationState={formik.errors.name ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.name && formik.errors.name}
             />
+
+            {/* Degrees Input */}
             <Input
-              label="Degrees (comma-separated)"
-              type="text"
+              label="Degrees"
               name="degrees"
-              value={formData.degrees}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.degrees}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.degrees && formik.touched.degrees}
+              validationState={formik.errors.degrees ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.degrees && formik.errors.degrees}
             />
+
+            {/* Designation Input */}
             <Input
               label="Designation"
-              type="text"
               name="designation"
-              value={formData.designation}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.designation}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.designation && formik.touched.designation}
+              validationState={formik.errors.designation ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.designation && formik.errors.designation}
             />
+
+            {/* Specialization Input */}
             <Input
               label="Specialization"
-              type="text"
               name="specialization"
-              value={formData.specialization}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.specialization}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.specialization && formik.touched.specialization}
+              validationState={formik.errors.specialization ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.specialization && formik.errors.specialization}
             />
-            <Input
-              label="Consultation Hours"
-              type="text"
-              name="consultingHours"
-              value={formData.consultingHours}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
-            />
+
+            {/* Primary Phone Input */}
             <Input
               label="Primary Phone"
-              type="text"
               name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.phone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.phone && formik.touched.phone}
+              validationState={formik.errors.phone ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.phone && formik.errors.phone}
             />
+
+            {/* Additional Phones */}
             {additionalPhones.map((phone, index) => (
               <div key={index} className="flex items-center mb-4">
                 <Input
                   label={`Additional Phone ${index + 1}`}
-                  type="text"
+                  name={`additionalPhone-${index}`}
                   value={phone}
                   onChange={(e) => handleAdditionalPhoneChange(index, e.target.value)}
-                  className="text-slate-900 flex-grow"
+                  isInvalid={!!formik.errors.phone}
                 />
                 <Button
                   type="button"
@@ -152,29 +171,37 @@ const Profile: React.FC<DoctorProfileEditProps> = ({
                 </Button>
               </div>
             ))}
+
             <Button type="button" onClick={handleAddPhone} className="mb-4 bg-primary-600 text-white">
               Add additional phone
             </Button>
+
+            {/* BMDC Number Input */}
             <Input
               label="BMDC Number"
-              type="text"
               name="bmdcNumber"
-              value={formData.bmdcNumber}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.bmdcNumber}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.bmdcNumber && formik.touched.bmdcNumber}
+              validationState={formik.errors.bmdcNumber ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.bmdcNumber && formik.errors.bmdcNumber}
             />
+
+            {/* Digital Signature Input */}
             <Input
               label="Digital Signature"
-              type="text"
               name="digitalSignature"
-              value={formData.digitalSignature}
-              onChange={handleInputChange}
-              required
-              className="text-slate-900 mb-4"
+              value={formik.values.digitalSignature}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              isInvalid={!!formik.errors.digitalSignature && formik.touched.digitalSignature}
+              validationState={formik.errors.digitalSignature ? 'invalid' : 'valid'}
+              errorMessage={formik.touched.digitalSignature && formik.errors.digitalSignature}
             />
-            <Button type="submit" className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg">
-              Save Changes
+
+            <Button type="submit" isLoading={loading} className="w-full bg-primary-600 text-white">
+              Save Profile
             </Button>
           </form>
         </CardBody>
@@ -183,4 +210,4 @@ const Profile: React.FC<DoctorProfileEditProps> = ({
   );
 };
 
-export default Profile;
+export default ProfileComponent;

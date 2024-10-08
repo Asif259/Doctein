@@ -13,7 +13,7 @@ router.get("/authenticate", authenticateToken, authController.isLoggedIn);
 router.post("/refresh-token", tokenController.refreshAccessToken);
 router.post("/logout", authController.logoutUser);
 router.post('/activate', authController.activateUser);
-router.get("/getProfile", authenticateToken, userController.getUserProfile); // Get user profile
+router.get("/profile", authenticateToken, userController.getUserProfile); // Get user profile
 
 // Password Reset Routes
 router.post("/forgot-password/send-otp", forgetPassController.sendOtp); // Send OTP
