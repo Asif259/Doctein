@@ -5,7 +5,6 @@ interface IDoctor extends Document {
   degrees: string[];
   designation: string;
   specialization: string;
-  consultingHours: string;
   phone: string[];
   bmdcNumber: string;
   digitalSignature: string;
@@ -26,10 +25,6 @@ const doctorSchema = new Schema<IDoctor>({
   },
   specialization: {
     type: String,
-    required: true,
-  },
-  consultingHours: {
-    type: String, 
     required: true,
   },
   phone: {

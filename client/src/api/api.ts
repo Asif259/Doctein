@@ -95,7 +95,7 @@ export const resetPassword = async (email: string, newPassword: string) => {
 //Get user profile
 export const getUserProfile = async () => {
   try {
-    const response = await axios.get(`/getProfile`);
+    const response = await axios.get(`/profile`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.data);
@@ -109,5 +109,18 @@ export const logoutUser = async () => {
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.data);
+  }
+};
+
+export const saveDoctorProfile = async (email: string, profileData: any) => {
+  try {
+    const response = await axios.post(`/save-doctor`, {
+      email,
+      ...profileData,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error saving doctor profile:', error);
+    throw error;
   }
 };
