@@ -11,6 +11,8 @@ import cookieParser from "cookie-parser";
 import authRouter from "./src/Routes/authRoutes";
 import userRouter from "./src/Routes/userRoutes";
 import authenticateToken from "./src/Middlewares/authenticate";
+import appointmentRoutes from "./src/Routes/appointmentRoutes";
+import authenticate from "./src/Middlewares/authenticate";
 
 dotenv.config();
 
@@ -38,6 +40,7 @@ mongoose
 // Use API router
 app.use("/api/v1", authRouter);
 app.use("/api/v1", userRouter);
+app.use("/api/v1", authenticate, appointmentRoutes);
 
 // Dummy route to test middleware
 app.get("/", authenticateToken, (_req: Request, res: Response) => {

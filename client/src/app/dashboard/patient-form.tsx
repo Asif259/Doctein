@@ -35,10 +35,11 @@ function PatientForm({ patient }: { patient?: patient | null }) {
             );
             addPatients(updatedPatients);
             alert("Patient updated successfully");
+            return;
           }
         }
         const res = await savePatient({
-          id: patients.length ? patients[patients.length - 1].id + 1 : 1,
+          id: patients.length ? patients.length + 1 : 1,
           name,
           age,
           weight,

@@ -1,11 +1,11 @@
 import { Schema, model, Document } from "mongoose";
 
-interface IAppointment extends Document {
+export interface IAppointment extends Document {
   patientId: string | Schema.Types.ObjectId;
   doctorId: string | Schema.Types.ObjectId;
   prescriptionId?: string | Schema.Types.ObjectId;
   date: Date | null;
-  time: string;
+  note: string;
   status: string;
 }
 
@@ -15,6 +15,7 @@ const appointmentSchema = new Schema<IAppointment>(
     doctorId: { type: Schema.Types.ObjectId, ref: "Doctor", required: true },
     prescriptionId: { type: Schema.Types.ObjectId, ref: "Prescription" },
     date: { type: Date },
+    note: { type: String },
     status: {
       type: String,
       required: true,
