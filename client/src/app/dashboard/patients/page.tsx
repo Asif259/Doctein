@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -39,6 +39,31 @@ export default function Page() {
   const [open, setOpen] = React.useState<boolean>(false);
   const [updatePatient, setUpdatePatient] = React.useState<patient | null>(
     null,
+  );
+
+  const handleUpdate = (patient: patient) => {
+    setUpdatePatient(patient);
+    setOpen(true);
+  };
+
+  const handleDelete = useCallback(
+    async (patient: patient) => {
+      console.log("Delete user");
+      console.log(patient);
+      if (!patient) return;
+
+      // Delete patient
+      const res = await deletePatient(patient.key);
+      if (res?.success) {
+        const latestPatients = useDashboardStore.getState().patients;
+        const updatedPatients = latestPatients.filter((p) => {
+          return p && p.key !== patient.key;
+        });
+        addPatients([...updatedPatients]);
+        alert("Patient deleted successfully");
+      }
+    },
+    [addPatients],
   );
 
   const renderCell = React.useCallback(
@@ -81,7 +106,7 @@ export default function Page() {
             <div className="relative flex justify-center items-center gap-2">
               <Tooltip content="Prescription">
                 <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                  <EyeIcon className="size-5" />
+                  <EyeIcon className="size-5 text-secondary-700" />
                 </span>
               </Tooltip>
               <Tooltip content="Edit user">
@@ -89,7 +114,7 @@ export default function Page() {
                   onClick={() => handleUpdate(patient)}
                   className="text-lg text-default-400 cursor-pointer active:opacity-50"
                 >
-                  <EditIcon className="size-5" />
+                  <EditIcon className="size-5 text-warning-500" />
                 </span>
               </Tooltip>
               <Tooltip
@@ -111,27 +136,8 @@ export default function Page() {
           return cellValue;
       }
     },
-    [],
+    [handleDelete],
   );
-
-  const handleUpdate = (patient: patient) => {
-    setUpdatePatient(patient);
-    setOpen(true);
-  };
-
-  const handleDelete = async (patient: patient) => {
-    console.log("Delete user");
-    console.log(patient);
-    if (!patient) return;
-
-    // Delete patient
-    const res = await deletePatient(patient.key);
-    if (res?.success) {
-      const updatedPatients = patients.filter((p) => p.key !== patient.key);
-      addPatients(updatedPatients);
-      console.log("Patient deleted successfully");
-    }
-  };
 
   useEffect(() => {
     (async () => {
@@ -144,6 +150,7 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
+    console.log("Patients:", patients);
     setFilteredPatients(patients);
   }, [patients]);
 
@@ -182,8 +189,8 @@ export default function Page() {
         <Input
           isClearable
           type="search"
-          variant="bordered"
-          placeholder="Search patients by name, email, etc."
+          variant="flat"
+          placeholder="Search patients by name, phone, etc."
           defaultValue=""
           onChange={(e) => setSearch(e.target.value)}
           onClear={() => console.log("input cleared")}
@@ -192,7 +199,7 @@ export default function Page() {
         <Button
           onClick={() => setOpen(true)}
           startContent={<PlusIcon />}
-          color="primary"
+          className="bg-secondary-600 text-secondary-100"
           variant="solid"
         >
           Add Patient
@@ -201,10 +208,7 @@ export default function Page() {
       <Table aria-label="Example table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
-            <TableColumn
-              key={column.uid}
-              align={column.uid === "actions" ? "center" : "start"}
-            >
+            <TableColumn key={column.uid} align={"center"}>
               {column.name}
             </TableColumn>
           )}

@@ -40,7 +40,7 @@ const savePatient = async (req: Request, res: Response): Promise<any> => {
     const savedAppointment = await appointment.save();
     console.log("Appointment saved:", savedAppointment);
 
-    // create a prescription
+    // TODO: create a prescription for the patient
     // const prescription = new Prescription({
     //   patientId: savedPatient._id,
     //   doctorId: doctorId,
@@ -68,22 +68,36 @@ const savePatient = async (req: Request, res: Response): Promise<any> => {
 
 const getPatients = async (req: Request, res: Response): Promise<any> => {
   const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { search } = req.query as {
+    limit?: string;
+    page?: string;
+    search?: string;
+  };
   try {
     console.log("Doctor ID:", doctorId);
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
 
-    const patients = await Appointment.find({
+    let appointments = await Appointment.find({
       doctorId,
+      patientId: { $ne: null },
     })
-      .limit(10)
       .populate("patientId", "name age weight phone address")
       .select("patientId")
       .sort({ _id: -1 });
+    if (!appointments)
+      return res.status(404).json({ data: "Patients not found" });
 
-    console.log("Patients:", patients);
-
-    const response = patients.map((patient) => {
-      const patientId = patient.patientId as unknown as IPatient;
+    if (search) {
+      appointments = appointments.filter((appointment) => {
+        const patient = appointment.patientId as any;
+        return (
+          patient.name.toLowerCase().includes(search.toLowerCase()) ||
+          patient.phone.includes(search)
+        );
+      });
+    }
+    const response = appointments.map((appointment) => {
+      const patientId = appointment.patientId as unknown as IPatient;
       return {
         key: patientId._id,
         name: patientId.name,
@@ -110,22 +124,25 @@ const getPatient = async (req: Request, res: Response): Promise<any> => {
     console.log("Doctor ID:", doctorId);
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
 
-    const patient = await Appointment.findOne({
+    const appointment = (await Appointment.findOne({
       doctorId,
       patientId,
     })
       .populate("patientId", "name age weight phone address")
-      .select("patientId");
+      .select("patientId")
+      .projection("name age weight phone address")
+      .find({ patientId: { $ne: null } })) as any;
+    if (!appointment)
+      return res.status(404).json({ data: "Patient not found" });
 
-    console.log("Patient:", patient);
-
+    const patient = appointment?.patientId;
     const response = {
-      // key: patient._id,
-      // name: patient.name,
-      // age: patient.age,
-      // weight: patient.weight,
-      // phone: patient.phone,
-      // address: patient.address,
+      key: patient._id as string,
+      name: patient.name,
+      age: patient.age,
+      weight: patient.weight,
+      phone: patient.phone,
+      address: patient.address,
     };
 
     return res.status(200).json({ success: true, data: response });
@@ -197,21 +214,15 @@ const deletePatient = async (req: Request, res: Response): Promise<any> => {
   const { user, doctorId } = req.body as { user: IUser; doctorId: string };
   const { patientId } = req.params;
   try {
-    console.log("Doctor ID:", doctorId);
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
 
-    const patient = await Appointment.findOne({
+    const deletedAppointment = await Appointment.findOneAndDelete({
       doctorId,
       patientId,
-    }).populate("patientId");
-
-    console.log("Patient:", patient);
-
-    if (!patient) return res.status(404).json({ data: "Patient not found" });
-
-    const deletedPatient = await Patient.findByIdAndDelete(patient.patientId);
-
-    console.log("Deleted patient:", deletedPatient);
+    });
+    if (!deletedAppointment)
+      return res.status(404).json({ data: "Patient not found" });
+    console.log("Deleted Appointment:", deletedAppointment);
 
     return res.status(200).json({ success: true, data: "Patient deleted" });
   } catch (error) {

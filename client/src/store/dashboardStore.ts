@@ -12,6 +12,7 @@ interface DashboardState {
   addPatient: (newPatient: patient) => void;
   addPatients: (newPatients: patient[]) => void;
   addAppointment: (newAppointment: appointment) => void;
+  addAppointments: (newAppointments: appointment[]) => void;
   addStaff: (newStaff: staff) => void;
 }
 
@@ -29,6 +30,8 @@ const useDashboardStore = create<DashboardState>((set) => ({
   addPatients: (newPatients: patient[]) => set({ patients: newPatients }),
   addAppointment: (newAppointment: appointment) =>
     set((state) => ({ appointments: [...state.appointments, newAppointment] })),
+  addAppointments: (newAppointment: appointment[]) =>
+    set({ appointments: newAppointment }),
   addStaff: (newStaff: staff) =>
     set((state) => ({ staffs: [...state.staffs, newStaff] })),
 }));

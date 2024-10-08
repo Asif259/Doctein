@@ -1,5 +1,5 @@
 export interface patient {
-  id: number;
+  id?: number;
   key?: string;
   name: string;
   age: number | string;
@@ -10,10 +10,13 @@ export interface patient {
 }
 
 export interface appointment {
-  id: number;
+  id?: number;
+  key?: string;
   patientName: string;
+  phone: string;
   date: string;
   time: string;
+  note?: string;
 }
 
 export interface staff {

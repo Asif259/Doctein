@@ -12,9 +12,13 @@ export const savePatient = async (patient: patient) => {
 };
 
 // Get all patients
-export const getPatients = async () => {
+export const getPatients = async (query?: string) => {
   try {
-    const response = await axios.get(`/patients`);
+    let url = `/patients`;
+    if (query) {
+      url = `/patients?search=${query}`;
+    }
+    const response = await axios.get(url);
     return response.data;
   } catch (error: any) {
     // throw new Error(error.response?.data?.data);
