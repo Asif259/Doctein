@@ -1,6 +1,6 @@
 'use client';
 
-import DoctorProfile from '@/components/dashboard/profile/doctorProfile-component'; // Adjust path according to your project structure
+import DoctorProfile from '@/components/dashboard/profile/doctor-profile';
 import { useEffect, useState } from 'react';
 import { getDoctor } from '@/api/api';  
 import { Spinner } from "@nextui-org/react";
