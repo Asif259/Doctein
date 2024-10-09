@@ -76,8 +76,8 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
+    <div className="h-dvh bg-gray-100 flex items-center justify-center p-4">
+      <Card className="w-full h-[70dvh] max-w-2xl">
         <CardHeader className="flex flex-col items-center pb-0 pt-6">
           <Avatar
             src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -87,8 +87,8 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
           />
           <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
         </CardHeader>
-        <CardBody className="flex flex-col gap-6">
-          <form onSubmit={formik.handleSubmit}>
+        <CardBody className="flex flex-col gap-6 overflow-y-auto relative pb-24">
+          <form className="space-y-4" onSubmit={formik.handleSubmit}>
             {/* Name Input */}
             <Input
               label="Full Name"
@@ -220,12 +220,14 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
                 )
               }
             />
-
-            <Button type="submit" isLoading={loading} className="w-full bg-primary-600 text-white">
-              Save Profile
-            </Button>
           </form>
         </CardBody>
+
+        <div className="sticky bottom-0 bg-white p-4">
+          <Button type="submit" isLoading={loading} className="w-full bg-primary-600 text-white">
+            Save Profile
+          </Button>
+        </div>
       </Card>
     </div>
   );

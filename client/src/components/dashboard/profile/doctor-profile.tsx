@@ -13,7 +13,8 @@ interface DoctorProfileProps {
   bmdcNumber: string;
   digitalSignature: string;
 }
-
+//ok
+// what's that brother, what is this file name convention make it doctor-profile.tsx
 const DoctorProfile: React.FC<DoctorProfileProps> = ({
   name,
   degrees = [],
