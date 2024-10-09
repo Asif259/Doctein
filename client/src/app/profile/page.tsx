@@ -21,17 +21,18 @@ const ProfilePage = () => {
         const response = await getUserProfile();
 
         if (response.success && response.data) {
-          if (response.data?.userId && response.data?.role === "doctor") {
+          if (response.data?.role === "doctor" && response.data?.userId) {
             setLoading(false);
             setIsProfile(true);
             setRole("doctor");
             router.push("/dashboard");
             return;
+          } else {
+            setDoctorEmail(response.data?.email);
+            toast.success(
+              "Please complete your doctor profile for accessing application features!",
+            );
           }
-          setDoctorEmail(response.data?.email);
-          toast.success(
-            "Please complete your doctor profile for accessing application features!",
-          );
         } else {
           console.error(response.data);
           toast.error("Failed to load profile.");

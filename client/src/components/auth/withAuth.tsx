@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
-import { authenticateUser } from "@/api/api";
+import { authenticateUser, getUserProfile } from "@/api/api";
 import { Spinner } from "@nextui-org/react";
 
 const WithAuth = ({ children }: any) => {
@@ -29,6 +29,14 @@ const WithAuth = ({ children }: any) => {
 
         if (data.success) {
           login();
+          const res = await getUserProfile();
+          if (res?.success) {
+            if (res.data.role === "doctor" && !res.data.userId) {
+              router.push("/profile");
+            }
+            setLoading(false);
+            return;
+          }
           setLoading(false);
         } else {
           router.push("/auth/login");
