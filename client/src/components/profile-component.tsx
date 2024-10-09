@@ -89,8 +89,8 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
           />
           <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
         </CardHeader>
-        <CardBody className="flex flex-col gap-6 ">
-          <form onSubmit={formik.handleSubmit} className="space-y-3">
+        <CardBody className="flex flex-col gap-6 overflow-y-auto relative pb-24">
+          <form className="space-y-4" onSubmit={formik.handleSubmit}>
             {/* Name Input */}
             <Input
               label="Full Name"
