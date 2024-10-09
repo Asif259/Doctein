@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup'; 
 import InputComponent from '@/components/auth/input-component';
 import { verifyOtp, activateUser } from '@/api/api'; 
+import toast, { Toaster } from "react-hot-toast";
 
 export default function EnterOTP() {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ export default function EnterOTP() {
       try {
         if (email) {
           await verifyOtp(email, values.otp); 
-          console.log("OTP verified:", values.otp);
+          toast.success("OTP verified")
       
           if (from === "register") {
             await activateUser(email); 
@@ -35,12 +36,12 @@ export default function EnterOTP() {
           }
       
         } else {
-          throw new Error("Email is missing");
+          toast.error("Email is missing")
         }
       } catch (error) {
         const err = error as { response?: { data?: { data?: string } } };
-        setErrors({ otp: err.response?.data?.data || 'Failed to verify OTP. Please try again.' });
-        console.error("Error verifying OTP:", err);
+        setErrors({ otp: err.response?.data?.data || 'Failed to verify OTP. Please try again' });
+        toast.error("Failed to verify OTP. Please try again")
       } finally {
         setSubmitting(false);
       }

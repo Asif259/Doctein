@@ -61,8 +61,6 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
-      <Toaster position="top-right" />
-
       <div className="flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         <div className="w-full md:w-1/2 p-8">
           <h2 className="text-2xl font-semibold text-gray-800">

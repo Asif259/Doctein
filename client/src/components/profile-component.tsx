@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import { Card, CardBody, CardHeader, Avatar, Button, Input } from '@nextui-org/react'; 
 import React, { useState } from 'react';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import toast, { Toaster } from "react-hot-toast";
+
 
 interface DoctorProfileEditProps {
   email: string;
@@ -32,7 +34,7 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
   const formik = useFormik({
     initialValues: {
       name,
-      degrees,
+      degrees: degrees || [],
       designation,
       specialization,
       phone: phone[0],
@@ -41,7 +43,7 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
     },
     validationSchema: Yup.object({
       name: Yup.string().required('Name is required'),
-      degrees: Yup.string().required('Degrees are required'),
+      degrees: Yup.array().of(Yup.string().required('Degrees are required')),
       designation: Yup.string().required('Designation is required'),
       specialization: Yup.string().required('Specialization is required'),
       phone: Yup.string()
@@ -71,13 +73,13 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
     if (additionalPhones.length < 9) {
       setAdditionalPhones([...additionalPhones, '']);
     } else {
-      alert('You can only add up to 9 additional phone numbers.');
+      toast.error("You can add upto 10 phone numbers only!")
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-2xl">
+    <div className="h-dvh bg-gray-100 flex items-center justify-center p-4">
+      <Card className="h-[70dvh] w-full max-w-2xl">
         <CardHeader className="flex flex-col items-center pb-0 pt-6">
           <Avatar
             src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -87,8 +89,8 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
           />
           <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
         </CardHeader>
-        <CardBody className="flex flex-col gap-6">
-          <form onSubmit={formik.handleSubmit}>
+        <CardBody className="flex flex-col gap-6 ">
+          <form onSubmit={formik.handleSubmit} className="space-y-3">
             {/* Name Input */}
             <Input
               label="Full Name"
@@ -109,7 +111,10 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
               label="Degrees"
               name="degrees"
               value={formik.values.degrees.join(', ')}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const degreesArray = e.target.value.split(',').map(degree => degree.trim());
+                formik.setFieldValue('degrees', degreesArray);
+              }} 
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.degrees && formik.touched.degrees}
               errorMessage={
@@ -220,12 +225,18 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
                 )
               }
             />
-
-            <Button type="submit" isLoading={loading} className="w-full bg-primary-600 text-white">
-              Save Profile
-            </Button>
           </form>
         </CardBody>
+        <div className="sticky bottom-0 bg-white pt-4">
+          <Button
+            type="button" 
+            onClick={formik.submitForm} 
+            isLoading={loading}
+            className="w-full bg-primary-600 text-white"
+          >
+            Save Profile
+          </Button>
+        </div>
       </Card>
     </div>
   );

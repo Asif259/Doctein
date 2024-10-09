@@ -18,6 +18,7 @@ const ProfilePage = () => {
         const response = await getUserProfile();
 
         if (response.data.userId) {
+          setLoading(true);
           router.push("/dashboard");
           return;
         }
@@ -76,7 +77,6 @@ const ProfilePage = () => {
         handleFormSubmit={handleFormSubmit}
         loading={loading}
       />
-      <Toaster position="top-right" />
     </>
   );
 };
