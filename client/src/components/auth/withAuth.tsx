@@ -7,7 +7,8 @@ import { authenticateUser } from "@/api/api";
 import { Spinner } from "@nextui-org/react";
 
 const WithAuth = ({ children }: any) => {
-  const { isLoggedIn, role, isProfileCompleted, login, setRole, setIsProfile } = useAuthStore((state) => state);
+  const { isLoggedIn, role, isProfileCompleted, login, setRole, setIsProfile } =
+    useAuthStore((state) => state);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -20,24 +21,22 @@ const WithAuth = ({ children }: any) => {
         console.log("User authentication data", data);
 
         if (data.success) {
-          login(); 
-          setRole(data.role); 
-          setIsProfile(data.isProfileCompleted); 
+          login();
+          // setRole(data.role);
+          // setIsProfile(data.isProfileCompleted);
         } else {
-          router.push("/auth/login"); 
+          // router.push("/auth/login");
         }
       } catch (error) {
         console.error("Authentication error:", error);
-        router.push("/auth/login"); 
+        // router.push("/auth/login");
       }
     })();
   }, []);
 
- 
-
-  if (!isLoggedIn || !role || !isProfileCompleted) {
-    router.push("/profile");
-  };
+  // if (!isLoggedIn || !role || !isProfileCompleted) {
+  //   router.push("/profile");
+  // }
 
   if (loading) {
     return (
