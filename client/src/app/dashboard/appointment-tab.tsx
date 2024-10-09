@@ -4,6 +4,7 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Chip,
   Divider,
   Input,
   Table,
@@ -18,7 +19,12 @@ import { useFormik } from "formik";
 import { appointment, patient } from "@/types/dashboard";
 import { CalendarIcon, ClockIcon, NotebookPenIcon } from "lucide-react";
 import { getPatients } from "@/api/dashboard/patientAPI";
-import { getAppointments } from "@/api/dashboard/appointmentAPI";
+import {
+  createAppointment,
+  getAppointments,
+} from "@/api/dashboard/appointmentAPI";
+import { extractDateAndTime, getDateString } from "@/utilities/timeZone";
+import toast from "react-hot-toast";
 
 function AppointmentTab() {
   const formik = useFormik({
@@ -29,28 +35,71 @@ function AppointmentTab() {
       date: "",
       time: "",
       note: "",
+      status: "upcoming",
     },
-    onSubmit: (values: appointment) => {
-      console.log(values);
-      // addAppointment(values);
+    onSubmit: async (values: appointment) => {
+      if (!selectedPatient) {
+        toast.error("Please select a patient");
+        return;
+      }
+      if (!values.date || !values.time) {
+        toast.error("Please select date and time");
+        return;
+      }
+      const dateTime = getDateString(values.date, values.time);
+
+      const res = await createAppointment({
+        patientId: selectedPatient,
+        date: dateTime,
+        note: values.note || "",
+      });
+      if (res?.success) {
+        if (res.data) {
+          const { date } = res.data;
+          const extractDate = extractDateAndTime(date);
+          addAppointments([
+            ...appointments,
+            {
+              ...res.data,
+              date: extractDate.date,
+              time: extractDate.time,
+            },
+          ]);
+        }
+        toast.success("Appointment created successfully");
+      }
     },
   });
   const { appointments, addAppointments } = useDashboardStore((state) => state);
   const [patients, setPatients] = React.useState<patient[]>([]);
   const [search, setSearch] = React.useState("");
-  const [selectedPatient, setSelectedPatient] = React.useState<any>(null);
+  const [selectedPatient, setSelectedPatient] = React.useState<
+    string | undefined
+  >(undefined);
 
   useEffect(() => {
     (async () => {
       const res = await getAppointments();
       if (res?.success) {
+        if (!res.data) return;
         console.log("Appointment fetched successfully");
-        addAppointments(res.data);
+        addAppointments(
+          res.data.map((appointment: appointment) => {
+            const { date } = appointment;
+            const extractDate = extractDateAndTime(date);
+            return {
+              ...appointment,
+              date: extractDate.date,
+              time: extractDate.time,
+            };
+          }),
+        );
       }
     })();
   }, []);
 
   const handleSearch = async () => {
+    if (!search) return;
     const res = await getPatients(search);
     if (res?.success) {
       console.log("Patients fetched successfully");
@@ -60,12 +109,14 @@ function AppointmentTab() {
 
   useEffect(() => {
     if (!selectedPatient) return;
-    const iterator = selectedPatient.values();
-    console.log(iterator.next().value);
+    console.log("Selected Patient:", selectedPatient);
   }, [selectedPatient]);
 
   useEffect(() => {
-    if (!search) setPatients([]);
+    if (!search) {
+      setPatients([]);
+      setSelectedPatient(undefined);
+    }
   }, [search]);
 
   return (
@@ -88,11 +139,21 @@ function AppointmentTab() {
               placeholder="search by name or phone"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              endContent={
+                <Button
+                  onClick={handleSearch}
+                  className="bg-primary-700 text-white"
+                >
+                  Search
+                </Button>
+              }
             />
             <Table
               selectionMode="single"
               onSelectionChange={(selected) => {
-                setSelectedPatient(selected);
+                const set = new Set(selected);
+                const iterator = set.values();
+                setSelectedPatient(iterator.next().value?.toString());
               }}
               aria-label="Patient list"
             >
@@ -113,12 +174,6 @@ function AppointmentTab() {
                 ))}
               </TableBody>
             </Table>
-            <Button
-              onClick={handleSearch}
-              className="bg-primary-700 text-white w-full"
-            >
-              Search
-            </Button>
           </div>
           <div className="flex-1 space-y-4">
             <header>
@@ -169,15 +224,23 @@ function AppointmentTab() {
               <TableColumn>Date</TableColumn>
               <TableColumn>Time</TableColumn>
               <TableColumn>Note</TableColumn>
+              <TableColumn>Status</TableColumn>
             </TableHeader>
             <TableBody>
               {appointments.map((appointment) => (
                 <TableRow key={appointment.key}>
                   <TableCell>{appointment.patientName}</TableCell>
                   <TableCell>{appointment.phone}</TableCell>
-                  <TableCell>{appointment.date}</TableCell>
-                  <TableCell>{appointment.time}</TableCell>
+                  <TableCell>
+                    <Chip>{appointment.date}</Chip>
+                  </TableCell>
+                  <TableCell>
+                    <Chip>{appointment.time}</Chip>
+                  </TableCell>
                   <TableCell>{appointment.note}</TableCell>
+                  <TableCell>
+                    <Chip>{appointment.status.toUpperCase()}</Chip>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
