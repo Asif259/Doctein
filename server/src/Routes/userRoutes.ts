@@ -21,5 +21,6 @@ router.delete(
 
 //doctor
 router.post('/save-doctor', authenticate, doctorController.saveDoctor);
+router.get('/get-doctor', authenticate, doctorController.getDoctor)
 
 export default router;

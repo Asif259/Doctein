@@ -7,7 +7,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 interface DoctorProfileEditProps {
   email: string;
   name: string;
-  degrees: string;
+  degrees: string[];
   designation: string;
   specialization: string;
   phone: string[];
@@ -108,7 +108,7 @@ const ProfileComponent: React.FC<DoctorProfileEditProps> = ({
             <Input
               label="Degrees"
               name="degrees"
-              value={formik.values.degrees}
+              value={formik.values.degrees.join(', ')}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               isInvalid={!!formik.errors.degrees && formik.touched.degrees}

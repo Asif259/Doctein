@@ -67,7 +67,7 @@ const ProfilePage = () => {
       <ProfileComponent
         email={doctorEmail}
         name=""
-        degrees=""
+        degrees={[]}
         designation=""
         specialization=""
         phone={[]}

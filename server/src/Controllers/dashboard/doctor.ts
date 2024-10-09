@@ -33,3 +33,36 @@ export const saveDoctor = async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({ success: false, data: "Server error", error: error.message });
   }
 };
+
+
+export const getDoctor = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { email } = req.body.user; // Get email from the authenticated user
+
+    // Find the user with the role of doctor and retrieve their profile
+    const doctor = await User.findOne({
+      email: email,
+      role: "doctor",
+    }).populate('userId'); // Ensure userId links to the Doctor model
+
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+
+    const doctorProfile = await Doctor.findOne({ _id: doctor.userId });
+
+    if (!doctorProfile) {
+      return res.status(404).json({ message: "Doctor profile not found" });
+    }
+
+    // Send the doctor profile along with the email
+    return res.status(200).json({ doctorProfile, email });
+  } catch (error) {
+    console.error("Error fetching doctor profile:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
+
