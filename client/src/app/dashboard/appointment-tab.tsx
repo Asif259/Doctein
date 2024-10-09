@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
 import {
-  Button,
   Card,
   CardBody,
   CardHeader,
   Chip,
-  Divider,
-  Input,
   Table,
   TableBody,
   TableCell,
@@ -15,67 +12,13 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { useDashboardStore } from "@/store/dashboardStore";
-import { useFormik } from "formik";
-import { appointment, patient } from "@/types/dashboard";
-import { CalendarIcon, ClockIcon, NotebookPenIcon } from "lucide-react";
-import { getPatients } from "@/api/dashboard/patientAPI";
-import {
-  createAppointment,
-  getAppointments,
-} from "@/api/dashboard/appointmentAPI";
-import { extractDateAndTime, getDateString } from "@/utilities/timeZone";
-import toast from "react-hot-toast";
+import { appointment } from "@/types/dashboard";
+import { getAppointments } from "@/api/dashboard/appointmentAPI";
+import { extractDateAndTime } from "@/utilities/timeZone";
+import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
 
 function AppointmentTab() {
-  const formik = useFormik({
-    initialValues: {
-      id: 0,
-      patientName: "",
-      phone: "",
-      date: "",
-      time: "",
-      note: "",
-      status: "upcoming",
-    },
-    onSubmit: async (values: appointment) => {
-      if (!selectedPatient) {
-        toast.error("Please select a patient");
-        return;
-      }
-      if (!values.date || !values.time) {
-        toast.error("Please select date and time");
-        return;
-      }
-      const dateTime = getDateString(values.date, values.time);
-
-      const res = await createAppointment({
-        patientId: selectedPatient,
-        date: dateTime,
-        note: values.note || "",
-      });
-      if (res?.success) {
-        if (res.data) {
-          const { date } = res.data;
-          const extractDate = extractDateAndTime(date);
-          addAppointments([
-            ...appointments,
-            {
-              ...res.data,
-              date: extractDate.date,
-              time: extractDate.time,
-            },
-          ]);
-        }
-        toast.success("Appointment created successfully");
-      }
-    },
-  });
   const { appointments, addAppointments } = useDashboardStore((state) => state);
-  const [patients, setPatients] = React.useState<patient[]>([]);
-  const [search, setSearch] = React.useState("");
-  const [selectedPatient, setSelectedPatient] = React.useState<
-    string | undefined
-  >(undefined);
 
   useEffect(() => {
     (async () => {
@@ -98,118 +41,14 @@ function AppointmentTab() {
     })();
   }, []);
 
-  const handleSearch = async () => {
-    if (!search) return;
-    const res = await getPatients(search);
-    if (res?.success) {
-      console.log("Patients fetched successfully");
-      setPatients(res.data);
-    }
-  };
-
-  useEffect(() => {
-    if (!selectedPatient) return;
-    console.log("Selected Patient:", selectedPatient);
-  }, [selectedPatient]);
-
-  useEffect(() => {
-    if (!search) {
-      setPatients([]);
-      setSelectedPatient(undefined);
-    }
-  }, [search]);
-
   return (
     <>
       <Card className="mt-4">
         <CardHeader>
           <h3 className="text-lg font-semibold">Add New Appointment</h3>
         </CardHeader>
-        <CardBody className="flex flex-row justify-evenly gap-5">
-          <div className="flex-1 space-y-4">
-            <header>
-              <h4 className="text-lg font-semibold">Select Patient</h4>
-              <p className="text-sm text-gray-500">
-                Select a patient to create an appointment
-              </p>
-            </header>
-            <Divider />
-            <Input
-              label="Search Patient"
-              placeholder="search by name or phone"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              endContent={
-                <Button
-                  onClick={handleSearch}
-                  className="bg-primary-700 text-white"
-                >
-                  Search
-                </Button>
-              }
-            />
-            <Table
-              selectionMode="single"
-              onSelectionChange={(selected) => {
-                const set = new Set(selected);
-                const iterator = set.values();
-                setSelectedPatient(iterator.next().value?.toString());
-              }}
-              aria-label="Patient list"
-            >
-              <TableHeader>
-                <TableColumn>Patient Name</TableColumn>
-                <TableColumn>Phone</TableColumn>
-                <TableColumn>Age</TableColumn>
-                <TableColumn>Weight</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {patients.map((patient) => (
-                  <TableRow key={patient.key}>
-                    <TableCell>{patient.name}</TableCell>
-                    <TableCell>{patient.phone}</TableCell>
-                    <TableCell>{patient.age}</TableCell>
-                    <TableCell>{patient.weight}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex-1 space-y-4">
-            <header>
-              <h4 className="text-lg font-semibold">Select Date &amp; Time</h4>
-              <p className="text-sm text-gray-500">
-                Select the date and time for the appointment
-              </p>
-            </header>
-            <Divider />
-            <form className="space-y-4" onSubmit={formik.handleSubmit}>
-              <Input
-                startContent={<CalendarIcon size={20} />}
-                label="Date"
-                type="date"
-                {...formik.getFieldProps("date")}
-              />
-              <Input
-                startContent={<ClockIcon size={20} />}
-                label="Time"
-                type="time"
-                {...formik.getFieldProps("time")}
-              />
-              <Input
-                startContent={<NotebookPenIcon size={20} />}
-                label="Note"
-                placeholder="Enter note"
-                {...formik.getFieldProps("note")}
-              />
-              <Button
-                className="bg-secondary-600 text-secondary-100 w-full"
-                type="submit"
-              >
-                Add Appointment
-              </Button>
-            </form>
-          </div>
+        <CardBody>
+          <AppointmentForm />
         </CardBody>
       </Card>
       <Card className="mt-4">
