@@ -10,19 +10,23 @@ import {
   TableCell,
   Chip,
   Tooltip,
-  ChipProps,
   Input,
   Button,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
 } from "@nextui-org/react";
 import { EditIcon, EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboardStore";
 import { appointment } from "@/types/dashboard";
-
-const statusColorMap: Record<string, ChipProps["color"]> = {
-  active: "success",
-  paused: "danger",
-  vacation: "warning",
-};
+import {
+  deleteAppointment,
+  getAppointments,
+} from "@/api/dashboard/appointmentAPI";
+import toast from "react-hot-toast";
+import { extractDateAndTime } from "@/utilities/timeZone";
+import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
 
 const columns = [
   { name: "PATIENT NAME", uid: "patientName" },
@@ -33,21 +37,11 @@ const columns = [
   { name: "ACTIONS", uid: "actions" },
 ];
 
-const users = [
-  {
-    key: "1",
-    patientName: "Tony Reichert",
-    phone: "1234567890",
-    date: "2024/05/03",
-    time: "10:00 AM",
-    status: "upcoming",
-  },
-];
-
 export default function Page() {
   const [search, setSearch] = React.useState("");
-  const [filteredAppointments, setFilteredAppointments] =
-    React.useState<appointment[]>(users);
+  const [filteredAppointments, setFilteredAppointments] = React.useState<
+    appointment[]
+  >([]);
   const { appointments, addAppointments } = useDashboardStore((state) => state);
   const [open, setOpen] = React.useState<boolean>(false);
   const [updateAppointment, setUpdateAppointment] =
@@ -65,14 +59,14 @@ export default function Page() {
       if (!appointment) return;
 
       // Delete patient
-      // const res = await deletePatient(patient.key);
+      const res = await deleteAppointment(appointment.key);
       if (res?.success) {
         const latestAppointments = useDashboardStore.getState().appointments;
         const updatedAppointments = latestAppointments.filter((app) => {
           return app && app.key !== appointment.key;
         });
         addAppointments([...updatedAppointments]);
-        alert("Appointment deleted successfully");
+        toast.success("Appointment deleted successfully");
       }
     },
     [addAppointments],
@@ -91,9 +85,9 @@ export default function Page() {
           );
         case "date":
           return (
-            <div className="flex flex-col">
+            <Chip className="flex flex-col">
               <p className="text-bold text-sm capitalize">{cellValue}</p>
-            </div>
+            </Chip>
           );
         case "time":
           return (
@@ -103,12 +97,7 @@ export default function Page() {
           );
         case "status":
           return (
-            <Chip
-              className="capitalize"
-              // color={statusColorMap[user.status]}
-              size="sm"
-              variant="flat"
-            >
+            <Chip className="capitalize" size="sm" variant="flat">
               {cellValue}
             </Chip>
           );
@@ -157,8 +146,8 @@ export default function Page() {
     }
 
     const searchValue = search.toLowerCase();
-    const filtered = users.filter((user) =>
-      Object.values(user).some((value) =>
+    const filtered = appointments.filter((appointment) =>
+      Object.values(appointment).some((value) =>
         String(value).toLowerCase().includes(searchValue),
       ),
     );
@@ -166,8 +155,47 @@ export default function Page() {
     setFilteredAppointments(filtered);
   }, [search]);
 
+  useEffect(() => {
+    (async () => {
+      // Fetch appointments
+      const res = await getAppointments();
+      if (res?.success) {
+        if (res.data) {
+          const appointments = res.data.map((appointment: appointment) => {
+            const { date } = appointment;
+            const extractDate = extractDateAndTime(date);
+            return {
+              ...appointment,
+              date: extractDate.date,
+              time: extractDate.time,
+            };
+          });
+          console.log(appointments);
+          addAppointments(appointments);
+        }
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    console.log("Appointments:", appointments);
+    setFilteredAppointments(appointments);
+  }, [appointments]);
+
   return (
     <>
+      <Modal className="p-5" size="5xl" isOpen={open} onOpenChange={setOpen}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader>Add Appointment</ModalHeader>
+              <ModalBody>
+                <AppointmentForm appointment={updateAppointment} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <h1 className="text-3xl font-bold mb-8">Appointments</h1>
       <div className="flex justify-between gap-4">
         <Input
@@ -184,6 +212,7 @@ export default function Page() {
           startContent={<PlusIcon />}
           variant="solid"
           className="bg-secondary-600 text-secondary-100"
+          onClick={() => setOpen(true)}
         >
           Add Appointment
         </Button>
