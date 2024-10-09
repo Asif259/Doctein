@@ -11,8 +11,8 @@ router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 router.get("/authenticate", authenticateToken, authController.isLoggedIn);
 router.post("/refresh-token", tokenController.refreshAccessToken);
-router.post("/logout", authController.logoutUser);
-router.post('/activate', authController.activateUser);
+router.post("/logout", authenticateToken, authController.logoutUser);
+router.post("/activate", authenticateToken, authController.activateUser);
 router.get("/profile", authenticateToken, userController.getUserProfile); // Get user profile
 
 // Password Reset Routes

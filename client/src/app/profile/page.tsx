@@ -5,30 +5,33 @@ import ProfileComponent from "@/components/profile-component";
 import { getUserProfile, saveDoctorProfile } from "@/api/api";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
-import toast, { Toaster } from "react-hot-toast";
-import { useAuthStore } from "@/store/authStore"; 
+import toast from "react-hot-toast";
+import { useAuthStore } from "@/store/authStore";
 
 const ProfilePage = () => {
   const [doctorEmail, setDoctorEmail] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const setIsProfile = useAuthStore((state) => state.setIsProfile); 
+  const setIsProfile = useAuthStore((state) => state.setIsProfile);
   const setRole = useAuthStore((state) => state.setRole);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    (async () => {
       try {
         const response = await getUserProfile();
 
-        if (response.data.userId) {
-          setLoading(true);
-          router.push("/dashboard");
-          return;
-        }
-
-        if (response.success) {
-          setDoctorEmail(response.data.email);
-          toast.success("Please complete your doctor profile for accessing application features!");
+        if (response.success && response.data) {
+          if (response.data?.userId && response.data?.role === "doctor") {
+            setLoading(false);
+            setIsProfile(true);
+            setRole("doctor");
+            router.push("/dashboard");
+            return;
+          }
+          setDoctorEmail(response.data?.email);
+          toast.success(
+            "Please complete your doctor profile for accessing application features!",
+          );
         } else {
           console.error(response.data);
           toast.error("Failed to load profile.");
@@ -39,9 +42,7 @@ const ProfilePage = () => {
       } finally {
         setLoading(false);
       }
-    };
-
-    fetchUserProfile();
+    })();
   }, [router]);
 
   const handleFormSubmit = async (formData: any) => {
@@ -50,9 +51,9 @@ const ProfilePage = () => {
       await saveDoctorProfile(doctorEmail, formData);
       toast.success("Profile saved successfully!");
 
-      setIsProfile(true); 
-      setRole("doctor"); 
-      
+      setIsProfile(true);
+      setRole("doctor");
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to save profile:", error);

@@ -7,13 +7,20 @@ import { authenticateUser } from "@/api/api";
 import { Spinner } from "@nextui-org/react";
 
 const WithAuth = ({ children }: any) => {
-  const { isLoggedIn, role, isProfileCompleted, login, setRole, setIsProfile } =
-    useAuthStore((state) => state);
+  const { isLoggedIn, role, isProfileCompleted, login } = useAuthStore(
+    (state) => state,
+  );
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoggedIn) return;
+    if (isLoggedIn) {
+      if (role === "doctor" && !isProfileCompleted) {
+        router.push("/profile");
+      }
+      setLoading(false);
+      return;
+    }
     console.log("Checking user authentication", isLoggedIn);
     (async () => {
       try {
@@ -22,21 +29,16 @@ const WithAuth = ({ children }: any) => {
 
         if (data.success) {
           login();
-          // setRole(data.role);
-          // setIsProfile(data.isProfileCompleted);
+          setLoading(false);
         } else {
-          // router.push("/auth/login");
+          router.push("/auth/login");
         }
       } catch (error) {
         console.error("Authentication error:", error);
-        // router.push("/auth/login");
+        router.push("/auth/login");
       }
     })();
   }, []);
-
-  // if (!isLoggedIn || !role || !isProfileCompleted) {
-  //   router.push("/profile");
-  // }
 
   if (loading) {
     return (
