@@ -28,7 +28,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
-// app.use(helmet);
+// [patientId].use(helmet);
 app.use(hpp({ checkBody: true, checkQuery: true }));
 
 const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || "";
