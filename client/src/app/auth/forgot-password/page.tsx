@@ -22,7 +22,7 @@ export default function ForgotPassword() {
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         await sendOtp(values.email);
-        toast.success("OTP sent to:", values.email)
+        toast.success("OTP sent successfully!");
         console.log("OTP sent to:", values.email);
         router.push(`/auth/enter-otp?email=${values.email}`);
       } catch (error: any) {

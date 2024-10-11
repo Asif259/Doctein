@@ -20,7 +20,9 @@ router.delete(
 );
 
 //doctor
-router.post('/save-doctor', authenticate, doctorController.saveDoctor);
-router.get('/get-doctor', authenticate, doctorController.getDoctor)
+router.post('/doctors', authenticate, doctorController.saveDoctor);
+router.get('/doctors', authenticate, doctorController.getDoctor);
+router.put('/doctors', authenticate, doctorController.updateDoctor);
+
 
 export default router;

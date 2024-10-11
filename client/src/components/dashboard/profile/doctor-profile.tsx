@@ -2,29 +2,11 @@
 
 import { Card, CardBody, CardHeader, Avatar, Chip } from "@nextui-org/react";
 import { FaPhone, FaEnvelope, FaSignature, FaStethoscope } from "react-icons/fa";
+import { doctor } from "@/types/dashboard";
 
-interface DoctorProfileProps {
-  name: string;
-  degrees: string[];
-  designation: string;
-  specialization: string;
-  phone: string[];
-  email: string;
-  bmdcNumber: string;
-  digitalSignature: string;
-}
-//ok
-// what's that brother, what is this file name convention make it doctor-profile.tsx
-const DoctorProfile: React.FC<DoctorProfileProps> = ({
-  name,
-  degrees = [],
-  designation,
-  specialization,
-  phone = [],
-  email,
-  bmdcNumber,
-  digitalSignature,
-}) => {
+function DoctorProfile({ doctor, email }: { doctor: doctor; email: string }) {
+  const { name, designation, degrees, specialization, phone, bmdcNumber, digitalSignature } = doctor;
+
   const avatarFallback = name ? name.split(" ").map((n) => n[0]).join("") : "Dr";
 
   return (
@@ -43,7 +25,6 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({
           </Chip>
         </CardHeader>
         <CardBody className="flex flex-col gap-6 bg-white px-8 py-6">
-          {/* Degrees */}
           <div className="flex flex-wrap gap-2 justify-center text-gray-800">
             {degrees.map((degree, idx) => (
               <Chip key={idx} variant="flat" className="bg-blue-50 text-blue-600 border border-blue-300">
@@ -53,7 +34,6 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-            {/* Left Side - Specialization and Phone */}
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <FaStethoscope className="text-blue-600 text-xl" />
@@ -74,7 +54,6 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({
               </div>
             </div>
 
-            {/* Right Side - Email and BMDC Number */}
             <div>
               <div className="flex justify-start md:justify-end items-center gap-2 mb-4">
                 <FaEnvelope className="text-blue-600 text-xl" />
@@ -91,7 +70,6 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({
             </div>
           </div>
 
-          {/* Digital Signature */}
           <div className="flex justify-end mt-8 text-gray-700 border-t border-gray-400 pt-4">
             <FaSignature className="text-blue-600 text-xl" />
             <div className="ml-3">
@@ -102,6 +80,7 @@ const DoctorProfile: React.FC<DoctorProfileProps> = ({
       </Card>
     </>
   );
-};
+}
+
 
 export default DoctorProfile;

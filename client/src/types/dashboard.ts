@@ -25,3 +25,15 @@ export interface staff {
   name: string;
   role: string;
 }
+
+export interface doctor {
+  [x: string]: any;
+  key?: string;
+  name: string;
+  degrees: string[]; 
+  designation: string;
+  specialization: string;
+  phone: string[];
+  bmdcNumber: string; 
+  digitalSignature?: string;
+}

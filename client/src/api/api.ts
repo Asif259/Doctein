@@ -1,4 +1,5 @@
 import axios from "@/config/axios";
+import { doctor } from "@/types/dashboard";
 
 // Register a new user
 export const registerUser = async (
@@ -113,10 +114,9 @@ export const logoutUser = async () => {
 };
 
 //save doctor profile
-export const saveDoctorProfile = async (email: string, profileData: any) => {
+export const saveDoctorProfile = async (profileData: doctor) => {
   try {
-    const response = await axios.post(`/save-doctor`, {
-      email,
+    const response = await axios.post(`/doctors`, {
       ...profileData,
     });
     return response.data;
@@ -129,10 +129,24 @@ export const saveDoctorProfile = async (email: string, profileData: any) => {
 //get doctors
 export const getDoctor = async () => { 
   try {
-    const response = await axios.get(`/get-doctor`);
+    const response = await axios.get(`/doctors`);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message);
+  }
+};
+
+//update doctor
+
+// TODO: don't use any data type unless you are forced to do
+export const updateDoctorProfile = async ( doctor: doctor) => {
+  try {
+    const response = await axios.put(`/doctors`, {...doctor, 
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error updating doctor profile:", error);
+    throw new Error(error.response?.data?.message || "Error updating doctor profile");
   }
 };
 

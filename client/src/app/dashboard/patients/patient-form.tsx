@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { patient } from "@/types/dashboard";
 import { savePatient, updatePatient } from "@/api/dashboard/patientAPI";
 import { useDashboardStore } from "@/store/dashboardStore";
+import toast from "react-hot-toast";
 
 function PatientForm({ patient }: { patient?: patient | null }) {
   const { patients, addPatients } = useDashboardStore((state) => state);
@@ -34,7 +35,7 @@ function PatientForm({ patient }: { patient?: patient | null }) {
               p.key === patient.key ? res.data : p,
             );
             addPatients(updatedPatients);
-            alert("Patient updated successfully");
+            toast.success("Patient updated successfully");
             return;
           }
         }
@@ -49,7 +50,7 @@ function PatientForm({ patient }: { patient?: patient | null }) {
         });
         if (res?.success) {
           addPatients([...patients, res.data]);
-          alert("Patient saved successfully");
+          toast.success("Patient saved successfully");
         }
       } catch (error) {
         console.error("Error saving patient:", error);
