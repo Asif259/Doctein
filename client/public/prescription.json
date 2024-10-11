@@ -1,0 +1,94 @@
+{
+  "complaints": [
+    {
+      "complaint": "Headache",
+      "duration": "2 days",
+      "severity": "Mild",
+      "description": "Pain in the forehead area"
+    },
+    {
+      "complaint": "Fever",
+      "duration": "2 days",
+      "severity": "Mild",
+      "description": "Temperature 100F"
+    },
+    {
+      "complaint": "Cough",
+      "duration": "2 days",
+      "severity": "Mild",
+      "description": "Dry cough"
+    }
+  ],
+  "history": [
+    {
+      "duration": "4 days",
+      "diagnosis": "Fever",
+      "description": "Paracetamol"
+    },
+    {
+      "duration": "10 days",
+      "diagnosis": "Cough",
+      "description": "Cough syrup"
+    }
+  ],
+  "diagnosis": [
+    {
+      "name": "CBC",
+      "description": "Complete Blood Count",
+      "date": "2021-09-01"
+    },
+    {
+      "name": "Chest X-ray",
+      "description": "Chest X-ray",
+      "date": "2021-09-01"
+    }
+  ],
+  "investigations": [
+    {
+      "name": "CBC",
+      "description": "Complete Blood Count",
+      "date": "2021-09-01"
+    },
+    {
+      "name": "Chest X-ray",
+      "description": "Chest X-ray",
+      "date": "2021-09-01"
+    }
+  ],
+  "medicines": [
+    {
+      "type": "Tab.",
+      "name": "Paracetamol",
+      "dosage": "500mg",
+      "frequency": "1+1+1",
+      "duration": "3 days"
+    },
+    {
+      "type": "Tab.",
+      "name": "Azithromycin",
+      "dosage": "500mg",
+      "frequency": "1+0+0",
+      "duration": "3 days"
+    },
+    {
+      "type": "Syrup",
+      "name": "Cough syrup",
+      "dosage": "5ml",
+      "frequency": "1+0+1",
+      "duration": "3 days"
+    }
+  ],
+  "instructions": [
+    {
+      "instruction": "Take medicines after meals",
+      "id": "1"
+    },
+    {
+      "instruction": "Drink plenty of water",
+      "id": "2"
+    }
+  ],
+  "followUp": {
+    "date": "2021-09-04"
+  }
+}

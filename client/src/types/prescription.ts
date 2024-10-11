@@ -11,6 +11,7 @@ export interface Prescription {
   history?: History[];
   diagnosisList?: Diagnosis[];
   investigations?: Investigation[];
+  isEditable?: boolean;
 }
 
 export interface Medication {
