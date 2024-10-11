@@ -4,7 +4,7 @@ import { appointment, patient } from "@/types/dashboard";
 import toast from "react-hot-toast";
 import { extractDateAndTime, getDateString } from "@/utilities/timeZone";
 import { createAppointment } from "@/api/dashboard/appointmentAPI";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import {
   Button,
