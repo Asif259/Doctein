@@ -13,7 +13,7 @@ import { Calendar, CalendarClockIcon, UserPlusIcon, Users } from "lucide-react";
 import PatientTab from "@/app/dashboard/patient-tab";
 import AppointmentTab from "@/app/dashboard/appointment-tab";
 import StaffTab from "@/app/dashboard/staff-tab";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 
 export default function Page() {
   const { patients, appointments, staffs } = useDashboardStore(

@@ -1,6 +1,6 @@
 import { ClipboardList, FileText, Stethoscope, Activity } from "lucide-react";
 import { forwardRef, ReactNode } from "react";
-import PrescriptionHeader from "@/components/prescription/PrescriptionHeader";
+import PrescriptionHeader from "@/components/prescription/prescription-header";
 
 const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
   ({ isPrint = false }: { isPrint?: boolean }, ref) => {

@@ -5,10 +5,10 @@ import * as Yup from "yup";
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
 import { authenticateUser, loginUser, getUserProfile } from "@/api/api";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@nextui-org/react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const { login } = useAuthStore((state) => state);
@@ -25,7 +25,7 @@ export default function Login() {
 
         const userProfile = await getUserProfile();
         if (userProfile.success) {
-          const { email, role: userRole, userId } = userProfile.data;
+          const { role: userRole, userId } = userProfile.data;
 
           if (userRole === "doctor" && userId) {
             router.push("/dashboard");
@@ -48,8 +48,12 @@ export default function Login() {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email address").required("Email is required"),
-      password: Yup.string().min(8, "Password must be at least 8 characters long").required("Password required"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters long")
+        .required("Password required"),
     }),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
@@ -60,7 +64,7 @@ export default function Login() {
           login();
 
           const userProfile = await getUserProfile();
-          const { email, role: userRole, userId } = userProfile.data;
+          const { role: userRole, userId } = userProfile.data;
 
           if (userRole === "doctor" && userId) {
             router.push("/dashboard");
@@ -114,7 +118,9 @@ export default function Login() {
                 {...formik.getFieldProps("email")}
                 isInvalid={formik.touched.email && Boolean(formik.errors.email)}
                 errorMessage={
-                  formik.touched.email && formik.errors.email ? formik.errors.email : undefined
+                  formik.touched.email && formik.errors.email
+                    ? formik.errors.email
+                    : undefined
                 }
               />
             </div>
@@ -123,16 +129,23 @@ export default function Login() {
               <PasswordComponent
                 placeholder="Enter your password"
                 {...formik.getFieldProps("password")}
-                isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                isInvalid={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
                 errorMessage={
-                  formik.touched.password && formik.errors.password ? formik.errors.password : undefined
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : undefined
                 }
               />
             </div>
 
             {/* Forgot Password Link */}
             <div className="mb-4 text-right">
-              <a href="/auth/forgot-password" className="text-primary-800 hover:underline">
+              <a
+                href="/auth/forgot-password"
+                className="text-primary-800 hover:underline"
+              >
                 Forgot your password?
               </a>
             </div>

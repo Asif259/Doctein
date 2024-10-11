@@ -12,7 +12,7 @@ import {
 } from "@nextui-org/react";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import PatientForm from "@/app/dashboard/patients/patient-form";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 
 function PatientTab() {
   const { patients, addPatients } = useDashboardStore((state) => state);

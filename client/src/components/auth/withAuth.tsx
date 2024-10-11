@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
 import { useRouter } from "next/navigation";
 import { authenticateUser, getUserProfile } from "@/api/api";
 import { Spinner } from "@nextui-org/react";

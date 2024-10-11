@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
   Tabs,
   Tab,
@@ -10,7 +10,7 @@ import {
   Input,
   Button,
 } from "@nextui-org/react";
-import { Section } from "@/components/prescription/PrescriptionTemplate";
+import { Section } from "@/components/prescription/prescription-template";
 
 export default function PrescriptionTabs() {
   const [selected, setSelected] = React.useState<string | number>("patient");

@@ -2,9 +2,9 @@
 
 import React, { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
-import PrescriptionTemplate from "@/components/prescription/PrescriptionTemplate";
+import PrescriptionTemplate from "@/components/prescription/prescription-template";
 import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 
 function Page({ params }: { params: { patientId: string } }) {
   const printableDiv = useRef<HTMLDivElement>(null);
