@@ -139,7 +139,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
+              className="w-full bg-primary-800 text-white py-2 px-4 rounded-lg"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Logging in..." : "Login"}

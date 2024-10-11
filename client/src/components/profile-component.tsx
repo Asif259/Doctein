@@ -14,18 +14,24 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import toast from "react-hot-toast";
-import { saveDoctorProfile, updateDoctorProfile } from "@/api/api";
+import { saveDoctorProfile, updateDoctorProfile } from "@/api/dashboard/profileAPI";
 import { doctor } from "@/types/dashboard";
 import { useProfileStore } from "@/store/profileStore";
+import { MdOutlineCancel } from "react-icons/md";
 
-interface ProfileComponentProps {
-  doctor: doctor | null;
-}
 
-function ProfileComponent({ doctor }: ProfileComponentProps) {
+function ProfileComponent({doctor, onProfileUpdate,}:{
+  doctor: doctor | null; 
+  onProfileUpdate: () => void; 
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const { Doctor, addDoctor } = useProfileStore((state) => state);
+
+  // Manage additional phone numbers
+  const [additionalPhones, setAdditionalPhones] = useState<string[]>(
+    doctor?.phone.slice(1) || []
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -33,7 +39,7 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
       degrees: doctor?.degrees || [""],
       designation: doctor?.designation || "",
       specialization: doctor?.specialization || "",
-      phone: doctor?.phone || [""],
+      phone: doctor?.phone ? [doctor.phone[0]] : [""], // Keep primary phone separately
       bmdcNumber: doctor?.bmdcNumber || "",
       digitalSignature: doctor?.digitalSignature || "",
     },
@@ -54,54 +60,55 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
       digitalSignature: Yup.string().required("Digital signature is required"),
     }),
     onSubmit: async (values: doctor) => {
-      setLoading(true); 
-      const { name, degrees, designation, specialization, phone, bmdcNumber, digitalSignature } = values;
+      setLoading(true);
+
+      // Merge additional phones with the primary phone
+      const phoneNumbers = [...values.phone, ...additionalPhones];
+
+      const { name, degrees, designation, specialization, bmdcNumber, digitalSignature } = values;
 
       try {
         if (doctor) {
+          // Updating existing doctor profile
           const res = await updateDoctorProfile({
             ...doctor,
             name,
             degrees,
             designation,
             specialization,
-            phone,
-            bmdcNumber,
-            digitalSignature,
-          });
-          if (res?.success) {
-            if (Doctor) {
-              addDoctor(Doctor);
-              toast.success("Doctor updated successfully");
-              router.refresh();
-              
-            }
-          }
-        } else {
-          const res = await saveDoctorProfile({
-            name,
-            degrees,
-            designation,
-            specialization,
-            phone,
+            phone: phoneNumbers, 
             bmdcNumber,
             digitalSignature,
           });
           if (res?.success) {
             addDoctor(res.data);
-            toast.success("Doctor saved successfully");
+            toast.success("Profile updated successfully");
+            onProfileUpdate();
+          }
+        } else {
+          // Creating new doctor profile
+          const res = await saveDoctorProfile({
+            name,
+            degrees,
+            designation,
+            specialization,
+            phone: phoneNumbers, 
+            bmdcNumber,
+            digitalSignature,
+          });
+          if (res?.success) {
+            addDoctor(res.data);
+            toast.success("Profile saved successfully");
             router.push(`/dashboard/profile`);
           }
         }
       } catch (error) {
         console.error("Error saving Doctor:", error);
       } finally {
-        setLoading(false); 
+        setLoading(false);
       }
     },
   });
-
-  const [additionalPhones, setAdditionalPhones] = useState<string[]>(doctor?.phone.slice(1) || []);
 
   const handleAdditionalPhoneChange = (index: number, value: string) => {
     const updatedPhones = [...additionalPhones];
@@ -117,16 +124,8 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex h-dvh w-full justify-center items-center gap-4">
-        <Spinner color="warning" size="lg" />
-      </div>
-    );
-  }
-
   return (
-    <Card className="h-[80dvh] w-full max-w-2xl mx-auto">
+    <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-secondary-100">
       <CardHeader className="flex flex-col items-center pb-0 pt-6">
         <Avatar
           src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -137,7 +136,7 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
         <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
       </CardHeader>
       <CardBody className="flex flex-col gap-6 relative p-9">
-        <form className="space-y-4 overflow-y-auto" >
+        <form className="space-y-4 overflow-y-auto" onSubmit={formik.handleSubmit}>
           <Input
             label="Full Name"
             name="name"
@@ -187,7 +186,7 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
           />
           <Input
             label="Primary Phone"
-            name="phone[0]"  //  manage the phone array
+            name="phone[0]"
             value={formik.values.phone[0]}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
@@ -202,7 +201,7 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
             <div key={index} className="flex items-center mb-4">
               <Input
                 label={`Additional Phone ${index + 1}`}
-                name={`phone[${index + 1}]`} 
+                name={`phone[${index + 1}]`}
                 value={phone}
                 onChange={(e) => handleAdditionalPhoneChange(index, e.target.value)}
                 isInvalid={!!formik.errors.phone}
@@ -215,17 +214,19 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
                 }}
                 className="ml-2 text-red-500"
               >
-                X
+                <MdOutlineCancel className="size-5" />
               </Button>
             </div>
           ))}
+
           <Button
             type="button"
             onClick={handleAddPhone}
-            className="mb-4 bg-primary-600 text-white"
+            className="mb-4 bg-secondary-600 text-white"
           >
             Add additional phone
           </Button>
+
           <Input
             label="BMDC Number"
             name="bmdcNumber"
@@ -248,21 +249,21 @@ function ProfileComponent({ doctor }: ProfileComponentProps) {
               <span style={{ color: "red" }}>{formik.errors.digitalSignature}</span>
             )}
           />
-          
-        </form>
-        <div className="sticky bottom-0 bg-white pt-4">
+
+          <div className="sticky bottom-0 bg-white pt-4">
             <Button
-              type="button"
-              onClick={formik.handleSubmit}
+              type="submit"
               isLoading={loading}
-              className="w-full bg-primary-600 text-white"
+              className="w-full bg-secondary-600 text-white"
             >
-              Save Profile
+              {doctor ? "Update Profile" : "Save Profile"}
             </Button>
           </div>
+        </form>
       </CardBody>
     </Card>
   );
 }
 
 export default ProfileComponent;
+

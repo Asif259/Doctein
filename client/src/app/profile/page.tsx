@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import ProfileComponent from "@/components/profile-component";
 import { getUserProfile } from "@/api/api";
@@ -7,6 +7,8 @@ import { Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/authStore";
 import { useProfileStore } from "@/store/profileStore";
+import { logoutUser } from "@/api/api";
+import { LogOut } from "lucide-react";
 
 const ProfilePage = () => {
   const { Doctor, addDoctor } = useProfileStore((state) => state);
@@ -14,6 +16,12 @@ const ProfilePage = () => {
   const router = useRouter();
   const setIsProfile = useAuthStore((state) => state.setIsProfile);
   const setRole = useAuthStore((state) => state.setRole);
+
+  const handleLogout = async () => {
+    const res = await logoutUser();
+    console.log(res.message);
+    router.push("/auth/login");
+  };
 
   useEffect(() => {
     (async () => {
@@ -28,11 +36,9 @@ const ProfilePage = () => {
             router.push("/dashboard");
             return;
           } else {
-            // Check if doctor profile already exists
             if (response.data.doctor) {
               addDoctor(response.data.doctor);
             } else {
-              // If no doctor profile, pass null or undefined to indicate new doctor
               addDoctor(null);
               toast.success(
                 "Please complete your doctor profile to access the application features!",
@@ -51,7 +57,6 @@ const ProfilePage = () => {
       }
     })();
   }, [router]);
-  
 
   if (loading) {
     return (
@@ -62,8 +67,16 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="h-dvh bg-gray-100 flex items-center justify-center p-4">
-      <ProfileComponent doctor={Doctor} /> 
+    <div className="relative h-dvh bg-gray-100 flex items-center justify-center p-4">
+      <div
+        onClick={handleLogout}
+        className="absolute top-4 right-4 flex items-center cursor-pointer bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-all duration-200"
+      >
+        <LogOut className="w-5 h-5 mr-2" />
+        <span>Logout</span>
+      </div>
+
+      <ProfileComponent doctor={Doctor} />
     </div>
   );
 };
