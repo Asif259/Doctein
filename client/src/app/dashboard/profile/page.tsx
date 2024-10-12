@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { getDoctor } from '@/api/dashboard/profileAPI';
-import DoctorProfile from '@/components/dashboard/profile/doctor-profile';
-import ProfileComponent from '@/components/profile-component';
+import { useEffect, useState } from "react";
+import { getDoctor } from "@/api/dashboard/profileAPI";
+import DoctorProfile from "@/components/dashboard/profile/doctor-profile";
+import ProfileComponent from "@/components/profile-component";
 import { Spinner, Button } from "@nextui-org/react";
 import { FaEdit, FaWindowClose } from "react-icons/fa";
-import { useProfileStore } from "@/store/profileStore";
+import { useProfileStore } from "@/store/profile-store";
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ const ProfilePage = () => {
   // switch back to DoctorProfile view
   const handleProfileUpdate = async () => {
     await fetchDoctorProfile();
-    setIsEditing(false); 
+    setIsEditing(false);
   };
 
   if (loading) {
@@ -62,9 +62,12 @@ const ProfilePage = () => {
       </div>
 
       {isEditing ? (
-        <ProfileComponent doctor={Doctor} onProfileUpdate={handleProfileUpdate} />
+        <ProfileComponent
+          doctor={Doctor}
+          onProfileUpdate={handleProfileUpdate}
+        />
       ) : (
-        <DoctorProfile doctor={Doctor} email={email || ''} />
+        <DoctorProfile doctor={Doctor} email={email || ""} />
       )}
     </>
   );

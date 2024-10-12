@@ -8,21 +8,25 @@ import {
   Avatar,
   Button,
   Input,
-  Spinner,
 } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import toast from "react-hot-toast";
-import { saveDoctorProfile, updateDoctorProfile } from "@/api/dashboard/profileAPI";
+import {
+  saveDoctorProfile,
+  updateDoctorProfile,
+} from "@/api/dashboard/profileAPI";
 import { doctor } from "@/types/dashboard";
-import { useProfileStore } from "@/store/profileStore";
+import { useProfileStore } from "@/store/profile-store";
 import { MdOutlineCancel } from "react-icons/md";
 
-
-function ProfileComponent({doctor, onProfileUpdate,}:{
-  doctor: doctor | null; 
-  onProfileUpdate: () => void; 
+function ProfileComponent({
+  doctor,
+  onProfileUpdate,
+}: {
+  doctor: doctor | null;
+  onProfileUpdate: () => void;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
@@ -30,7 +34,7 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
 
   // Manage additional phone numbers
   const [additionalPhones, setAdditionalPhones] = useState<string[]>(
-    doctor?.phone.slice(1) || []
+    doctor?.phone.slice(1) || [],
   );
 
   const formik = useFormik({
@@ -54,7 +58,7 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             const phoneNumber = parsePhoneNumberFromString(value || "", "US");
             return phoneNumber ? phoneNumber.isValid() : false;
           })
-          .required("Phone number is required")
+          .required("Phone number is required"),
       ),
       bmdcNumber: Yup.string().required("BMDC Number is required"),
       digitalSignature: Yup.string().required("Digital signature is required"),
@@ -65,7 +69,14 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
       // Merge additional phones with the primary phone
       const phoneNumbers = [...values.phone, ...additionalPhones];
 
-      const { name, degrees, designation, specialization, bmdcNumber, digitalSignature } = values;
+      const {
+        name,
+        degrees,
+        designation,
+        specialization,
+        bmdcNumber,
+        digitalSignature,
+      } = values;
 
       try {
         if (doctor) {
@@ -76,7 +87,7 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             degrees,
             designation,
             specialization,
-            phone: phoneNumbers, 
+            phone: phoneNumbers,
             bmdcNumber,
             digitalSignature,
           });
@@ -92,7 +103,7 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             degrees,
             designation,
             specialization,
-            phone: phoneNumbers, 
+            phone: phoneNumbers,
             bmdcNumber,
             digitalSignature,
           });
@@ -131,12 +142,18 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
           src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
           alt={formik.values.name}
           className="w-20 h-20 text-large"
-          fallback={formik.values.name.split(" ").map((n) => n[0]).join("")}
+          fallback={formik.values.name
+            .split(" ")
+            .map((n) => n[0])
+            .join("")}
         />
         <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
       </CardHeader>
       <CardBody className="flex flex-col gap-6 relative p-9">
-        <form className="space-y-4 overflow-y-auto" onSubmit={formik.handleSubmit}>
+        <form
+          className="space-y-4 overflow-y-auto"
+          onSubmit={formik.handleSubmit}
+        >
           <Input
             label="Full Name"
             name="name"
@@ -144,23 +161,31 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             isInvalid={!!formik.errors.name && formik.touched.name}
-            errorMessage={formik.touched.name && formik.errors.name && (
-              <span style={{ color: "red" }}>{formik.errors.name}</span>
-            )}
+            errorMessage={
+              formik.touched.name &&
+              formik.errors.name && (
+                <span style={{ color: "red" }}>{formik.errors.name}</span>
+              )
+            }
           />
           <Input
             label="Degrees"
             name="degrees"
             value={formik.values.degrees.join(", ")}
             onChange={(e) => {
-              const degreesArray = e.target.value.split(",").map((degree) => degree.trim());
+              const degreesArray = e.target.value
+                .split(",")
+                .map((degree) => degree.trim());
               formik.setFieldValue("degrees", degreesArray);
             }}
             onBlur={formik.handleBlur}
             isInvalid={!!formik.errors.degrees && formik.touched.degrees}
-            errorMessage={formik.touched.degrees && formik.errors.degrees && (
-              <span style={{ color: "red" }}>{formik.errors.degrees}</span>
-            )}
+            errorMessage={
+              formik.touched.degrees &&
+              formik.errors.degrees && (
+                <span style={{ color: "red" }}>{formik.errors.degrees}</span>
+              )
+            }
           />
           <Input
             label="Designation"
@@ -168,10 +193,17 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             value={formik.values.designation}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            isInvalid={!!formik.errors.designation && formik.touched.designation}
-            errorMessage={formik.touched.designation && formik.errors.designation && (
-              <span style={{ color: "red" }}>{formik.errors.designation}</span>
-            )}
+            isInvalid={
+              !!formik.errors.designation && formik.touched.designation
+            }
+            errorMessage={
+              formik.touched.designation &&
+              formik.errors.designation && (
+                <span style={{ color: "red" }}>
+                  {formik.errors.designation}
+                </span>
+              )
+            }
           />
           <Input
             label="Specialization"
@@ -179,10 +211,17 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             value={formik.values.specialization}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            isInvalid={!!formik.errors.specialization && formik.touched.specialization}
-            errorMessage={formik.touched.specialization && formik.errors.specialization && (
-              <span style={{ color: "red" }}>{formik.errors.specialization}</span>
-            )}
+            isInvalid={
+              !!formik.errors.specialization && formik.touched.specialization
+            }
+            errorMessage={
+              formik.touched.specialization &&
+              formik.errors.specialization && (
+                <span style={{ color: "red" }}>
+                  {formik.errors.specialization}
+                </span>
+              )
+            }
           />
           <Input
             label="Primary Phone"
@@ -191,9 +230,12 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             isInvalid={!!formik.errors.phone && formik.touched.phone}
-            errorMessage={formik.touched.phone && formik.errors.phone && (
-              <span style={{ color: "red" }}>{formik.errors.phone}</span>
-            )}
+            errorMessage={
+              formik.touched.phone &&
+              formik.errors.phone && (
+                <span style={{ color: "red" }}>{formik.errors.phone}</span>
+              )
+            }
           />
 
           {/* Additional Phones */}
@@ -203,13 +245,17 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
                 label={`Additional Phone ${index + 1}`}
                 name={`phone[${index + 1}]`}
                 value={phone}
-                onChange={(e) => handleAdditionalPhoneChange(index, e.target.value)}
+                onChange={(e) =>
+                  handleAdditionalPhoneChange(index, e.target.value)
+                }
                 isInvalid={!!formik.errors.phone}
               />
               <Button
                 type="button"
                 onClick={() => {
-                  const updatedPhones = additionalPhones.filter((_, i) => i !== index);
+                  const updatedPhones = additionalPhones.filter(
+                    (_, i) => i !== index,
+                  );
                   setAdditionalPhones(updatedPhones);
                 }}
                 className="ml-2 text-red-500"
@@ -234,9 +280,12 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             isInvalid={!!formik.errors.bmdcNumber && formik.touched.bmdcNumber}
-            errorMessage={formik.touched.bmdcNumber && formik.errors.bmdcNumber && (
-              <span style={{ color: "red" }}>{formik.errors.bmdcNumber}</span>
-            )}
+            errorMessage={
+              formik.touched.bmdcNumber &&
+              formik.errors.bmdcNumber && (
+                <span style={{ color: "red" }}>{formik.errors.bmdcNumber}</span>
+              )
+            }
           />
           <Input
             label="Digital Signature"
@@ -244,10 +293,18 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
             value={formik.values.digitalSignature}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            isInvalid={!!formik.errors.digitalSignature && formik.touched.digitalSignature}
-            errorMessage={formik.touched.digitalSignature && formik.errors.digitalSignature && (
-              <span style={{ color: "red" }}>{formik.errors.digitalSignature}</span>
-            )}
+            isInvalid={
+              !!formik.errors.digitalSignature &&
+              formik.touched.digitalSignature
+            }
+            errorMessage={
+              formik.touched.digitalSignature &&
+              formik.errors.digitalSignature && (
+                <span style={{ color: "red" }}>
+                  {formik.errors.digitalSignature}
+                </span>
+              )
+            }
           />
 
           <div className="sticky bottom-0 bg-white pt-4">
@@ -266,4 +323,3 @@ function ProfileComponent({doctor, onProfileUpdate,}:{
 }
 
 export default ProfileComponent;
-

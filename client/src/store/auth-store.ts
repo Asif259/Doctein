@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { appointment, patient, staff } from "@/types/dashboard";
+import { patient, staff } from "@/types/dashboard";
 
 interface AuthState {
   isLoggedIn: boolean;

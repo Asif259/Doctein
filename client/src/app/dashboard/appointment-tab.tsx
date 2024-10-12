@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 import { appointment } from "@/types/dashboard";
 import { getAppointments } from "@/api/dashboard/appointmentAPI";
 import { extractDateAndTime } from "@/utilities/timeZone";

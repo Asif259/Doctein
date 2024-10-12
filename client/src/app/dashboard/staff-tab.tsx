@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { staff } from "@/types/dashboard";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 
 function StaffTab() {
   const formik = useFormik({

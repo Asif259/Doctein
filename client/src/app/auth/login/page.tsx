@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
 import { authenticateUser, loginUser, getUserProfile, sendOtp } from "@/api/api";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";

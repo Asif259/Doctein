@@ -5,8 +5,8 @@ import { getUserProfile } from "@/api/api";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/store/authStore";
-import { useProfileStore } from "@/store/profileStore";
+import { useAuthStore } from "@/store/auth-store";
+import { useProfileStore } from "@/store/profile-store";
 import { logoutUser } from "@/api/api";
 import { LogOut } from "lucide-react";
 
@@ -27,7 +27,7 @@ const ProfilePage = () => {
     (async () => {
       try {
         const response = await getUserProfile();
-  
+
         if (response.success && response.data) {
           if (response.data?.role === "doctor" && response.data?.userId) {
             setLoading(false);

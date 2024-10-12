@@ -3,7 +3,7 @@ import { Button, Checkbox, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { patient } from "@/types/dashboard";
 import { savePatient, updatePatient } from "@/api/dashboard/patientAPI";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 import toast from "react-hot-toast";
 
 function PatientForm({ patient }: { patient?: patient | null }) {
