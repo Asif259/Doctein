@@ -59,12 +59,14 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
       new Date().getTime() -
       new Date((user.reset.lastReset as Date)?.toString()).getTime();
 
-    if (timeSinceLastOtp < otpSendInterval) {
-      return res.status(403).json({
-        success: false,
-        data: "Please wait before requesting a new OTP.",
-      });
-    }
+      if (timeSinceLastOtp < otpSendInterval) {
+        const remainingTime = otpSendInterval - timeSinceLastOtp; // Remaining time in milliseconds
+        return res.status(403).json({
+          success: false,
+          data: `Please wait ${Math.ceil(remainingTime / 1000)} seconds before requesting a new OTP.`,
+          remainingTime, 
+        });
+      }
 
     const otp = generateOtp();
     user.reset.otp = otp;

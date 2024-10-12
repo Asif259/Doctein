@@ -35,8 +35,8 @@ export default function ResetPassword() {
         console.log("New password set for:", email);
         router.push(`/auth/login`);
       } catch (err: any) {
-        toast.error("Please enter the confirm password correctly!");
-        setErrors({ confirmPassword: err.message });
+        toast.error(err.response?.data?.data || err.message || "An error occurred while resetting the password.");
+        setErrors({ newPassword: err.response?.data?.data || err.message });
         setSubmitting(false);
       }
     },
@@ -49,13 +49,7 @@ export default function ResetPassword() {
         <p className="text-gray-600">
           Reset your password for the account associated with {email}.
         </p>
-
-        {formik.errors.confirmPassword && (
-          <div className="text-red-500 mb-4">
-            {formik.errors.confirmPassword}
-          </div>
-        )}
-
+        
         <form className="mt-4" onSubmit={formik.handleSubmit}>
           <div className="mb-4">
             <PasswordComponent
