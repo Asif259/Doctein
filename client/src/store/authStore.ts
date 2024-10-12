@@ -3,18 +3,22 @@ import { appointment, patient, staff } from "@/types/dashboard";
 
 interface AuthState {
   isLoggedIn: boolean;
-  user: string;
-  token: string;
+  role: "doctor" | "patient" | "staff" | null;
+  isProfileCompleted: boolean;
   login: () => void;
   logout: () => void;
+  setRole: (role: AuthState["role"]) => void;
+  setIsProfile: (isProfileCompleted: boolean) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
-  user: "",
-  token: "",
+  role: null,
+  isProfileCompleted: false,
   login: () => set({ isLoggedIn: true }),
   logout: () => set({ isLoggedIn: false }),
+  setRole: (role: AuthState["role"]) => set({ role }),
+  setIsProfile: (isProfileCompleted: boolean) => set({ isProfileCompleted }),
 }));
 
 export { useAuthStore };

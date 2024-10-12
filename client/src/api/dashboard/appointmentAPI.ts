@@ -11,7 +11,11 @@ export const getAppointments = async () => {
 };
 
 // Add a new appointment
-export const saveAppointment = async (appointment: any) => {
+export const createAppointment = async (appointment: {
+  patientId: string;
+  date: string;
+  note: string;
+}) => {
   try {
     const response = await axios.post(`/appointments`, appointment);
     return response.data;

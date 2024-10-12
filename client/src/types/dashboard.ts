@@ -17,6 +17,7 @@ export interface appointment {
   date: string;
   time: string;
   note?: string;
+  status: "upcoming" | "completed" | "cancelled";
 }
 
 export interface staff {

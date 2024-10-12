@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import { getPatients } from "@/api/dashboard/patientAPI";
-import PatientForm from "@/app/dashboard/patient-form";
+import PatientForm from "@/app/dashboard/patients/patient-form";
 import { useDashboardStore } from "@/store/dashboardStore";
 
 function PatientTab() {

@@ -21,7 +21,7 @@ import { EditIcon, EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { deletePatient, getPatients } from "@/api/dashboard/patientAPI";
 import { patient } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/dashboardStore";
-import PatientForm from "@/app/dashboard/patient-form";
+import PatientForm from "@/app/dashboard/patients/patient-form";
 
 const columns = [
   { name: "NAME", uid: "name" },

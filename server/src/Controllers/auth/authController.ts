@@ -25,23 +25,23 @@ export const registerUser = async (
   const { email, password, confirmPassword, role } = req.body;
 
   if (!validateEmail(email)) {
-    return res.status(400).json({ data: "Invalid email format" });
+    return res.status(400).json({success: false, data: "Invalid email format" });
   }
 
   if (!validatePassword(password)) {
     return res.status(400).json({
-      data: "Password must be at least 6 characters long and contain letters and numbers",
+     success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ data: "Passwords do not match" });
+    return res.status(400).json({success: false, data: "Passwords do not match" });
   }
 
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ data: "User already exists" });
+      return res.status(400).json({success: false, data: "User already exists" });
     }
 
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
@@ -50,10 +50,10 @@ export const registerUser = async (
     const user = new User({ email, password: hashedPassword, role , archive: {password: hashedPassword}});
     await user.save();
 
-    return res.status(201).json({ data: "User registered successfully", user });
+    return res.status(201).json({success: false, data: "User registered successfully", user });
   } catch (error) {
     console.error("Error registering user:", error);
-    return res.status(500).json({ data: "Error registering user", error });
+    return res.status(500).json({success: false, data: "Error registering user", error });
   }
 };
 
@@ -63,25 +63,25 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 
   // Validate email
   if (!validateEmail(email)) {
-    return res.status(400).json({ data: "Invalid email format" });
+    return res.status(400).json({success: false, data: "Invalid email format" });
   }
 
   // Validate password
   if (!validatePassword(password)) {
     return res.status(400).json({
-      data: "Password must be at least 6 characters long and contain letters and numbers",
+     success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ data: "Invalid credentials" });
+      return res.status(401).json({success: false, data: "Invalid credentials" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res.status(401).json({ data: "Invalid credentials" });
+      return res.status(401).json({success: false, data: "Invalid credentials" });
     }
 
     // Call the setAuthCookies function to handle token generation and cookie setting
@@ -90,7 +90,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     setAuthCookies(req, res); // Set access and refresh tokens as cookies
   } catch (error) {
     console.error("Error logging in user:", error);
-    return res.status(500).json({ data: "Internal server error" });
+    return res.status(500).json({success: false, data: "Internal server error" });
   }
 };
 
@@ -104,12 +104,12 @@ export const activateUser = async (req: Request,res: Response): Promise<any> => 
     );
 
     if (!user) {
-      return res.status(404).json({ data: 'User not found' });
+      return res.status(404).json({success: false, data: 'User not found' });
     }
 
-    return res.status(200).json({ data: 'User activated successfully', user });
+    return res.status(200).json({success: true, data: 'User activated successfully', user });
   } catch (error) {
-    return res.status(500).json({ data: 'Server error' });
+    return res.status(500).json({success: false, data: 'Server error' });
   }
 };
 

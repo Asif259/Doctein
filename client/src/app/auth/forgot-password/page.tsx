@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputComponent from "@/components/auth/input-component";
 import { sendOtp } from "@/api/api";
+import toast, { Toaster } from "react-hot-toast";
+
 
 export default function ForgotPassword() {
   const router = useRouter();
@@ -20,9 +22,11 @@ export default function ForgotPassword() {
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         await sendOtp(values.email);
+        toast.success("OTP sent to:", values.email)
         console.log("OTP sent to:", values.email);
         router.push(`/auth/enter-otp?email=${values.email}`);
       } catch (error: any) {
+        toast.error("Error sending OTP:", error)
         console.error("Error sending OTP:", error);
         setErrors({ email: error.message });
       } finally {

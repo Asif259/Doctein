@@ -4,6 +4,7 @@ import PasswordComponent from "../../../components/auth/pass-component";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { resetPassword } from "@/api/api";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function ResetPassword() {
   const searchParams = useSearchParams();
@@ -30,9 +31,11 @@ export default function ResetPassword() {
     onSubmit: async (values, { setSubmitting, setErrors }) => {
       try {
         await resetPassword(email as string, values.newPassword);
+        toast.success("New password set successfully!");
         console.log("New password set for:", email);
         router.push(`/auth/login`);
       } catch (err: any) {
+        toast.error("Please enter the confirm password correctly!");
         setErrors({ confirmPassword: err.message });
         setSubmitting(false);
       }

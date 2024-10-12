@@ -4,7 +4,7 @@ import { IUser } from "../../Models/userModel";
 import Patient from "../../Models/profile/patient";
 
 const saveAppointment = async (req: Request, res: Response): Promise<any> => {
-  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { doctorId } = req.body as { user: IUser; doctorId: string };
   const { patientId, date, note } = req.body as {
     patientId: string;
     date: string;
@@ -25,9 +25,11 @@ const saveAppointment = async (req: Request, res: Response): Promise<any> => {
     await appointment.save();
     const response = {
       key: appointment._id,
-      patientId: appointment.patientId,
+      patientName: patient.name,
+      phone: patient.phone,
       date: appointment.date,
       note: appointment.note,
+      status: appointment.status,
     };
     return res.status(201).json({ success: true, data: response });
   } catch (error) {
@@ -49,21 +51,20 @@ const getAppointments = async (req: Request, res: Response): Promise<any> => {
         $ne: null,
       },
     })
-      .populate("patientId", "name phone")
-      .select("patientId date note");
+      .populate("patientId", "name phone status")
+      .select("patientId date note status");
     console.log("Appointments:", appointments);
 
     const response = appointments.map((appointment) => {
       const patient = appointment.patientId as any;
-      const date = appointment.date as Date;
-      const time = date?.toLocaleTimeString();
+      const date = appointment.date;
       return {
         key: appointment._id,
         patientName: patient.name,
         phone: patient.phone,
         date: date,
-        time: time,
         note: appointment.note,
+        status: appointment.status,
       };
     });
     return res.status(200).json({ success: true, data: response });
@@ -78,10 +79,10 @@ const getAppointments = async (req: Request, res: Response): Promise<any> => {
 const updateAppointment = async (req: Request, res: Response): Promise<any> => {
   const { doctorId } = req.body as { doctorId: string };
   const { appointmentId } = req.params;
-  const { date, note } = req.body as {
-    appointmentId: string;
+  const { date, note, status } = req.body as {
     date: string;
-    note: string;
+    note?: string;
+    status?: string;
   };
   try {
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
@@ -91,7 +92,8 @@ const updateAppointment = async (req: Request, res: Response): Promise<any> => {
       return res.status(404).json({ data: "Appointment not found" });
 
     appointment.date = new Date(date);
-    appointment.note = note;
+    if (note) appointment.note = note;
+    if (status) appointment.status = status;
     await appointment.save();
 
     const response = {
@@ -99,6 +101,7 @@ const updateAppointment = async (req: Request, res: Response): Promise<any> => {
       patientId: appointment.patientId,
       date: appointment.date,
       note: appointment.note,
+      status: appointment.status,
     };
     return res.status(200).json({ success: true, data: response });
   } catch (error) {
