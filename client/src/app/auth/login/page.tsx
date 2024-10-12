@@ -4,11 +4,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import InputComponent from "@/components/auth/input-component";
 import PasswordComponent from "@/components/auth/pass-component";
-import { authenticateUser, loginUser, getUserProfile } from "@/api/api";
-import { useAuthStore } from "@/store/authStore";
+import { authenticateUser, loginUser, getUserProfile, sendOtp } from "@/api/api";
+import { useAuthStore } from "@/store/auth-store";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@nextui-org/react";
 import toast, { Toaster } from "react-hot-toast";
+
 
 export default function Login() {
   const { login } = useAuthStore((state) => state);
@@ -24,17 +25,20 @@ export default function Login() {
         login();
 
         const userProfile = await getUserProfile();
-        if (userProfile.success) {
-          const { email, role: userRole, userId } = userProfile.data;
+          const { email, role: userRole, userId, active } = userProfile.data;
 
-          if (userRole === "doctor" && userId) {
-            router.push("/dashboard");
-          } else if (userRole === "doctor" && !userId) {
-            router.push("/profile");
-          } else if (userRole === "patient") {
-            router.push("/dashboard");
+          if (!active) {
+            await sendOtp(email);
+            router.push(`/auth/enter-otp?email=${email}&from=register`);
+          } else {
+            if (userRole === "doctor" && userId) {
+              router.push("/dashboard");
+            } else if (userRole === "doctor" && !userId) {
+              router.push("/profile");
+            } else if (userRole === "patient") {
+              router.push("/dashboard");
+            }
           }
-        }
       }
       setLoading(false);
     };
@@ -48,8 +52,12 @@ export default function Login() {
       password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email address").required("Email is required"),
-      password: Yup.string().min(8, "Password must be at least 8 characters long").required("Password required"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters long")
+        .required("Password required"),
     }),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
@@ -60,14 +68,18 @@ export default function Login() {
           login();
 
           const userProfile = await getUserProfile();
-          const { email, role: userRole, userId } = userProfile.data;
+          const { email, role: userRole, userId, active } = userProfile.data;
 
-          if (userRole === "doctor" && userId) {
-            router.push("/dashboard");
-          } else if (userRole === "doctor" && !userId) {
-            router.push("/profile");
-          } else if (userRole === "patient") {
-            router.push("/dashboard");
+          if (!active) {
+            router.push(`/auth/enter-otp?email=${email}&from=register`);
+          } else {
+            if (userRole === "doctor" && userId) {
+              router.push("/dashboard");
+            } else if (userRole === "doctor" && !userId) {
+              router.push("/profile");
+            } else if (userRole === "patient") {
+              router.push("/dashboard");
+            }
           }
         }
       } catch (err: any) {
@@ -114,7 +126,9 @@ export default function Login() {
                 {...formik.getFieldProps("email")}
                 isInvalid={formik.touched.email && Boolean(formik.errors.email)}
                 errorMessage={
-                  formik.touched.email && formik.errors.email ? formik.errors.email : undefined
+                  formik.touched.email && formik.errors.email
+                    ? formik.errors.email
+                    : undefined
                 }
               />
             </div>
@@ -123,23 +137,30 @@ export default function Login() {
               <PasswordComponent
                 placeholder="Enter your password"
                 {...formik.getFieldProps("password")}
-                isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                isInvalid={
+                  formik.touched.password && Boolean(formik.errors.password)
+                }
                 errorMessage={
-                  formik.touched.password && formik.errors.password ? formik.errors.password : undefined
+                  formik.touched.password && formik.errors.password
+                    ? formik.errors.password
+                    : undefined
                 }
               />
             </div>
 
             {/* Forgot Password Link */}
             <div className="mb-4 text-right">
-              <a href="/auth/forgot-password" className="text-primary-800 hover:underline">
+              <a
+                href="/auth/forgot-password"
+                className="text-primary-800 hover:underline"
+              >
                 Forgot your password?
               </a>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-primary-600 text-white py-2 px-4 rounded-lg"
+              className="w-full bg-primary-800 text-white py-2 px-4 rounded-lg"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Logging in..." : "Login"}

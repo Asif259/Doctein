@@ -20,7 +20,7 @@ import {
 import { EditIcon, EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
 import { deletePatient, getPatients } from "@/api/dashboard/patientAPI";
 import { patient } from "@/types/dashboard";
-import { useDashboardStore } from "@/store/dashboardStore";
+import { useDashboardStore } from "@/store/dashboard-store";
 import PatientForm from "@/app/dashboard/patients/patient-form";
 
 const columns = [

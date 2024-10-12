@@ -59,12 +59,14 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
       new Date().getTime() -
       new Date((user.reset.lastReset as Date)?.toString()).getTime();
 
-    if (timeSinceLastOtp < otpSendInterval) {
-      return res.status(403).json({
-        success: false,
-        data: "Please wait before requesting a new OTP.",
-      });
-    }
+      if (timeSinceLastOtp < otpSendInterval) {
+        const remainingTime = otpSendInterval - timeSinceLastOtp; // Remaining time in milliseconds
+        return res.status(403).json({
+          success: false,
+          data: `Please wait ${Math.ceil(remainingTime / 1000)} seconds before requesting a new OTP.`,
+          remainingTime, 
+        });
+      }
 
     const otp = generateOtp();
     user.reset.otp = otp;
@@ -75,8 +77,21 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: "Your Password Reset OTP",
-      text: `Your OTP for password reset is ${otp}. It is valid for 5 minutes.`,
+      subject: "DocHub verification OTP",
+      html: `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f4f4f4; border-radius: 8px;">
+    <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+      <h2 style="text-align: center; color: #4CAF50;">Welcome to DocHub!</h2>
+      <p style="font-size: 16px; color: #333333; text-align: center;">This is the verification code for registering or restting password. Please use the following OTP to verify your email address and complete the registration process.</p>
+      <div style="text-align: center; margin: 20px 0;">
+        <span style="font-size: 24px; font-weight: bold; padding: 10px 20px; background-color: #4CAF50; color: #ffffff; border-radius: 5px; display: inline-block;">${otp}</span>
+      </div>
+      <p style="font-size: 14px; color: #333333; text-align: center;">This OTP is valid for <strong>5 minutes</strong>. If you did not request this, please ignore this email.</p>
+      <hr style="margin: 20px 0;">
+      <p style="font-size: 12px; color: #888888; text-align: center;">DocHub Team</p>
+    </div>
+  </div>
+  `,
     };
 
     await transporter.sendMail(mailOptions);

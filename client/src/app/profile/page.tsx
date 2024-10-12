@@ -1,19 +1,27 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import ProfileComponent from "@/components/profile-component";
-import { getUserProfile, saveDoctorProfile } from "@/api/api";
+import { getUserProfile } from "@/api/api";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/store/authStore";
+import { useAuthStore } from "@/store/auth-store";
+import { useProfileStore } from "@/store/profile-store";
+import { logoutUser } from "@/api/api";
+import { LogOut } from "lucide-react";
 
 const ProfilePage = () => {
-  const [doctorEmail, setDoctorEmail] = useState<string>("");
+  const { Doctor, addDoctor } = useProfileStore((state) => state);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const setIsProfile = useAuthStore((state) => state.setIsProfile);
   const setRole = useAuthStore((state) => state.setRole);
+
+  const handleLogout = async () => {
+    const res = await logoutUser();
+    console.log(res.message);
+    router.push("/auth/login");
+  };
 
   useEffect(() => {
     (async () => {
@@ -28,10 +36,14 @@ const ProfilePage = () => {
             router.push("/dashboard");
             return;
           } else {
-            setDoctorEmail(response.data?.email);
-            toast.success(
-              "Please complete your doctor profile for accessing application features!",
-            );
+            if (response.data.doctor) {
+              addDoctor(response.data.doctor);
+            } else {
+              addDoctor(null);
+              toast.success(
+                "Please complete your doctor profile to access the application features!",
+              );
+            }
           }
         } else {
           console.error(response.data);
@@ -46,24 +58,6 @@ const ProfilePage = () => {
     })();
   }, [router]);
 
-  const handleFormSubmit = async (formData: any) => {
-    setLoading(true);
-    try {
-      await saveDoctorProfile(doctorEmail, formData);
-      toast.success("Profile saved successfully!");
-
-      setIsProfile(true);
-      setRole("doctor");
-
-      router.push("/dashboard");
-    } catch (error) {
-      console.error("Failed to save profile:", error);
-      toast.error("Failed to save profile. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="flex h-dvh w-full justify-center items-center gap-4">
@@ -73,20 +67,17 @@ const ProfilePage = () => {
   }
 
   return (
-    <>
-      <ProfileComponent
-        email={doctorEmail}
-        name=""
-        degrees={[]}
-        designation=""
-        specialization=""
-        phone={[]}
-        bmdcNumber=""
-        digitalSignature=""
-        handleFormSubmit={handleFormSubmit}
-        loading={loading}
-      />
-    </>
+    <div className="relative h-dvh bg-gray-100 flex items-center justify-center p-4">
+      <div
+        onClick={handleLogout}
+        className="absolute top-4 right-4 flex items-center cursor-pointer bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-all duration-200"
+      >
+        <LogOut className="w-5 h-5 mr-2" />
+        <span>Logout</span>
+      </div>
+
+      <ProfileComponent doctor={Doctor} />
+    </div>
   );
 };
 

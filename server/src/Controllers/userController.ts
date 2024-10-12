@@ -17,6 +17,7 @@ export const getUserProfile = async (
       email: user.email,
       role: user.role,
       userId: user.userId,
+      active: user.active,
     };
 
     return res.status(200).json({ success: true, data: response });
