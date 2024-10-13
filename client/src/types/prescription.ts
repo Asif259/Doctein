@@ -1,3 +1,26 @@
+export interface PrescriptionHeader {
+  key: string;
+  doctor: {
+    name: string;
+    degrees: string[];
+    designation: string;
+    specialization: string;
+    email: string;
+    phone: string[];
+    bmdcNumber: string;
+    digitalSignature: string;
+  };
+  patient: {
+    name: string;
+    age: number | string;
+    weight: number | string;
+    phone: string;
+  };
+  date: string;
+  note: string;
+  status: string;
+}
+
 export interface Prescription {
   id: number;
   patientId: number;

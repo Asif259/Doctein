@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Appointment from "../../Models/dashboard/appointment";
 import { IUser } from "../../Models/userModel";
 import Patient from "../../Models/profile/patient";
+import Doctor from "../../Models/profile/doctor";
 
 const saveAppointment = async (req: Request, res: Response): Promise<any> => {
   const { doctorId } = req.body as { user: IUser; doctorId: string };
@@ -76,6 +77,98 @@ const getAppointments = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+const getAppointmentByPatientId = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  const { doctorId } = req.body as { doctorId: string };
+  const { patientId } = req.params;
+  try {
+    if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
+
+    const appointments = await Appointment.find({
+      doctorId,
+      patientId,
+      date: {
+        $ne: null,
+      },
+    })
+      .populate("patientId", "name phone status")
+      .select("patientId date note status");
+
+    const response = appointments.map((appointment) => {
+      const patient = appointment.patientId as any;
+      const date = appointment.date;
+      return {
+        key: appointment._id,
+        patientName: patient.name,
+        phone: patient.phone,
+        date: date,
+        note: appointment.note,
+        status: appointment.status,
+      };
+    });
+    console.log("Response:", response);
+    return res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Error fetching appointments" });
+  }
+};
+
+const getAppointmentById = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { appointmentId } = req.params;
+  try {
+    if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
+
+    console.log("User:", user);
+    const doctor = await Doctor.findById(user.userId);
+    if (!doctor) return res.status(404).json({ data: "Doctor not found" });
+
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment)
+      return res.status(404).json({ data: "Appointment not found" });
+
+    const patient = await Patient.findById(appointment.patientId);
+    if (!patient) return res.status(404).json({ data: "Patient not found" });
+
+    const response = {
+      key: appointment._id,
+      doctor: {
+        name: doctor.name,
+        degrees: doctor.degrees,
+        designation: doctor.designation,
+        specialization: doctor.specialization,
+        email: user.email,
+        phone: doctor.phone,
+        bmdcNumber: doctor.bmdcNumber,
+        digitalSignature: doctor.digitalSignature,
+      },
+      patient: {
+        name: patient.name,
+        age: patient.age,
+        weight: patient.weight,
+        phone: patient.phone,
+      },
+      date: appointment.date,
+      note: appointment.note,
+      status: appointment.status,
+    };
+    return res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    console.error("Error fetching appointment:", error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Error fetching appointment" });
+  }
+};
+
 const updateAppointment = async (req: Request, res: Response): Promise<any> => {
   const { doctorId } = req.body as { doctorId: string };
   const { appointmentId } = req.params;
@@ -134,6 +227,8 @@ const deleteAppointment = async (req: Request, res: Response): Promise<any> => {
 export {
   saveAppointment,
   getAppointments,
+  getAppointmentByPatientId,
+  getAppointmentById,
   updateAppointment,
   deleteAppointment,
 };

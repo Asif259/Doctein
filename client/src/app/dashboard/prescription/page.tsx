@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -9,154 +9,54 @@ import {
   TableRow,
   TableCell,
   Chip,
-  Tooltip,
   Input,
   Button,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
+  Card,
 } from "@nextui-org/react";
-import { EditIcon, EyeIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboard-store";
-import { appointment } from "@/types/dashboard";
-import {
-  deleteAppointment,
-  getAppointments,
-} from "@/api/dashboard/appointmentAPI";
+import { appointment, patient } from "@/types/dashboard";
+import { getAppointmentByPatientId } from "@/api/dashboard/appointmentAPI";
 import toast from "react-hot-toast";
 import { extractDateAndTime } from "@/utilities/timeZone";
-import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
+import Link from "next/link";
+import { getPatients } from "@/api/dashboard/patientAPI";
+import { useRouter } from "next/navigation";
 
-const columns = [
+const patientCols = [
   { name: "PATIENT NAME", uid: "patientName" },
   { name: "PHONE", uid: "phone" },
+  { name: "AGE", uid: "age" },
+];
+
+const appointmentCols = [
+  { name: "DATE", uid: "date" },
+  { name: "TIME", uid: "time" },
   { name: "STATUS", uid: "status" },
-  { name: "ACTIONS", uid: "actions" },
+  { name: "ACTION", uid: "action" },
 ];
 
 export default function Page() {
+  const router = useRouter();
   const [search, setSearch] = React.useState("");
+  const [selectedPatient, setSelectedPatient] = React.useState<string>("");
+  const [selectedAppointment, setSelectedAppointment] =
+    React.useState<string>("");
+  const [appointments, addAppointments] = useState<appointment[]>([]);
   const [filteredAppointments, setFilteredAppointments] = React.useState<
     appointment[]
   >([]);
-  const { appointments, addAppointments } = useDashboardStore((state) => state);
-  const [open, setOpen] = React.useState<boolean>(false);
-  const [updateAppointment, setUpdateAppointment] =
-    React.useState<appointment | null>(null);
-
-  const handleUpdate = (appointment: appointment) => {
-    setUpdateAppointment(appointment);
-    setOpen(true);
-  };
-
-  const handleDelete = useCallback(
-    async (appointment: appointment) => {
-      console.log("Delete Appointment");
-      console.log(appointment);
-      if (!appointment) return;
-
-      // Delete patient
-      const res = await deleteAppointment(appointment.key);
-      if (res?.success) {
-        const latestAppointments = useDashboardStore.getState().appointments;
-        const updatedAppointments = latestAppointments.filter((app) => {
-          return app && app.key !== appointment.key;
-        });
-        addAppointments([...updatedAppointments]);
-        toast.success("Appointment deleted successfully");
-      }
-    },
-    [addAppointments],
-  );
-
-  const renderCell = React.useCallback(
-    (appointment: appointment, columnKey: React.Key) => {
-      const cellValue = appointment[columnKey as keyof appointment];
-
-      switch (columnKey) {
-        case "patientName":
-          return (
-            <div className="flex flex-col">
-              <p className="text-bold text-sm capitalize">{cellValue}</p>
-            </div>
-          );
-        case "date":
-          return (
-            <Chip className="flex flex-col">
-              <p className="text-bold text-sm capitalize">{cellValue}</p>
-            </Chip>
-          );
-        case "time":
-          return (
-            <Chip className="capitalize" size="sm" variant="flat">
-              {cellValue}
-            </Chip>
-          );
-        case "status":
-          return (
-            <Chip className="capitalize" size="sm" variant="flat">
-              {cellValue}
-            </Chip>
-          );
-        case "actions":
-          return (
-            <div className="relative flex justify-center items-center gap-2">
-              <Tooltip content="Prescription">
-                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                  <EyeIcon className="size-5 text-secondary-700" />
-                </span>
-              </Tooltip>
-              <Tooltip content="Edit Appointment">
-                <span
-                  onClick={() => handleUpdate(appointment)}
-                  className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                >
-                  <EditIcon className="size-5 text-warning-500" />
-                </span>
-              </Tooltip>
-              <Tooltip
-                content="Delete Appointment"
-                classNames={{
-                  content: "bg-danger-500 text-white",
-                }}
-              >
-                <span
-                  onClick={() => handleDelete(appointment)}
-                  className="text-lg text-danger cursor-pointer active:opacity-50"
-                >
-                  <TrashIcon className="size-5" />
-                </span>
-              </Tooltip>
-            </div>
-          );
-        default:
-          return cellValue;
-      }
-    },
-    [handleDelete],
-  );
+  const { patients, addPatients } = useDashboardStore((state) => state);
+  const [filteredPatients, setFilteredPatients] = useState<patient[]>(patients);
 
   useEffect(() => {
-    if (!search) {
-      setFilteredAppointments(appointments);
+    console.log("Selected Patient:", selectedPatient);
+    if (!selectedPatient) {
+      setFilteredAppointments([]);
       return;
     }
-
-    const searchValue = search.toLowerCase();
-    const filtered = appointments.filter((appointment) =>
-      Object.values(appointment).some((value) =>
-        String(value).toLowerCase().includes(searchValue),
-      ),
-    );
-
-    setFilteredAppointments(filtered);
-  }, [search]);
-
-  useEffect(() => {
     (async () => {
-      // Fetch appointments
-      const res = await getAppointments();
+      const res = await getAppointmentByPatientId(selectedPatient);
       if (res?.success) {
         if (res.data) {
           const appointments = res.data.map((appointment: appointment) => {
@@ -173,7 +73,43 @@ export default function Page() {
         }
       }
     })();
+  }, [selectedPatient]);
+
+  useEffect(() => {
+    console.log("Selected Appointment:", selectedAppointment);
+  }, [selectedAppointment]);
+
+  useEffect(() => {
+    if (!search) {
+      setFilteredPatients(patients);
+      return;
+    }
+
+    const searchValue = search.toLowerCase();
+    const filtered = patients.filter((patient) =>
+      Object.values(patient).some((value) =>
+        String(value).toLowerCase().includes(searchValue),
+      ),
+    );
+
+    setFilteredPatients(filtered);
+  }, [search]);
+
+  useEffect(() => {
+    (async () => {
+      // Fetch patients
+      const res = await getPatients();
+      if (res?.success) {
+        if (res.data) {
+          addPatients(res.data);
+        }
+      }
+    })();
   }, []);
+
+  useEffect(() => {
+    setFilteredPatients(patients);
+  }, [patients]);
 
   useEffect(() => {
     console.log("Appointments:", appointments);
@@ -182,57 +118,123 @@ export default function Page() {
 
   return (
     <>
-      <Modal className="p-5" size="5xl" isOpen={open} onOpenChange={setOpen}>
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader>Add Appointment</ModalHeader>
-              <ModalBody>
-                <AppointmentForm appointment={updateAppointment} />
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-      <h1 className="text-3xl font-bold mb-8">Appointments</h1>
+      <h1 className="text-3xl font-bold mb-8">Prescriptions</h1>
       <div className="flex justify-between gap-4">
         <Input
           isClearable
           type="search"
           variant="flat"
-          placeholder="Search appointments by name, phone, etc."
+          placeholder="Search prescriptions by name, phone, etc."
           defaultValue=""
           onChange={(e) => setSearch(e.target.value)}
           onClear={() => console.log("input cleared")}
           className="max-w-xs mb-4"
         />
-        <Button
-          startContent={<PlusIcon />}
-          variant="solid"
-          className="bg-secondary-600 text-secondary-100"
-          onClick={() => setOpen(true)}
-        >
-          Add Appointment
-        </Button>
+        <Link href="/dashboard/prescription/add" target="_blank">
+          <Button
+            startContent={<PlusIcon />}
+            variant="solid"
+            className="bg-secondary-600 text-secondary-100"
+          >
+            Add Prescription
+          </Button>
+        </Link>
       </div>
-      <Table aria-label="Example table with custom cells">
-        <TableHeader columns={columns}>
-          {(column) => (
-            <TableColumn key={column.uid} align={"center"}>
-              {column.name}
-            </TableColumn>
-          )}
-        </TableHeader>
-        <TableBody items={filteredAppointments}>
-          {(item) => (
-            <TableRow key={item.key}>
-              {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey)}</TableCell>
+      <div className="flex flex-col lg:flex-row gap-3 lg:gap-0">
+        <div className="flex-1">
+          <Table
+            selectionMode="single"
+            onSelectionChange={(key) => {
+              const set = new Set(key);
+              setSelectedPatient(set.values().next().value as string);
+            }}
+            classNames={{
+              wrapper: "lg:rounded-r-none",
+            }}
+            aria-label="Example table with custom cells"
+          >
+            <TableHeader columns={patientCols}>
+              {(column) => (
+                <TableColumn key={column.uid} align={"center"}>
+                  {column.name}
+                </TableColumn>
               )}
-            </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredPatients.map((patient) => (
+                <TableRow key={patient.key}>
+                  <TableCell>{patient.name}</TableCell>
+                  <TableCell>{patient.phone}</TableCell>
+                  <TableCell>
+                    <Chip color="success">{patient.age}</Chip>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex-1">
+          {selectedPatient ? (
+            <Table
+              selectionMode="single"
+              onSelectionChange={(key) => {
+                const set = new Set(key);
+                setSelectedAppointment(set.values().next().value as string);
+              }}
+              classNames={{
+                base: "h-full",
+                wrapper: "lg:rounded-l-none h-full",
+              }}
+              aria-label="Example table with custom cells"
+            >
+              <TableHeader columns={appointmentCols}>
+                {(column) => (
+                  <TableColumn key={column.uid} align={"center"}>
+                    {column.name}
+                  </TableColumn>
+                )}
+              </TableHeader>
+              <TableBody>
+                {filteredAppointments.map((appointment) => (
+                  <TableRow key={appointment.key}>
+                    <TableCell>{appointment.date}</TableCell>
+                    <TableCell>{appointment.time}</TableCell>
+                    <TableCell>
+                      <Chip color="success">{appointment.status}</Chip>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="solid"
+                        className="bg-secondary-600 text-secondary-100"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/prescription/${appointment.key}`,
+                          )
+                        }
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <Card
+              classNames={{
+                base: "h-full rounded-l-none",
+              }}
+            >
+              <div className="flex flex-col items-center justify-center h-full">
+                <p className="text-lg text-gray-500">
+                  Select a patient to view details
+                </p>
+              </div>
+            </Card>
           )}
-        </TableBody>
-      </Table>
+        </div>
+      </div>
     </>
   );
 }

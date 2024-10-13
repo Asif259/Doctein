@@ -1,12 +1,24 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
 import PrescriptionTemplate from "@/components/prescription/prescription-template";
-import { Button, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Divider,
+  Spinner,
+} from "@nextui-org/react";
 import { useDashboardStore } from "@/store/dashboard-store";
+import { getAppointmentById } from "@/api/dashboard/appointmentAPI";
+import { useRouter } from "next/navigation";
+import { usePrescriptionStore } from "@/store/prescription-store";
 
-function Page({ params }: { params: { patientId: string } }) {
+function Page({ params }: { params: { appointmentId: string } }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(true);
   const printableDiv = useRef<HTMLDivElement>(null);
   const printFn = useReactToPrint({
     contentRef: printableDiv,
@@ -16,17 +28,45 @@ function Page({ params }: { params: { patientId: string } }) {
   });
   const [isPrint, setIsPrint] = useState<boolean>(false);
   const setEditable = useDashboardStore((state) => state.setEditable);
+  const setPrescriptionHeader = usePrescriptionStore(
+    (state) => state.setPrescriptionHeader,
+  );
+
+  // handle appointment ID from params
+  useEffect(() => {
+    (async () => {
+      const appointmentId = params.appointmentId;
+      const res = await getAppointmentById(appointmentId);
+      if (res?.success) {
+        setPrescriptionHeader(res.data);
+        setLoading(false);
+      } else {
+        router.push("/prescription/404");
+      }
+    })();
+  }, []);
 
   const handlePrint = () => {
     setIsPrint(true);
     printFn();
   };
 
+  const handleSave = () => {};
+
+  if (loading) {
+    return (
+      <div className="flex h-dvh w-full justify-center items-center gap-4">
+        <Spinner color="warning" size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex flex-row justify-between items-center mb-5">
         <h1>Prescription App</h1>
         <div className="flex flex-row gap-3">
+          <Button onClick={() => handleSave()}>Save</Button>
           <Button onClick={() => setEditable(false)}>Preview</Button>
           <Button onClick={() => setEditable(true)}>Edit</Button>
           <Button onClick={handlePrint}>Print</Button>

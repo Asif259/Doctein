@@ -5,6 +5,14 @@ const router = express.Router();
 
 router.post("/appointments", appointmentController.saveAppointment);
 router.get("/appointments", appointmentController.getAppointments);
+router.get(
+  "/appointments/patient/:patientId",
+  appointmentController.getAppointmentByPatientId,
+);
+router.get(
+  "/appointments/:appointmentId",
+  appointmentController.getAppointmentById,
+);
 router.put(
   "/appointments/:appointmentId",
   appointmentController.updateAppointment,

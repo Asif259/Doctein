@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Prescription } from "@/types/prescription";
+import { Prescription, PrescriptionHeader } from "@/types/prescription";
 
 interface Modal {
   type: string;
@@ -9,22 +9,27 @@ interface Modal {
 
 interface PrescriptionState {
   isEditable: boolean;
-  prescriptions: Prescription[];
+  prescription: Prescription | null;
+  prescriptionHeader: PrescriptionHeader | null;
   modal: Modal;
   modalOpen: boolean;
-  addPrescriptions: (newPrescriptions: Prescription[]) => void;
+  setPrescription: (newPrescription: Prescription) => void;
+  setPrescriptionHeader: (newPrescriptionHeader: PrescriptionHeader) => void;
   setEditable: (isEditable: boolean) => void;
   setModal: (modal: Modal) => void;
   setModalOpen: (modalOpen: boolean) => void;
 }
 
 const usePrescriptionStore = create<PrescriptionState>((set) => ({
-  prescriptions: [],
+  prescription: null,
+  prescriptionHeader: null,
   isEditable: false,
   modal: { type: "", title: "", id: 0 },
   modalOpen: false,
-  addPrescriptions: (newPrescriptions: Prescription[]) =>
-    set({ prescriptions: [...newPrescriptions] }),
+  setPrescription: (newPrescription: Prescription) =>
+    set({ prescription: newPrescription }),
+  setPrescriptionHeader: (newPrescriptionHeader: PrescriptionHeader) =>
+    set({ prescriptionHeader: newPrescriptionHeader }),
   setEditable: (isEditable: boolean) => set({ isEditable }),
   setModal: (modal: Modal) => set({ modal }),
   setModalOpen: (modalOpen: boolean) => set({ modalOpen }),

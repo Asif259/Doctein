@@ -10,6 +10,27 @@ export const getAppointments = async () => {
   }
 };
 
+// Get an appointment by patient ID
+export const getAppointmentByPatientId = async (patientId: string) => {
+  try {
+    const response = await axios.get(`/appointments/patient/${patientId}`);
+    return response.data;
+  } catch (error: any) {
+    // throw new Error(error.response?.data?.data);
+  }
+};
+
+// Get an appointment by ID
+export const getAppointmentById = async (appointmentId: string | undefined) => {
+  if (!appointmentId) return;
+  try {
+    const response = await axios.get(`/appointments/${appointmentId}`);
+    return response.data;
+  } catch (error: any) {
+    // throw new Error(error.response?.data?.data);
+  }
+};
+
 // Add a new appointment
 export const createAppointment = async (appointment: {
   patientId: string;
