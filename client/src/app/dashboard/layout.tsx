@@ -22,7 +22,7 @@ function DashboardLayout({
           <LeftSidebar />
           <main className="flex-grow overflow-y-scroll bg-secondary-200">
             <div className="flex">
-              <main className="flex-1 overflow-y-auto p-8">{children}</main>
+              <main className="flex-1 overflow-y-auto p-7">{children}</main>
             </div>
           </main>
         </div>

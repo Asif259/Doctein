@@ -1,19 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+} from "@nextui-org/react";
 import { getDoctor } from "@/api/dashboard/profileAPI";
 import DoctorProfile from "@/components/dashboard/profile/doctor-profile";
 import ProfileComponent from "@/components/profile-component";
 import { Spinner, Button } from "@nextui-org/react";
-import { FaEdit, FaWindowClose } from "react-icons/fa";
+import { FaEdit } from "react-icons/fa";
 import { useProfileStore } from "@/store/profile-store";
+import { doctor } from "@/types/dashboard";
 
 const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const { Doctor, addDoctor } = useProfileStore((state) => state);
+  const { Doctor, addDoctor, onProfileUpdate } = useProfileStore((state) => state);
   const [email, setEmail] = useState<string | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
+  const [updateProfile, setUpdateProfile] = useState<doctor | null>(null);
 
   const fetchDoctorProfile = async () => {
     try {
@@ -33,10 +41,15 @@ const ProfilePage = () => {
     fetchDoctorProfile();
   }, []);
 
-  // switch back to DoctorProfile view
-  const handleProfileUpdate = async () => {
-    await fetchDoctorProfile();
-    setIsEditing(false);
+  const handleProfileUpdate = async (doctor: doctor) => {
+    try {
+      setUpdateProfile(doctor);
+      onProfileUpdate(doctor);
+      await fetchDoctorProfile();
+      setOpen(false);
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+    }
   };
 
   if (loading) {
@@ -49,26 +62,43 @@ const ProfilePage = () => {
 
   return (
     <>
+      <Modal
+        className="bg-secondary-100"
+        size="2xl"
+        isOpen={open}
+        onOpenChange={setOpen}
+        shouldBlockScroll={true}
+      >
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader>Update Profile</ModalHeader>
+              <ModalBody>
+                <ProfileComponent doctor={Doctor} onProfileUpdate={handleProfileUpdate} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
       <div className="flex justify-between items-center mb-1">
         <h1 className="text-3xl font-bold">Profile</h1>
         <Button
-          startContent={isEditing ? <FaWindowClose /> : <FaEdit />}
+          startContent={<FaEdit />}
           color="secondary"
           className="flex items-center gap-2 bg-secondary-600 text-secondary-100"
-          onClick={() => setIsEditing((prev) => !prev)}
+          onClick={() => setOpen(true)}
         >
-          {isEditing ? "Close" : "Edit"}
+          Edit
         </Button>
       </div>
 
-      {isEditing ? (
-        <ProfileComponent
-          doctor={Doctor}
-          onProfileUpdate={handleProfileUpdate}
-        />
+      {Doctor ? (
+          <DoctorProfile doctor={Doctor} email={email || ""} />
       ) : (
-        <DoctorProfile doctor={Doctor} email={email || ""} />
+          <div>No doctor profile available</div>
       )}
+
     </>
   );
 };

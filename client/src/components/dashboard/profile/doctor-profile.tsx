@@ -4,7 +4,7 @@ import { Card, CardBody, CardHeader, Avatar, Chip } from "@nextui-org/react";
 import { FaPhone, FaEnvelope, FaSignature, FaStethoscope } from "react-icons/fa";
 import { doctor } from "@/types/dashboard";
 
-function DoctorProfile({ doctor, email }: { doctor: Doctor | null; email: string }) {
+function DoctorProfile({ doctor, email }: { doctor: doctor; email: string }) {
   const { name, designation, degrees, specialization, phone, bmdcNumber, digitalSignature } = doctor;
 
   const avatarFallback = name ? name.split(" ").map((n) => n[0]).join("") : "Dr";

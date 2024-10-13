@@ -75,10 +75,13 @@ const ProfilePage = () => {
         <LogOut className="w-5 h-5 mr-2" />
         <span>Logout</span>
       </div>
-
-      <ProfileComponent doctor={Doctor} />
+  
+      <div className="border border-secondary-300 shadow-lg rounded-lg bg-secondary-100 w-full max-w-2xl"> {/* Added border and shadow */}
+        <ProfileComponent doctor={Doctor} onProfileUpdate={() => {}} />
+      </div>
     </div>
   );
+  
 };
 
 export default ProfilePage;

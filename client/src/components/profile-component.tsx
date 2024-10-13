@@ -21,13 +21,7 @@ import { doctor } from "@/types/dashboard";
 import { useProfileStore } from "@/store/profile-store";
 import { MdOutlineCancel } from "react-icons/md";
 
-function ProfileComponent({
-  doctor,
-  onProfileUpdate,
-}: {
-  doctor: doctor | null;
-  onProfileUpdate: () => void;
-}) {
+const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; onProfileUpdate: (doctor: doctor) => void }) => {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const { Doctor, addDoctor } = useProfileStore((state) => state);
@@ -94,7 +88,7 @@ function ProfileComponent({
           if (res?.success) {
             addDoctor(res.data);
             toast.success("Profile updated successfully");
-            onProfileUpdate();
+            onProfileUpdate(doctor);
           }
         } else {
           // Creating new doctor profile
@@ -136,18 +130,18 @@ function ProfileComponent({
   };
 
   return (
-    <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-secondary-100">
+    <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-secondary-100 border-none shadow-none">
       <CardHeader className="flex flex-col items-center pb-0 pt-6">
         <Avatar
           src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
           alt={formik.values.name}
-          className="w-20 h-20 text-large"
+          className="text-large"
+          style={{height: "90px", width: "90px"}}
           fallback={formik.values.name
             .split(" ")
             .map((n) => n[0])
             .join("")}
         />
-        <h2 className="text-2xl font-bold mt-4 text-slate-900">Profile</h2>
       </CardHeader>
       <CardBody className="flex flex-col gap-6 relative p-9">
         <form
