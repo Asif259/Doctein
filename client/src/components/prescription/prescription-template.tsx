@@ -15,6 +15,7 @@ import { useDashboardStore } from "@/store/dashboard-store";
 import PrescriptionModal from "@/components/prescription/prescription-modal";
 import { usePrescriptionStore } from "@/store/prescription-store";
 import { getPrescriptionById } from "@/api/dashboard/prescriptionAPI";
+import toast from "react-hot-toast";
 
 const PrescriptionTemplate = forwardRef<
   HTMLDivElement,
@@ -42,7 +43,7 @@ const PrescriptionTemplate = forwardRef<
           if (res.data) {
             setPrescription({
               complaints: res.data.complaints,
-              medicines: res.data.medicines,
+              medications: res.data.medications,
               instructions: res.data.instructions,
               followUpDate: res.data.followUp,
               history: res.data.history,
@@ -50,17 +51,22 @@ const PrescriptionTemplate = forwardRef<
               investigations: res.data.investigations,
               appointmentId: appointmentId,
             });
+            toast.success("Prescription loaded successfully");
           }
+        } else {
+          toast.success("Add new prescription");
+          setPrescription({
+            ...prescription,
+            appointmentId: appointmentId,
+          });
         }
       })();
     }, []);
 
-    const handleAdd = (title: string) => {
+    const handleAdd = () => {
       setModal({
         type: "medication",
         action: "add",
-        title: `Add ${title}`,
-        id: 0,
       });
       setModalOpen(true);
     };
@@ -73,7 +79,6 @@ const PrescriptionTemplate = forwardRef<
         <PrescriptionModal
           type={modal?.type}
           action={modal?.action}
-          // title={modal?.title}
           isOpen={modalOpen}
           onOpenChange={setModalOpen}
         />
@@ -165,21 +170,21 @@ const PrescriptionTemplate = forwardRef<
               </h2>
               {isEditable && (
                 <Button
-                  onClick={() => handleAdd("Medicine")}
+                  onClick={() => handleAdd()}
                   className="min-w-6 h-6 p-0 text-white bg-success"
                   startContent={<PlusIcon size="20" className="font-black" />}
                 />
               )}
             </div>
             <div className="space-y-4">
-              {prescription?.medicines?.map((medicine, index) => (
+              {prescription?.medications?.map((medication, index) => (
                 <Medication
                   key={index}
-                  type={medicine.type}
-                  name={medicine.name}
-                  dosage={medicine.dosage}
-                  duration={medicine.duration}
-                  frequency={medicine.frequency}
+                  type={medication.type}
+                  name={medication.name}
+                  dosage={medication.dosage}
+                  duration={medication.duration}
+                  frequency={medication.frequency}
                 />
               ))}
             </div>
@@ -225,12 +230,10 @@ export function Section({
   const isEditable = useDashboardStore((state) => state.isEditable);
   const { setModal, setModalOpen } = usePrescriptionStore((state) => state);
 
-  const handleAdd = (title: string) => {
+  const handleAdd = () => {
     setModal({
       type,
       action: "add",
-      title: `Add ${title}`,
-      id: 0,
     });
     setModalOpen(true);
   };
@@ -242,7 +245,7 @@ export function Section({
           <span className="ml-2">{title}</span>
           {isEditable && (
             <Button
-              onClick={() => handleAdd(title)}
+              onClick={() => handleAdd()}
               className="min-w-6 h-6 p-0 text-white bg-success"
               startContent={<PlusIcon size="20" className="font-black" />}
             />
@@ -266,12 +269,10 @@ function Header({
   const isEditable = useDashboardStore((state) => state.isEditable);
   const { setModal, setModalOpen } = usePrescriptionStore((state) => state);
 
-  const handleAdd = (title: string) => {
+  const handleAdd = () => {
     setModal({
       type,
       action: "add",
-      title: `Add ${title}`,
-      id: 0,
     });
     setModalOpen(true);
   };
@@ -282,7 +283,7 @@ function Header({
       <h3 className="font-semibold mb-1">{title}</h3>
       {isEditable && (
         <Button
-          onClick={() => handleAdd(title)}
+          onClick={() => handleAdd()}
           className="min-w-6 h-6 p-0 text-white bg-success"
           startContent={<PlusIcon size="20" className="font-black" />}
         />
@@ -303,21 +304,19 @@ function ListItem({
   const isEditable = useDashboardStore((state) => state.isEditable);
   const { setModal, setModalOpen } = usePrescriptionStore((state) => state);
 
-  const handleEdit = (id: string, title: string) => {
+  const handleEdit = (id: string) => {
     setModal({
       type,
       action: "edit",
-      title: title,
       id: parseInt(id),
     });
     setModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = (id: string) => {
     setModal({
       type,
       action: "delete",
-      title: title,
       id: parseInt(id),
     });
     setModalOpen(true);
@@ -333,12 +332,12 @@ function ListItem({
         {isEditable && (
           <div className="flex flex-row gap-1">
             <Button
-              onClick={() => handleEdit("1", "Edit Instruction")}
+              onClick={() => handleEdit("1")}
               className="min-w-5 h-5 p-0 bg-warning-600 text-warning-100"
               startContent={<EditIcon size="12" />}
             />
             <Button
-              onClick={() => handleDelete("1", "Delete Instruction")}
+              onClick={() => handleDelete("1")}
               className="min-w-5 h-5 p-0 bg-danger-600 text-danger-100"
               startContent={<CloseIcon fontSize="12" />}
             />
@@ -367,21 +366,19 @@ function Medication({
   const isEditable = useDashboardStore((state) => state.isEditable);
   const { setModal, setModalOpen } = usePrescriptionStore((state) => state);
 
-  const handleEdit = (id: string, title: string) => {
+  const handleEdit = (id: string) => {
     setModal({
       type: "medication",
       action: "edit",
-      title: title,
       id: parseInt(id),
     });
     setModalOpen(true);
   };
 
-  const handleDelete = (id: string, title: string) => {
+  const handleDelete = (id: string) => {
     setModal({
       type: "medication",
       action: "delete",
-      title: title,
       id: parseInt(id),
     });
     setModalOpen(true);
@@ -400,12 +397,12 @@ function Medication({
       {isEditable && (
         <div className="flex flex-row gap-1">
           <Button
-            onClick={() => handleEdit("1", "Edit Medication")}
+            onClick={() => handleEdit("1")}
             className="min-w-5 h-5 p-0 bg-warning-600 text-warning-100"
             startContent={<EditIcon size="12" />}
           />
           <Button
-            onClick={() => handleDelete("1", "Delete Medication")}
+            onClick={() => handleDelete("1")}
             className="min-w-5 h-5 p-0 bg-danger-600 text-danger-100"
             startContent={<CloseIcon fontSize="12" />}
           />

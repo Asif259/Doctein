@@ -15,6 +15,8 @@ import { useDashboardStore } from "@/store/dashboard-store";
 import { getAppointmentById } from "@/api/dashboard/appointmentAPI";
 import { useRouter } from "next/navigation";
 import { usePrescriptionStore } from "@/store/prescription-store";
+import { savePrescription } from "@/api/dashboard/prescriptionAPI";
+import toast from "react-hot-toast";
 
 function Page({ params }: { params: { appointmentId: string } }) {
   const router = useRouter();
@@ -54,8 +56,15 @@ function Page({ params }: { params: { appointmentId: string } }) {
   };
 
   // handle save prescription to database
-  const handleSave = () => {
-    console.log(prescription);
+  const handleSave = async () => {
+    console.log("Prescription:", prescription);
+    if (prescription.appointmentId === "") {
+      return;
+    }
+    const res = await savePrescription(prescription);
+    if (res?.success) {
+      toast.success("Prescription saved successfully");
+    }
   };
 
   if (loading) {

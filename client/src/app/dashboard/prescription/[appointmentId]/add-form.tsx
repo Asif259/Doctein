@@ -21,21 +21,36 @@ function AddForm({
   action: string;
   onClose: () => void;
 }) {
+  const prescription = usePrescriptionStore((state) => state.prescription);
+
   switch (type) {
     case "medication":
-      return <MedicationForm onClose={onClose} />;
+      return (
+        <MedicationForm data={prescription.medications} onClose={onClose} />
+      );
     case "instruction":
-      return <InstructionForm onClose={onClose} />;
+      return (
+        <InstructionForm data={prescription.instructions} onClose={onClose} />
+      );
     case "complaint":
-      return <ComplaintForm onClose={onClose} />;
+      return <ComplaintForm data={prescription.complaints} onClose={onClose} />;
     case "history":
-      return <HistoryForm onClose={onClose} />;
+      return <HistoryForm data={prescription.history} onClose={onClose} />;
     case "diagnosis":
-      return <DiagnosisForm onClose={onClose} />;
+      return (
+        <DiagnosisForm data={prescription.diagnosisList} onClose={onClose} />
+      );
     case "investigation":
-      return <InvestigationForm onClose={onClose} />;
+      return (
+        <InvestigationForm
+          data={prescription.investigations}
+          onClose={onClose}
+        />
+      );
     case "followUp":
-      return <FollowUpForm onClose={onClose} />;
+      return (
+        <FollowUpForm data={prescription.followUpDate} onClose={onClose} />
+      );
     default:
       return <p>No form found</p>;
   }
@@ -43,12 +58,18 @@ function AddForm({
 
 export default AddForm;
 
-function MedicationForm({ onClose }: { onClose: () => void }) {
+function MedicationForm({
+  data,
+  onClose,
+}: {
+  data: Medication[];
+  onClose: () => void;
+}) {
   const addMedication = usePrescriptionStore((state) => state.addMedication);
 
   const formik = useFormik<Medication>({
     initialValues: {
-      id: "1",
+      id: 0,
       type: "",
       name: "",
       dosage: "",
@@ -57,7 +78,10 @@ function MedicationForm({ onClose }: { onClose: () => void }) {
       note: "",
     },
     onSubmit: (values) => {
-      addMedication(values);
+      addMedication({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -90,16 +114,25 @@ function MedicationForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function InstructionForm({ onClose }: { onClose: () => void }) {
+function InstructionForm({
+  data,
+  onClose,
+}: {
+  data: Instructions[];
+  onClose: () => void;
+}) {
   const addInstruction = usePrescriptionStore((state) => state.addInstruction);
 
   const formik = useFormik<Instructions>({
     initialValues: {
-      id: "",
+      id: 0,
       instruction: "",
     },
     onSubmit: (values) => {
-      addInstruction(values);
+      addInstruction({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -115,7 +148,13 @@ function InstructionForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function ComplaintForm({ onClose }: { onClose: () => void }) {
+function ComplaintForm({
+  data,
+  onClose,
+}: {
+  data: Complaint[];
+  onClose: () => void;
+}) {
   const addComplaint = usePrescriptionStore((state) => state.addComplaint);
 
   const formik = useFormik<Complaint>({
@@ -124,10 +163,13 @@ function ComplaintForm({ onClose }: { onClose: () => void }) {
       duration: "",
       severity: "",
       description: "",
-      id: "",
+      id: 0,
     },
     onSubmit: (values) => {
-      addComplaint(values);
+      addComplaint({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -148,7 +190,13 @@ function ComplaintForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function HistoryForm({ onClose }: { onClose: () => void }) {
+function HistoryForm({
+  data,
+  onClose,
+}: {
+  data: History[];
+  onClose: () => void;
+}) {
   const addHistory = usePrescriptionStore((state) => state.addHistory);
 
   const formik = useFormik<History>({
@@ -156,10 +204,13 @@ function HistoryForm({ onClose }: { onClose: () => void }) {
       diagnosis: "",
       description: "",
       duration: "",
-      id: "",
+      id: 0,
     },
     onSubmit: (values) => {
-      addHistory(values);
+      addHistory({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -177,7 +228,13 @@ function HistoryForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function DiagnosisForm({ onClose }: { onClose: () => void }) {
+function DiagnosisForm({
+  data,
+  onClose,
+}: {
+  data: Diagnosis[];
+  onClose: () => void;
+}) {
   const addDiagnosis = usePrescriptionStore((state) => state.addDiagnosis);
 
   const formik = useFormik<Diagnosis>({
@@ -185,10 +242,13 @@ function DiagnosisForm({ onClose }: { onClose: () => void }) {
       name: "",
       description: "",
       date: "",
-      id: "",
+      id: 0,
     },
     onSubmit: (values) => {
-      addDiagnosis(values);
+      addDiagnosis({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -206,7 +266,13 @@ function DiagnosisForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function InvestigationForm({ onClose }: { onClose: () => void }) {
+function InvestigationForm({
+  data,
+  onClose,
+}: {
+  data: Investigation[];
+  onClose: () => void;
+}) {
   const addInvestigation = usePrescriptionStore(
     (state) => state.addInvestigation,
   );
@@ -216,10 +282,13 @@ function InvestigationForm({ onClose }: { onClose: () => void }) {
       name: "",
       description: "",
       date: "",
-      id: "",
+      id: 0,
     },
     onSubmit: (values) => {
-      addInvestigation(values);
+      addInvestigation({
+        ...values,
+        id: data.length + 1,
+      });
     },
   });
 
@@ -237,7 +306,13 @@ function InvestigationForm({ onClose }: { onClose: () => void }) {
   );
 }
 
-function FollowUpForm({ onClose }: { onClose: () => void }) {
+function FollowUpForm({
+  data,
+  onClose,
+}: {
+  data: string;
+  onClose: () => void;
+}) {
   const setFollowUpDate = usePrescriptionStore(
     (state) => state.setFollowUpDate,
   );

@@ -24,7 +24,7 @@ export interface PrescriptionHeader {
 export interface Prescription {
   id?: string;
   appointmentId: string;
-  medicines: Medication[] | [];
+  medications: Medication[] | [];
   instructions: Instructions[] | [];
   complaints: Complaint[] | [];
   history: History[] | [];
@@ -35,7 +35,7 @@ export interface Prescription {
 }
 
 export interface Medication {
-  id: string;
+  id: number;
   type: string;
   name: string;
   dosage: string;
@@ -45,12 +45,12 @@ export interface Medication {
 }
 
 export interface Instructions {
-  id: string;
+  id: number;
   instruction: string;
 }
 
 export interface Complaint {
-  id: string;
+  id: number;
   complaint: string;
   duration: string;
   severity: string;
@@ -58,21 +58,21 @@ export interface Complaint {
 }
 
 export interface History {
-  id: string;
+  id: number;
   diagnosis: string;
   description?: string;
   duration?: string;
 }
 
 export interface Diagnosis {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   date?: string;
 }
 
 export interface Investigation {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   date?: string;

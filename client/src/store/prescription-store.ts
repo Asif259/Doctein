@@ -20,8 +20,7 @@ interface Modal {
     | "diagnosis"
     | "investigation";
   action: "add" | "edit" | "delete";
-  title: string;
-  id: number;
+  id?: number;
 }
 
 interface PrescriptionState {
@@ -47,7 +46,7 @@ interface PrescriptionState {
 const usePrescriptionStore = create<PrescriptionState>((set) => ({
   prescription: {
     appointmentId: "",
-    medicines: [],
+    medications: [],
     instructions: [],
     complaints: [],
     history: [],
@@ -67,7 +66,7 @@ const usePrescriptionStore = create<PrescriptionState>((set) => ({
     set((state) => ({
       prescription: {
         ...state.prescription,
-        medicines: [...state.prescription?.medicines, medication],
+        medications: [...state.prescription?.medications, medication],
       },
     })),
   addInstruction: (instruction: Instructions) =>

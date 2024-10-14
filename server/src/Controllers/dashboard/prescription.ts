@@ -20,18 +20,25 @@ const addPrescription = async (req: Request, res: Response): Promise<any> => {
   try {
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
 
-    const prescription = new Prescription({
-      appointmentId,
-      ...(snapshot && { snapshot }),
-      ...(medications && { medications }),
-      ...(instructions && { instructions }),
-      ...(complaints && { complaints }),
-      ...(history && { history }),
-      ...(diagnosisList && { diagnosisList }),
-      ...(investigations && { investigations }),
-      ...(followUpDate && { followUpDate }),
-    });
-    await prescription.save();
+    const prescription = await Prescription.findOneAndUpdate(
+      {
+        appointmentId,
+      },
+      {
+        ...(snapshot && { snapshot }),
+        ...(medications && { medications }),
+        ...(instructions && { instructions }),
+        ...(complaints && { complaints }),
+        ...(history && { history }),
+        ...(diagnosisList && { diagnosisList }),
+        ...(investigations && { investigations }),
+        ...(followUpDate && { followUpDate }),
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
 
     const response = {
       id: prescription._id,

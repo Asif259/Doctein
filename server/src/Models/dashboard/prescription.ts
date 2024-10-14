@@ -1,7 +1,7 @@
 import { Schema, model, Document, ObjectId } from "mongoose";
 
 export interface IMedication extends Document {
-  id: string;
+  id: number;
   type: string;
   name: string;
   dosage: string;
@@ -11,12 +11,12 @@ export interface IMedication extends Document {
 }
 
 export interface IInstructions extends Document {
-  id: string;
+  id: number;
   instruction: string;
 }
 
 export interface IComplaint extends Document {
-  id: string;
+  id: number;
   complaint: string;
   duration: string;
   severity: string;
@@ -24,21 +24,21 @@ export interface IComplaint extends Document {
 }
 
 export interface IHistory extends Document {
-  id: string;
+  id: number;
   diagnosis: string;
   description?: string;
   duration?: string;
 }
 
 export interface IDiagnosis extends Document {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   date?: string;
 }
 
 export interface IInvestigation extends Document {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   date?: string;
@@ -47,12 +47,12 @@ export interface IInvestigation extends Document {
 export interface IPrescription extends Document {
   snapshot?: string;
   appointmentId: ObjectId;
-  medications?: IMedication[];
-  instructions?: IInstructions[];
-  complaints?: IComplaint[];
-  history?: IHistory[];
-  diagnosisList?: IDiagnosis[];
-  investigations?: IInvestigation[];
+  medications?: IMedication[] | [];
+  instructions?: IInstructions[] | [];
+  complaints?: IComplaint[] | [];
+  history?: IHistory[] | [];
+  diagnosisList?: IDiagnosis[] | [];
+  investigations?: IInvestigation[] | [];
   followUpDate?: string;
 }
 
@@ -67,17 +67,19 @@ const prescriptionSchema = new Schema<IPrescription>(
     snapshot: String,
     medications: [
       {
+        id: Number,
         type: { type: String },
-        name: { type: String },
-        dosage: { type: String },
-        duration: { type: String },
-        frequency: { type: String },
-        note: { type: String },
+        name: String,
+        dosage: String,
+        duration: String,
+        frequency: String,
+        note: String,
       },
     ],
-    instructions: [{ instruction: String }],
+    instructions: [{ id: Number, instruction: String }],
     complaints: [
       {
+        id: Number,
         complaint: String,
         duration: String,
         severity: String,
@@ -85,14 +87,14 @@ const prescriptionSchema = new Schema<IPrescription>(
       },
     ],
     history: [
-      {
-        diagnosis: String,
-        description: String,
-        duration: String,
-      },
+      { id: Number, diagnosis: String, description: String, duration: String },
     ],
-    diagnosisList: [{ name: String, description: String, date: String }],
-    investigations: [{ name: String, description: String, date: String }],
+    diagnosisList: [
+      { id: Number, name: String, description: String, date: String },
+    ],
+    investigations: [
+      { id: Number, name: String, description: String, date: String },
+    ],
     followUpDate: String,
   },
   { timestamps: true },
