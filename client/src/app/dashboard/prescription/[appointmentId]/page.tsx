@@ -31,6 +31,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
   const setPrescriptionHeader = usePrescriptionStore(
     (state) => state.setPrescriptionHeader,
   );
+  const prescription = usePrescriptionStore((state) => state.prescription);
 
   // handle appointment ID from params
   useEffect(() => {
@@ -46,12 +47,16 @@ function Page({ params }: { params: { appointmentId: string } }) {
     })();
   }, []);
 
+  // handle print prescription
   const handlePrint = () => {
     setIsPrint(true);
     printFn();
   };
 
-  const handleSave = () => {};
+  // handle save prescription to database
+  const handleSave = () => {
+    console.log(prescription);
+  };
 
   if (loading) {
     return (
@@ -91,9 +96,13 @@ function Page({ params }: { params: { appointmentId: string } }) {
         </div>
         <div className="w-3/4">
           {isPrint ? (
-            <PrescriptionTemplate />
+            <PrescriptionTemplate appointmentId={params.appointmentId} />
           ) : (
-            <PrescriptionTemplate ref={printableDiv} isPrint={isPrint} />
+            <PrescriptionTemplate
+              appointmentId={params.appointmentId}
+              ref={printableDiv}
+              isPrint={isPrint}
+            />
           )}
         </div>
       </div>

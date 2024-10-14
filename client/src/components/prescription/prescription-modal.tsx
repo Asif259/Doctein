@@ -1,21 +1,27 @@
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
+import AddForm from "@/app/dashboard/prescription/[appointmentId]/add-form";
+import React from "react";
 
 export default function PrescriptionModal({
   title,
+  type,
+  action,
   isOpen,
   onOpenChange,
 }: {
-  title: string;
+  title?: string;
+  type?: string;
+  action?: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
+  const renderModal = (onClose: () => void, type?: string, action?: string) => {
+    if (!type || !action) {
+      return <p>No type or action</p>;
+    }
+    return <AddForm onClose={onClose} action={action} type={type} />;
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -23,25 +29,7 @@ export default function PrescriptionModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>
-                <p>Modal content</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  className="text-danger-500 border-danger-500"
-                  variant="bordered"
-                  onPress={onClose}
-                >
-                  Close
-                </Button>
-                <Button
-                  className="bg-secondary-600 text-secondary-50"
-                  variant="solid"
-                  onPress={onClose}
-                >
-                  Save
-                </Button>
-              </ModalFooter>
+              <ModalBody>{renderModal(onClose, type, action)}</ModalBody>
             </>
           )}
         </ModalContent>

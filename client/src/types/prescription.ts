@@ -22,62 +22,58 @@ export interface PrescriptionHeader {
 }
 
 export interface Prescription {
-  id: number;
-  patientId: number;
-  date: string;
-  symptoms: string;
-  diagnosis: string;
-  medicines?: Medication[];
-  advice?: Advice[];
-  followUp?: FollowUp[];
-  complaints?: Complaint[];
-  history?: History[];
-  diagnosisList?: Diagnosis[];
-  investigations?: Investigation[];
+  id?: string;
+  appointmentId: string;
+  medicines: Medication[] | [];
+  instructions: Instructions[] | [];
+  complaints: Complaint[] | [];
+  history: History[] | [];
+  diagnosisList: Diagnosis[] | [];
+  investigations: Investigation[] | [];
+  followUpDate: string;
   isEditable?: boolean;
 }
 
 export interface Medication {
-  id: number;
+  id: string;
   type: string;
   name: string;
   dosage: string;
   duration: string;
+  frequency: string;
   note: string;
 }
 
-export interface Advice {
-  id: number;
-  advice: string;
-}
-
-export interface FollowUp {
-  id: number;
-  followUp: string;
+export interface Instructions {
+  id: string;
+  instruction: string;
 }
 
 export interface Complaint {
-  id: number;
-  name: string;
-  description?: string;
-  duration?: string;
+  id: string;
+  complaint: string;
+  duration: string;
+  severity: string;
+  description: string;
 }
 
 export interface History {
-  id: number;
-  name: string;
+  id: string;
+  diagnosis: string;
   description?: string;
   duration?: string;
 }
 
 export interface Diagnosis {
-  id: number;
+  id: string;
   name: string;
   description?: string;
+  date?: string;
 }
 
 export interface Investigation {
-  id: number;
+  id: string;
   name: string;
   description?: string;
+  date?: string;
 }

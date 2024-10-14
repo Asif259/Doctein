@@ -7,89 +7,58 @@ import {
   PlusIcon,
   PillIcon,
 } from "lucide-react";
-import { forwardRef, ReactNode, useEffect, useState } from "react";
+import { forwardRef, ReactNode, useEffect } from "react";
 import PrescriptionHeader from "@/components/prescription/prescription-header";
-import axios from "axios";
 import { Button } from "@nextui-org/react";
 import { CloseIcon } from "@nextui-org/shared-icons";
 import { useDashboardStore } from "@/store/dashboard-store";
 import PrescriptionModal from "@/components/prescription/prescription-modal";
 import { usePrescriptionStore } from "@/store/prescription-store";
+import { getPrescriptionById } from "@/api/dashboard/prescriptionAPI";
 
-const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
-  ({ isPrint = false }: { isPrint?: boolean }, ref) => {
-    const [complaints, setComplaints] = useState<
-      {
-        complaint: string;
-        duration: string;
-        severity: string;
-        description: string;
-      }[]
-    >([]);
-    const [history, setHistory] = useState<
-      {
-        duration: string;
-        description: string;
-        diagnosis: string;
-      }[]
-    >([]);
-    const [diagnosis, setDiagnosis] = useState<
-      {
-        name: string;
-        description: string;
-        date: string;
-      }[]
-    >([]);
-    const [investigation, setInvestigation] = useState<
-      {
-        name: string;
-        description: string;
-        date: string;
-      }[]
-    >([]);
-    const [medicines, setMedicines] = useState<
-      {
-        type: string;
-        name: string;
-        dosage: string;
-        duration: string;
-        frequency: string;
-      }[]
-    >([]);
-    const [instructions, setInstructions] = useState<
-      {
-        id: number;
-        instruction: string;
-      }[]
-    >([]);
-    const [followUp, setFollowUp] = useState<{
-      date: string;
-      time: string;
-    } | null>(null);
-
+const PrescriptionTemplate = forwardRef<
+  HTMLDivElement,
+  { isPrint?: boolean; appointmentId: string }
+>(
+  (
+    {
+      isPrint = false,
+      appointmentId,
+    }: { isPrint?: boolean; appointmentId: string },
+    ref,
+  ) => {
     const isEditable = useDashboardStore((state) => state.isEditable);
     const { modal, setModal, modalOpen, setModalOpen } = usePrescriptionStore(
+      (state) => state,
+    );
+    const { prescription, setPrescription } = usePrescriptionStore(
       (state) => state,
     );
 
     useEffect(() => {
       (async () => {
-        const res = await axios.get("/prescription.json");
-        if (res.data) {
-          setComplaints(res.data.complaints);
-          setHistory(res.data.history);
-          setDiagnosis(res.data.diagnosis);
-          setInvestigation(res.data.investigations);
-          setMedicines(res.data.medicines);
-          setInstructions(res.data.instructions);
-          setFollowUp(res.data.followUp);
+        const res = await getPrescriptionById(appointmentId);
+        if (res?.success) {
+          if (res.data) {
+            setPrescription({
+              complaints: res.data.complaints,
+              medicines: res.data.medicines,
+              instructions: res.data.instructions,
+              followUpDate: res.data.followUp,
+              history: res.data.history,
+              diagnosisList: res.data.diagnosis,
+              investigations: res.data.investigations,
+              appointmentId: appointmentId,
+            });
+          }
         }
       })();
     }, []);
 
     const handleAdd = (title: string) => {
       setModal({
-        type: "add",
+        type: "medication",
+        action: "add",
         title: `Add ${title}`,
         id: 0,
       });
@@ -102,7 +71,9 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
         className={`${isPrint ? "w-[210mm] h-[297mm]" : "w-full h-full"} mx-auto p-8 rounded-lg bg-white shadow-lg print:shadow-none`}
       >
         <PrescriptionModal
-          title={modal?.title}
+          type={modal?.type}
+          action={modal?.action}
+          // title={modal?.title}
           isOpen={modalOpen}
           onOpenChange={setModalOpen}
         />
@@ -110,12 +81,17 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
         <div className="flex">
           <div className="w-1/3 pr-4">
             <Section
+              type="complaint"
               title="Chief Complaints"
               icon={<ClipboardList className="w-4 h-4" />}
             >
               <ul className="list-disc pl-5 text-sm">
-                {complaints.map((complaint, index) => (
-                  <ListItem description={complaint.description} key={index}>
+                {prescription?.complaints?.map((complaint, index) => (
+                  <ListItem
+                    type="complaint"
+                    description={complaint.description}
+                    key={index}
+                  >
                     {complaint.complaint} ({complaint.duration}) -{" "}
                     {complaint.severity}
                   </ListItem>
@@ -123,10 +99,18 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
               </ul>
             </Section>
 
-            <Section title="History" icon={<FileText className="w-4 h-4" />}>
+            <Section
+              type="history"
+              title="History"
+              icon={<FileText className="w-4 h-4" />}
+            >
               <ul className="list-disc pl-5 text-sm">
-                {history.map((item, index) => (
-                  <ListItem description={item.description} key={index}>
+                {prescription?.history?.map((item, index) => (
+                  <ListItem
+                    type="history"
+                    description={item.description}
+                    key={index}
+                  >
                     {item.description} (for {item.duration})
                   </ListItem>
                 ))}
@@ -134,12 +118,13 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
             </Section>
 
             <Section
+              type="diagnosis"
               title="Diagnosis"
               icon={<Stethoscope className="w-4 h-4" />}
             >
               <ul className="list-disc pl-5 text-sm">
-                {diagnosis.map((item, index) => (
-                  <ListItem key={index}>
+                {prescription?.diagnosisList?.map((item, index) => (
+                  <ListItem type="diagnosis" key={index}>
                     {item.name} -{" "}
                     <span className="text-[11px] text-gray-600">
                       ({item.date})
@@ -150,12 +135,17 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
             </Section>
 
             <Section
+              type="investigation"
               title="Investigation"
               icon={<Activity className="w-4 h-4" />}
             >
               <ul className="list-disc pl-5 text-sm">
-                {investigation.map((item, index) => (
-                  <ListItem description={item.description} key={index}>
+                {prescription?.investigations?.map((item, index) => (
+                  <ListItem
+                    type="investigation"
+                    description={item.description}
+                    key={index}
+                  >
                     {item.name} -{" "}
                     <span className="text-[11px] text-gray-600">
                       ({item.date})
@@ -182,7 +172,7 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
               )}
             </div>
             <div className="space-y-4">
-              {medicines.map((medicine, index) => (
+              {prescription?.medicines?.map((medicine, index) => (
                 <Medication
                   key={index}
                   type={medicine.type}
@@ -195,20 +185,23 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
             </div>
 
             <div className="mt-6">
-              <Header title="Instructions" />
+              <Header type="instruction" title="Instructions" />
               {
                 <ol className="pl-5 list-decimal text-sm">
-                  {instructions.map((item, index) => (
-                    <ListItem key={index}>{item.instruction}</ListItem>
+                  {prescription.instructions?.map((item, index) => (
+                    <ListItem type="instruction" key={index}>
+                      {item.instruction}
+                    </ListItem>
                   ))}
                 </ol>
               }
             </div>
 
             <div className="mt-4">
-              <Header title="Follow Up" />
+              <Header type="followUp" title="Follow Up" />
               <p className="text-sm">
-                <span className="underline">Next Visit:</span> {followUp?.date}
+                <span className="underline">Next Visit:</span>{" "}
+                {prescription.followUpDate}
               </p>
             </div>
           </div>
@@ -219,10 +212,12 @@ const PrescriptionTemplate = forwardRef<HTMLDivElement, { isPrint?: boolean }>(
 );
 
 export function Section({
+  type,
   title,
   children,
   icon,
 }: {
+  type: "complaint" | "history" | "diagnosis" | "investigation";
   title: string;
   children: ReactNode;
   icon?: ReactNode;
@@ -232,7 +227,8 @@ export function Section({
 
   const handleAdd = (title: string) => {
     setModal({
-      type: "add",
+      type,
+      action: "add",
       title: `Add ${title}`,
       id: 0,
     });
@@ -258,13 +254,22 @@ export function Section({
   );
 }
 
-function Header({ title, icon }: { title: string; icon?: ReactNode }) {
+function Header({
+  type,
+  title,
+  icon,
+}: {
+  type: "followUp" | "instruction";
+  title: string;
+  icon?: ReactNode;
+}) {
   const isEditable = useDashboardStore((state) => state.isEditable);
   const { setModal, setModalOpen } = usePrescriptionStore((state) => state);
 
   const handleAdd = (title: string) => {
     setModal({
-      type: "add",
+      type,
+      action: "add",
       title: `Add ${title}`,
       id: 0,
     });
@@ -287,9 +292,11 @@ function Header({ title, icon }: { title: string; icon?: ReactNode }) {
 }
 
 function ListItem({
+  type,
   children,
   description,
 }: {
+  type: "complaint" | "history" | "diagnosis" | "investigation" | "instruction";
   children: ReactNode;
   description?: string;
 }) {
@@ -298,7 +305,8 @@ function ListItem({
 
   const handleEdit = (id: string, title: string) => {
     setModal({
-      type: "edit",
+      type,
+      action: "edit",
       title: title,
       id: parseInt(id),
     });
@@ -307,7 +315,8 @@ function ListItem({
 
   const handleDelete = (id: string, title: string) => {
     setModal({
-      type: "delete",
+      type,
+      action: "delete",
       title: title,
       id: parseInt(id),
     });
@@ -360,7 +369,8 @@ function Medication({
 
   const handleEdit = (id: string, title: string) => {
     setModal({
-      type: "edit",
+      type: "medication",
+      action: "edit",
       title: title,
       id: parseInt(id),
     });
@@ -369,7 +379,8 @@ function Medication({
 
   const handleDelete = (id: string, title: string) => {
     setModal({
-      type: "delete",
+      type: "medication",
+      action: "delete",
       title: title,
       id: parseInt(id),
     });
