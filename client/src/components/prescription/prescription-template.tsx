@@ -57,7 +57,7 @@ const PrescriptionTemplate = forwardRef<
               complaints: res.data.complaints,
               medications: res.data.medications,
               instructions: res.data.instructions,
-              followUpDate: res.data.followUp,
+              followUpDate: res.data.followUpDate,
               history: res.data.history,
               diagnosisList: res.data.diagnosis,
               investigations: res.data.investigations,
@@ -82,7 +82,6 @@ const PrescriptionTemplate = forwardRef<
     const handleAdd = () => {
       setModal({
         type: "medication",
-        action: "add",
       });
       setModalOpen(true);
     };
@@ -230,7 +229,6 @@ const PrescriptionTemplate = forwardRef<
                       onClick={() => {
                         setModal({
                           type: "followUp",
-                          action: "edit",
                         });
                         setModalOpen(true);
                       }}
@@ -275,7 +273,6 @@ export function Section({
   const handleAdd = () => {
     setModal({
       type,
-      action: "add",
     });
     setModalOpen(true);
   };
@@ -319,7 +316,6 @@ function Header({
   const handleAdd = () => {
     setModal({
       type,
-      action: "add",
     });
     setModalOpen(true);
   };
@@ -365,7 +361,6 @@ function ListItem({
     console.log("Edit Item:", id);
     setModal({
       type,
-      action: "edit",
       id,
     });
     setModalOpen(true);
@@ -484,7 +479,6 @@ function Medication({
     console.log("Edit Medication:", id, id);
     setModal({
       type: "medication",
-      action: "edit",
       id,
     });
     setModalOpen(true);
