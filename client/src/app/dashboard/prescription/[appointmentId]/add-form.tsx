@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFormik } from "formik";
 import { Input } from "@nextui-org/react";
 import FormButton from "@/app/dashboard/prescription/[appointmentId]/form-button";
@@ -11,14 +11,17 @@ import {
   Investigation,
   Medication,
 } from "@/types/prescription";
+import { useShallow } from "zustand/react/shallow";
+import { CalendarIcon } from "lucide-react";
 
 function AddForm({
+  id,
   type,
-  action,
   onClose,
 }: {
-  type: string;
-  action: string;
+  id?: number;
+  type?: string;
+  action?: string;
   onClose: () => void;
 }) {
   const prescription = usePrescriptionStore((state) => state.prescription);
@@ -26,23 +29,44 @@ function AddForm({
   switch (type) {
     case "medication":
       return (
-        <MedicationForm data={prescription.medications} onClose={onClose} />
+        <MedicationForm
+          id={id}
+          data={prescription.medications}
+          onClose={onClose}
+        />
       );
     case "instruction":
       return (
-        <InstructionForm data={prescription.instructions} onClose={onClose} />
+        <InstructionForm
+          id={id}
+          data={prescription.instructions}
+          onClose={onClose}
+        />
       );
     case "complaint":
-      return <ComplaintForm data={prescription.complaints} onClose={onClose} />;
+      return (
+        <ComplaintForm
+          id={id}
+          data={prescription.complaints}
+          onClose={onClose}
+        />
+      );
     case "history":
-      return <HistoryForm data={prescription.history} onClose={onClose} />;
+      return (
+        <HistoryForm id={id} data={prescription.history} onClose={onClose} />
+      );
     case "diagnosis":
       return (
-        <DiagnosisForm data={prescription.diagnosisList} onClose={onClose} />
+        <DiagnosisForm
+          id={id}
+          data={prescription.diagnosisList}
+          onClose={onClose}
+        />
       );
     case "investigation":
       return (
         <InvestigationForm
+          id={id}
           data={prescription.investigations}
           onClose={onClose}
         />
@@ -59,13 +83,20 @@ function AddForm({
 export default AddForm;
 
 function MedicationForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: Medication[];
   onClose: () => void;
 }) {
-  const addMedication = usePrescriptionStore((state) => state.addMedication);
+  const { addMedication, updateMedication } = usePrescriptionStore(
+    useShallow((state) => ({
+      addMedication: state.addMedication,
+      updateMedication: state.updateMedication,
+    })),
+  );
 
   const formik = useFormik<Medication>({
     initialValues: {
@@ -78,12 +109,28 @@ function MedicationForm({
       note: "",
     },
     onSubmit: (values) => {
-      addMedication({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateMedication({
+          ...values,
+          id,
+        });
+      } else {
+        addMedication({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, [data]);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -115,13 +162,20 @@ function MedicationForm({
 }
 
 function InstructionForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: Instructions[];
   onClose: () => void;
 }) {
-  const addInstruction = usePrescriptionStore((state) => state.addInstruction);
+  const { addInstruction, updateInstruction } = usePrescriptionStore(
+    useShallow((state) => ({
+      addInstruction: state.addInstruction,
+      updateInstruction: state.updateInstruction,
+    })),
+  );
 
   const formik = useFormik<Instructions>({
     initialValues: {
@@ -129,12 +183,28 @@ function InstructionForm({
       instruction: "",
     },
     onSubmit: (values) => {
-      addInstruction({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateInstruction({
+          ...values,
+          id,
+        });
+      } else {
+        addInstruction({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, [data]);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -149,13 +219,20 @@ function InstructionForm({
 }
 
 function ComplaintForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: Complaint[];
   onClose: () => void;
 }) {
-  const addComplaint = usePrescriptionStore((state) => state.addComplaint);
+  const { addComplaint, updateComplaint } = usePrescriptionStore(
+    useShallow((state) => ({
+      addComplaint: state.addComplaint,
+      updateComplaint: state.updateComplaint,
+    })),
+  );
 
   const formik = useFormik<Complaint>({
     initialValues: {
@@ -166,12 +243,28 @@ function ComplaintForm({
       id: 0,
     },
     onSubmit: (values) => {
-      addComplaint({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateComplaint({
+          ...values,
+          id,
+        });
+      } else {
+        addComplaint({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, [data]);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -191,13 +284,20 @@ function ComplaintForm({
 }
 
 function HistoryForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: History[];
   onClose: () => void;
 }) {
-  const addHistory = usePrescriptionStore((state) => state.addHistory);
+  const { addHistory, updateHistory } = usePrescriptionStore(
+    useShallow((state) => ({
+      addHistory: state.addHistory,
+      updateHistory: state.updateHistory,
+    })),
+  );
 
   const formik = useFormik<History>({
     initialValues: {
@@ -207,12 +307,28 @@ function HistoryForm({
       id: 0,
     },
     onSubmit: (values) => {
-      addHistory({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateHistory({
+          ...values,
+          id,
+        });
+      } else {
+        addHistory({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, [data]);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -229,13 +345,20 @@ function HistoryForm({
 }
 
 function DiagnosisForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: Diagnosis[];
   onClose: () => void;
 }) {
-  const addDiagnosis = usePrescriptionStore((state) => state.addDiagnosis);
+  const { addDiagnosis, updateDiagnosis } = usePrescriptionStore(
+    useShallow((state) => ({
+      addDiagnosis: state.addDiagnosis,
+      updateDiagnosis: state.updateDiagnosis,
+    })),
+  );
 
   const formik = useFormik<Diagnosis>({
     initialValues: {
@@ -245,12 +368,28 @@ function DiagnosisForm({
       id: 0,
     },
     onSubmit: (values) => {
-      addDiagnosis({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateDiagnosis({
+          ...values,
+          id,
+        });
+      } else {
+        addDiagnosis({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, [data]);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -267,14 +406,19 @@ function DiagnosisForm({
 }
 
 function InvestigationForm({
+  id,
   data,
   onClose,
 }: {
+  id?: number;
   data: Investigation[];
   onClose: () => void;
 }) {
-  const addInvestigation = usePrescriptionStore(
-    (state) => state.addInvestigation,
+  const { addInvestigation, updateInvestigation } = usePrescriptionStore(
+    useShallow((state) => ({
+      addInvestigation: state.addInvestigation,
+      updateInvestigation: state.updateInvestigation,
+    })),
   );
 
   const formik = useFormik<Investigation>({
@@ -285,12 +429,28 @@ function InvestigationForm({
       id: 0,
     },
     onSubmit: (values) => {
-      addInvestigation({
-        ...values,
-        id: data.length + 1,
-      });
+      if (id) {
+        updateInvestigation({
+          ...values,
+          id,
+        });
+      } else {
+        addInvestigation({
+          ...values,
+          id: data.length + 1,
+        });
+      }
     },
   });
+
+  useEffect(() => {
+    if (id) {
+      const item = data.find((item) => item.id === id);
+      if (item) {
+        formik.setValues(item);
+      }
+    }
+  }, []);
 
   const handleSubmit = () => {
     formik.handleSubmit();
@@ -319,7 +479,7 @@ function FollowUpForm({
 
   const formik = useFormik({
     initialValues: {
-      followUpDate: "",
+      followUpDate: data ? data : "",
     },
     onSubmit: (value) => {
       setFollowUpDate(value.followUpDate);
@@ -332,7 +492,11 @@ function FollowUpForm({
   return (
     <form className="space-y-4">
       <h2 className="text-lg font-semibold">Add Follow Up</h2>
-      <Input label="Date" {...formik.getFieldProps("followUpDate")} />
+      <Input
+        endContent={<CalendarIcon className="place-items-baseline" size={18} />}
+        label="Date"
+        {...formik.getFieldProps("followUpDate")}
+      />
       <FormButton onClose={onClose} handleSubmit={handleSubmit} />
     </form>
   );

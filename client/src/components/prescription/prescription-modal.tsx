@@ -1,25 +1,21 @@
 import { Modal, ModalContent, ModalHeader, ModalBody } from "@nextui-org/react";
 import AddForm from "@/app/dashboard/prescription/[appointmentId]/add-form";
 import React from "react";
+import { usePrescriptionStore } from "@/store/prescription-store";
 
 export default function PrescriptionModal({
   title,
-  type,
-  action,
   isOpen,
   onOpenChange,
 }: {
   title?: string;
-  type?: string;
-  action?: string;
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
 }) {
-  const renderModal = (onClose: () => void, type?: string, action?: string) => {
-    if (!type || !action) {
-      return <p>No type or action</p>;
-    }
-    return <AddForm onClose={onClose} action={action} type={type} />;
+  const modal = usePrescriptionStore((state) => state.modal);
+
+  const renderModal = (onClose: () => void) => {
+    return <AddForm onClose={onClose} id={modal?.id} type={modal?.type} />;
   };
 
   return (
@@ -29,7 +25,7 @@ export default function PrescriptionModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">{title}</ModalHeader>
-              <ModalBody>{renderModal(onClose, type, action)}</ModalBody>
+              <ModalBody>{renderModal(onClose)}</ModalBody>
             </>
           )}
         </ModalContent>

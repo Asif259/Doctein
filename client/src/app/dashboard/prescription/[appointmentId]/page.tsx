@@ -11,12 +11,12 @@ import {
   Divider,
   Spinner,
 } from "@nextui-org/react";
-import { useDashboardStore } from "@/store/dashboard-store";
 import { getAppointmentById } from "@/api/dashboard/appointmentAPI";
 import { useRouter } from "next/navigation";
 import { usePrescriptionStore } from "@/store/prescription-store";
 import { savePrescription } from "@/api/dashboard/prescriptionAPI";
 import toast from "react-hot-toast";
+import { useShallow } from "zustand/react/shallow";
 
 function Page({ params }: { params: { appointmentId: string } }) {
   const router = useRouter();
@@ -29,11 +29,14 @@ function Page({ params }: { params: { appointmentId: string } }) {
     },
   });
   const [isPrint, setIsPrint] = useState<boolean>(false);
-  const setEditable = useDashboardStore((state) => state.setEditable);
-  const setPrescriptionHeader = usePrescriptionStore(
-    (state) => state.setPrescriptionHeader,
-  );
-  const prescription = usePrescriptionStore((state) => state.prescription);
+  const { prescription, setPrescriptionHeader, setEditable } =
+    usePrescriptionStore(
+      useShallow((state) => ({
+        prescription: state.prescription,
+        setPrescriptionHeader: state.setPrescriptionHeader,
+        setEditable: state.setEditable,
+      })),
+    );
 
   // handle appointment ID from params
   useEffect(() => {
