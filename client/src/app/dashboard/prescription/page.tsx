@@ -12,6 +12,10 @@ import {
   Input,
   Button,
   Card,
+  Modal,
+  ModalHeader,
+  ModalContent,
+  ModalBody,
 } from "@nextui-org/react";
 import { PlusIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboard-store";
@@ -22,6 +26,7 @@ import { extractDateAndTime } from "@/utilities/timeZone";
 import Link from "next/link";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import { useRouter } from "next/navigation";
+import DragAndDropInput from "@/app/dashboard/prescription/dnd-input";
 
 const patientCols = [
   { name: "PATIENT NAME", uid: "patientName" },
@@ -48,6 +53,7 @@ export default function Page() {
   >([]);
   const { patients, addPatients } = useDashboardStore((state) => state);
   const [filteredPatients, setFilteredPatients] = useState<patient[]>(patients);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Selected Patient:", selectedPatient);
@@ -116,8 +122,25 @@ export default function Page() {
     setFilteredAppointments(appointments);
   }, [appointments]);
 
+  const handleUploadSnapshot = (appointmentId: string | undefined) => {
+    setIsModalOpen(true);
+    // toast.success("Snapshot uploaded successfully");
+  };
+
   return (
     <>
+      <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader>Add Snapshot</ModalHeader>
+              <ModalBody>
+                <DragAndDropInput />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
       <h1 className="text-3xl font-bold mb-8">Prescriptions</h1>
       <div className="flex justify-between gap-4">
         <Input
@@ -202,7 +225,15 @@ export default function Page() {
                     <TableCell>
                       <Chip color="success">{appointment.status}</Chip>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="flex flex-row gap-2 justify-center">
+                      <Button
+                        size="sm"
+                        variant="solid"
+                        className="bg-secondary-600 text-secondary-100"
+                        onClick={() => handleUploadSnapshot(appointment.key)}
+                      >
+                        Add Snapshot
+                      </Button>
                       <Button
                         size="sm"
                         variant="solid"
