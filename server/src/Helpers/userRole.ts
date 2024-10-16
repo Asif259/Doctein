@@ -11,7 +11,7 @@ export const getDoctorId = async (user: IUser): Promise<string | null> => {
   if (user.role === "doctor") doctorId = user._id as string;
   else if (user.role === "staff") {
     const staff = await Staff.findOne({ userId: user._id });
-    if (staff) doctorId = staff.doctorId as string;
+    if (staff) doctorId = staff.doctorId.toString() as string;
   }
 
   return doctorId;

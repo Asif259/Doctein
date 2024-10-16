@@ -1,24 +1,22 @@
-import { Schema, Document, model } from "mongoose";
+import mongoose, { Schema, Document, model } from "mongoose";
 
 interface IStaff extends Document {
-  doctorId: string | Schema.Types.ObjectId;
-  name: string;
-  phone: string;
-  userId: Schema.Types.ObjectId;
+    name: string;
+    phone: string;
+    address: string;
+    status: "active" | "inactive" | "vacation";
+    doctorId: mongoose.Types.ObjectId;
 }
 
 const staffSchema = new Schema<IStaff>(
-  {
-    doctorId: { type: Schema.Types.ObjectId, required: true },
-    name: { type: String, required: true },
-    phone: { type: String, required: true },
-    userId: {
-      type: Schema.Types.ObjectId,
-      unique: true,
-      required: true,
+    {
+        name: { type: String, required: true },
+        phone: { type: String, required: true },
+        address: { type: String, required: true },
+        status: { type: String, required: true, enum: ["active", "inactive", "vacation"] },
+        doctorId: { type: Schema.Types.ObjectId, ref: "Doctor", required: true },
     },
-  },
-  { timestamps: true },
+    { timestamps: true }
 );
 
 export default model<IStaff>("Staff", staffSchema);

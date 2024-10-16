@@ -84,6 +84,9 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
       return res.status(401).json({success: false, data: "Invalid credentials" });
     }
 
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+
     // Call the setAuthCookies function to handle token generation and cookie setting
     req.body.user = user; // Pass the user data to the setAuthCookies middleware
 

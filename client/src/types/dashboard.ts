@@ -21,9 +21,13 @@ export interface appointment {
 }
 
 export interface staff {
-  id: number;
+  id?: number;
+  key?: string;
   name: string;
-  role: string;
+  phone: string;
+  address: string;
+  status: "active" | "inactive" | "vacation";
+  doctorId: string;
 }
 
 export interface doctor {

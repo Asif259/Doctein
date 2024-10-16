@@ -6,14 +6,13 @@ import { getDoctorId } from "../Helpers/userRole";
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
 const authenticateToken = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
+    req: Request,
+    res: Response,
+    next: NextFunction,
 ): Promise<any> => {
   const accessToken = req.cookies.accessToken;
   const refreshTokenCookie = req.cookies.refreshToken;
 
-  // Function to verify and refresh token
   const handleRefreshToken = async () => {
     const newAccessToken = refreshToken(refreshTokenCookie);
     if (!newAccessToken) {
@@ -27,33 +26,40 @@ const authenticateToken = async (
     return verifyToken(newAccessToken, JWT_SECRET);
   };
 
-  // Verify access token
   if (accessToken) {
     const decodedToken = verifyToken(accessToken, JWT_SECRET);
-    console.log("Decoded Token: ", decodedToken);
+    console.log("Decoded Token:", decodedToken);
+
     if (decodedToken) {
-      const { email } = decodedToken as {
+      const { email, userId } = decodedToken as {
         userId: string;
         email: string;
       };
-      console.log("Decoded token:", decodedToken);
+
+      console.log("Email from token:", email);
+      console.log("UserId from token:", userId);
+
       const user = await User.findOne({ email });
+
       if (!user) {
-        console.log(new Error("User not found"));
-        return res
-          .status(403)
-          .json({ success: false, message: "Unauthorized" });
+        console.error(`User not found for email: ${email}`);
+        return res.status(403).json({ success: false, message: "Unauthorized, User not found" });
       }
+
+      // Fetch doctorId from user
       const doctorId = await getDoctorId(user);
-      req.headers.user = decodedToken;
-      req.body.user = user as IUser;
+      console.log("Doctor ID:", doctorId);
+
+      req.body.user = user;
       req.body.doctorId = doctorId;
 
       return next();
+    } else {
+      console.log("Invalid token.");
+      return res.status(403).json({ success: false, message: "Unauthorized, Invalid token" });
     }
   }
 
-  // If access token is invalid, check refresh token
   if (refreshTokenCookie) {
     const decodedUser = await handleRefreshToken();
     if (decodedUser) {
@@ -63,8 +69,9 @@ const authenticateToken = async (
   }
 
   return res
-    .status(403)
-    .json({ success: false, message: "Access and refresh tokens are invalid" });
+      .status(403)
+      .json({ success: false, message: "Access and refresh tokens are invalid" });
 };
+
 
 export default authenticateToken;

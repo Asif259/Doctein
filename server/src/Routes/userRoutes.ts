@@ -1,6 +1,7 @@
 import express from "express";
 import * as patientController from "../Controllers/dashboard/patient";
 import * as doctorController from "../Controllers/dashboard/doctor"
+import * as staffController from "../Controllers/dashboard/staff"
 import authenticate from "../Middlewares/authenticate";
 
 const router = express.Router();
@@ -23,6 +24,10 @@ router.delete(
 router.post('/doctors', authenticate, doctorController.saveDoctor);
 router.get('/doctors', authenticate, doctorController.getDoctor);
 router.put('/doctors', authenticate, doctorController.updateDoctor);
+
+//staffs
+router.post('/staffs', authenticate, staffController.saveStaff);
+
 
 
 export default router;
