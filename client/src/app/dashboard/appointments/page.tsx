@@ -221,7 +221,7 @@ export default function Page() {
           variant="solid"
           className="bg-secondary-600 text-secondary-100"
           onClick={() => {
-            resetAppointments();
+            setUpdateAppointment(null);
             setOpen(true);
           }}
         >

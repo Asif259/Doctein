@@ -183,7 +183,9 @@ export default function Page() {
         <ModalContent>
           {() => (
             <>
-              <ModalHeader>{updatePatient ? "Update Patient" : "Add Patient"}</ModalHeader>
+              <ModalHeader>
+                {updatePatient ? "Update Patient" : "Add Patient"}
+              </ModalHeader>
               <ModalBody>
                 <PatientForm patient={updatePatient} />
               </ModalBody>
@@ -205,7 +207,7 @@ export default function Page() {
         />
         <Button
           onClick={() => {
-            resetPatients();
+            setUpdatePatient(null);
             setOpen(true);
           }}
           startContent={<PlusIcon />}
