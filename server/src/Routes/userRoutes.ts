@@ -27,7 +27,7 @@ router.put('/doctors', authenticate, doctorController.updateDoctor);
 
 //staffs
 router.post('/staffs', authenticate, staffController.saveStaff);
-
-
+router.get("/staffs", authenticate, staffController.getStaffs);
+router.put("/staffs/:staffId", authenticate, staffController.updateStaff);
 
 export default router;

@@ -12,7 +12,7 @@ export const saveStaff = async (staff: staff) => {
 };
 
 // Get all staffs
-export const getstaffs = async (query?: string) => {
+export const getStaffs = async (query?: string) => {
     try {
         let url = `/staffs`;
         if (query) {
@@ -20,7 +20,7 @@ export const getstaffs = async (query?: string) => {
         }
         const response = await axios.get(url);
         return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
         // throw new Error(error.response?.data?.data);
     }
 };
@@ -30,22 +30,19 @@ export const getStaffById = async (id: string) => {
     try {
         const response = await axios.get(`/staffs/${id}`);
         return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
+        console.log(error)
         // throw new Error(error.response?.data?.data);
     }
 };
 
 // Update a staff by ID
-export const updateStaff = async (
-    id: string | undefined,
-    staff: staff,
-) => {
-    if (!id) return;
+export const updateStaff = async (id: number | undefined, updatedData: staff) => {
     try {
-        const response = await axios.put(`/staffs/${id}`, staff);
+        const response = await axios.put(`/staffs/${id}`, updatedData);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error) {
+        console.error("Error updating staff:", error);
     }
 };
 
