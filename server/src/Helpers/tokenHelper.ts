@@ -8,7 +8,6 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "";
 
 // Generate Access Token
 export const generateAccessToken = (user: any) => {
-  console.log("Generating Access Token for user:", user);
   const payload = { email: user.email, userId: user._id };
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "2h" });
 };

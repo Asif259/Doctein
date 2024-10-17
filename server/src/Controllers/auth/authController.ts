@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { setAuthCookies } from "../../Middlewares/authVerify"; // Import the middleware
+import { setAuthCookies } from "../../Helpers/authVerify"; // Import the middleware
 import User from "../../Models/userModel";
 
 dotenv.config();
@@ -19,8 +19,8 @@ const validatePassword = (password: string): boolean => {
 
 // Register User
 export const registerUser = async (
-  req: Request,
-  res: Response,
+    req: Request,
+    res: Response,
 ): Promise<any> => {
   const { email, password, confirmPassword, role } = req.body;
 
@@ -30,7 +30,7 @@ export const registerUser = async (
 
   if (!validatePassword(password)) {
     return res.status(400).json({
-     success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
+      success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
@@ -69,7 +69,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   // Validate password
   if (!validatePassword(password)) {
     return res.status(400).json({
-     success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
+      success: false, data: "Password must be at least 6 characters long and contain letters and numbers",
     });
   }
 
@@ -83,9 +83,6 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     if (!passwordMatch) {
       return res.status(401).json({success: false, data: "Invalid credentials" });
     }
-
-    res.clearCookie("accessToken");
-    res.clearCookie("refreshToken");
 
     // Call the setAuthCookies function to handle token generation and cookie setting
     req.body.user = user; // Pass the user data to the setAuthCookies middleware
@@ -102,8 +99,8 @@ export const activateUser = async (req: Request,res: Response): Promise<any> => 
     const { email } = req.body;
 
     const user = await User.findOneAndUpdate(
-      { email },
-      { active: true }
+        { email },
+        { active: true }
     );
 
     if (!user) {
@@ -120,8 +117,8 @@ export const isLoggedIn = (req: Request, res: Response): any => {
   const { user } = req.headers;
   if (!user) {
     return res
-      .status(401)
-      .json({ success: false, message: "User not logged in" });
+        .status(401)
+        .json({ success: false, message: "User not logged in" });
   }
   return res.json({ success: true, data: user });
 };

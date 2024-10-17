@@ -13,6 +13,7 @@ const authenticateToken = async (
   const accessToken = req.cookies.accessToken;
   const refreshTokenCookie = req.cookies.refreshToken;
 
+  // Function to verify and refresh token
   const handleRefreshToken = async () => {
     const newAccessToken = refreshToken(refreshTokenCookie);
     if (!newAccessToken) {
@@ -26,40 +27,33 @@ const authenticateToken = async (
     return verifyToken(newAccessToken, JWT_SECRET);
   };
 
+  // Verify access token
   if (accessToken) {
     const decodedToken = verifyToken(accessToken, JWT_SECRET);
-    console.log("Decoded Token:", decodedToken);
-
+    console.log("Decoded Token: ", decodedToken);
     if (decodedToken) {
-      const { email, userId } = decodedToken as {
+      const { email } = decodedToken as {
         userId: string;
         email: string;
       };
-
-      console.log("Email from token:", email);
-      console.log("UserId from token:", userId);
-
+      console.log("Decoded token:", decodedToken);
       const user = await User.findOne({ email });
-
       if (!user) {
-        console.error(`User not found for email: ${email}`);
-        return res.status(403).json({ success: false, message: "Unauthorized, User not found" });
+        console.log(new Error("User not found"));
+        return res
+            .status(403)
+            .json({ success: false, message: "Unauthorized" });
       }
-
-      // Fetch doctorId from user
       const doctorId = await getDoctorId(user);
-      console.log("Doctor ID:", doctorId);
-
-      req.body.user = user;
+      req.headers.user = decodedToken;
+      req.body.user = user as IUser;
       req.body.doctorId = doctorId;
 
       return next();
-    } else {
-      console.log("Invalid token.");
-      return res.status(403).json({ success: false, message: "Unauthorized, Invalid token" });
     }
   }
 
+  // If access token is invalid, check refresh token
   if (refreshTokenCookie) {
     const decodedUser = await handleRefreshToken();
     if (decodedUser) {
@@ -72,6 +66,5 @@ const authenticateToken = async (
       .status(403)
       .json({ success: false, message: "Access and refresh tokens are invalid" });
 };
-
 
 export default authenticateToken;
