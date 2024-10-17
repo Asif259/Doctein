@@ -27,7 +27,6 @@ export interface staff {
   phone: string;
   address: string;
   status: "active" | "inactive" | "vacation";
-  doctorId: string;
 }
 
 export interface doctor {

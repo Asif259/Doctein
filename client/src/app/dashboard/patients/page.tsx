@@ -183,7 +183,7 @@ export default function Page() {
         <ModalContent>
           {() => (
             <>
-              <ModalHeader>Add Patient</ModalHeader>
+              <ModalHeader>{updatePatient ? "Update Patient" : "Add Patient"}</ModalHeader>
               <ModalBody>
                 <PatientForm patient={updatePatient} />
               </ModalBody>

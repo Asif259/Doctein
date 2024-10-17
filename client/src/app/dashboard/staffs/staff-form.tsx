@@ -6,17 +6,18 @@ import { saveStaff, updateStaff } from "@/api/dashboard/staffAPI";
 import { useDashboardStore } from "@/store/dashboard-store";
 import toast from "react-hot-toast";
 
-function StaffForm({ staff }: { staff?: staff | null }) {
-    const { staffs, addStaff } = useDashboardStore((state) => state);
+function StaffForm({staff,onClose,}: { staff?: staff | null; onClose: () => void;}) {
+    const { staffs, addStaffs } = useDashboardStore((state) => state);
 
     const formik = useFormik({
         initialValues: {
-            id: 0,
+            id: staff?.id || 0,
             name: staff?.name || "",
             phone: staff?.phone || "",
             address: staff?.address || "",
-            status: staff?.status || "",
+            status: staff?.status || "active",
         },
+        enableReinitialize: true,
         onSubmit: async (values) => {
             const { name, phone, address, status } = values;
 
@@ -33,12 +34,13 @@ function StaffForm({ staff }: { staff?: staff | null }) {
                         const updatedStaffs = staffs.map((p) =>
                             p.id === staff.id ? res.data : p
                         );
-                        addStaff(updatedStaffs);
+                        addStaffs(updatedStaffs);
                         toast.success("Staff updated successfully");
+                        onClose();
                         return;
                     }
-                } else {
-                    const res = await saveStaff({
+                }
+                const res = await saveStaff({
                         id: staffs.length ? staffs.length + 1 : 1,
                         name,
                         phone,
@@ -46,10 +48,10 @@ function StaffForm({ staff }: { staff?: staff | null }) {
                         status,
                     });
                     if (res?.success) {
-                        addStaff([...staffs, res.data]);
+                        addStaffs([...staffs, res.data]);
                         toast.success("Staff saved successfully");
+                        onClose();
                     }
-                }
             } catch (error) {
                 console.error("Error saving staff:", error);
             }
