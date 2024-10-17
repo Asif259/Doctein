@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../Helpers/tokenHelper";
+import { generateAccessToken, generateRefreshToken } from "./tokenHelper";
 
 export const setAuthCookies = (req: Request, res: Response) => {
   const { user } = req.body;
