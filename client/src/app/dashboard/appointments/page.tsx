@@ -27,6 +27,7 @@ import {
 import toast from "react-hot-toast";
 import { extractDateAndTime } from "@/utilities/timeZone";
 import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
+import { useShallow } from "zustand/react/shallow";
 
 const columns = [
   { name: "PATIENT NAME", uid: "patientName" },
@@ -42,7 +43,14 @@ export default function Page() {
   const [filteredAppointments, setFilteredAppointments] = React.useState<
     appointment[]
   >([]);
-  const { appointments, addAppointments } = useDashboardStore((state) => state);
+  const { appointments, addAppointments, resetAppointments } =
+    useDashboardStore(
+      useShallow((state) => ({
+        appointments: state.appointments,
+        addAppointments: state.addAppointments,
+        resetAppointments: state.resetAppointments,
+      })),
+    );
   const [open, setOpen] = React.useState<boolean>(false);
   const [updateAppointment, setUpdateAppointment] =
     React.useState<appointment | null>(null);
@@ -212,7 +220,10 @@ export default function Page() {
           startContent={<PlusIcon />}
           variant="solid"
           className="bg-secondary-600 text-secondary-100"
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            resetAppointments();
+            setOpen(true);
+          }}
         >
           Add Appointment
         </Button>

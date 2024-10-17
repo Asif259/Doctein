@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Card,
   CardBody,
@@ -13,34 +13,57 @@ import { Calendar, CalendarClockIcon, UserPlusIcon, Users } from "lucide-react";
 import PatientTab from "@/app/dashboard/patient-tab";
 import AppointmentTab from "@/app/dashboard/appointment-tab";
 import StaffTab from "@/app/dashboard/staff-tab";
-import { useDashboardStore } from "@/store/dashboard-store";
+import { getDashboardMetrics } from "@/api/dashboard/dashboardAPI";
 
 export default function Page() {
-  const { patients, appointments, staffs } = useDashboardStore(
-    (state) => state,
-  );
+  const [dashboardCounts, setDashboardCounts] = React.useState({
+    patients: 0,
+    appointments: 0,
+    upcomingAppointments: 0,
+    staffs: 0,
+  });
   const analytics = [
     {
       title: "Upcoming Appointments",
-      count: appointments.length,
+      count: dashboardCounts.upcomingAppointments,
       icon: <CalendarClockIcon className="h-4 w-4" />,
     },
     {
       title: "Total Appointments",
-      count: appointments.length,
+      count: dashboardCounts.appointments,
       icon: <Calendar className="h-4 w-4" />,
     },
     {
       title: "Total Patients",
-      count: patients.length,
+      count: dashboardCounts.patients,
       icon: <Users className="h-4 w-4" />,
     },
     {
       title: "Total Staffs",
-      count: staffs.length,
+      count: dashboardCounts.staffs,
       icon: <UserPlusIcon className="h-4 w-4" />,
     },
   ];
+
+  useEffect(() => {
+    (async () => {
+      // Fetch
+      const res = await getDashboardMetrics();
+      if (res?.success) {
+        /*
+        * totalAppointmentCount,
+      upcomingAppointmentCount,
+      patientsCount,
+      * */
+        setDashboardCounts({
+          patients: res.data.patientsCount,
+          appointments: res.data.totalAppointmentCount,
+          upcomingAppointments: res.data.upcomingAppointmentCount,
+          staffs: 0,
+        });
+      }
+    })();
+  }, []);
 
   return (
     <>

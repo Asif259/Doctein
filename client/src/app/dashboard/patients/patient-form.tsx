@@ -5,8 +5,10 @@ import { patient } from "@/types/dashboard";
 import { savePatient, updatePatient } from "@/api/dashboard/patientAPI";
 import { useDashboardStore } from "@/store/dashboard-store";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function PatientForm({ patient }: { patient?: patient | null }) {
+  const router = useRouter();
   const { patients, addPatients } = useDashboardStore((state) => state);
   const formik = useFormik({
     initialValues: {
@@ -51,6 +53,10 @@ function PatientForm({ patient }: { patient?: patient | null }) {
         if (res?.success) {
           addPatients([...patients, res.data]);
           toast.success("Patient saved successfully");
+
+          // for instant patients redirect to prescription app on patient save
+          if (instant && res?.data?.appointmentId)
+            router.push(`/dashboard/prescription/${res.data.appointmentId}`);
         }
       } catch (error) {
         console.error("Error saving patient:", error);

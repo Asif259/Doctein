@@ -22,6 +22,7 @@ import { deletePatient, getPatients } from "@/api/dashboard/patientAPI";
 import { patient } from "@/types/dashboard";
 import { useDashboardStore } from "@/store/dashboard-store";
 import PatientForm from "@/app/dashboard/patients/patient-form";
+import { useShallow } from "zustand/react/shallow";
 
 const columns = [
   { name: "NAME", uid: "name" },
@@ -35,7 +36,13 @@ const columns = [
 export default function Page() {
   const [search, setSearch] = React.useState("");
   const [filteredPatients, setFilteredPatients] = React.useState<patient[]>([]);
-  const { patients, addPatients } = useDashboardStore((state) => state);
+  const { patients, addPatients, resetPatients } = useDashboardStore(
+    useShallow((state) => ({
+      patients: state.patients,
+      addPatients: state.addPatients,
+      resetPatients: state.resetPatients,
+    })),
+  );
   const [open, setOpen] = React.useState<boolean>(false);
   const [updatePatient, setUpdatePatient] = React.useState<patient | null>(
     null,
@@ -197,7 +204,10 @@ export default function Page() {
           className="max-w-xs mb-4"
         />
         <Button
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            resetPatients();
+            setOpen(true);
+          }}
           startContent={<PlusIcon />}
           className="bg-secondary-600 text-secondary-100"
           variant="solid"

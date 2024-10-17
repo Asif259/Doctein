@@ -29,6 +29,7 @@ interface PrescriptionState {
   modal: Modal | null;
   modalOpen: boolean;
   setPrescription: (newPrescription: Prescription) => void;
+  resetPrescription: () => void;
   addMedication: (medication: Medication) => void;
   addInstruction: (instruction: Instructions) => void;
   addComplaint: (complaint: Complaint) => void;
@@ -54,24 +55,27 @@ interface PrescriptionState {
   setModalOpen: (modalOpen: boolean) => void;
 }
 
+const initialPrescription: Prescription = {
+  appointmentId: "",
+  medications: [],
+  instructions: [],
+  complaints: [],
+  history: [],
+  diagnosisList: [],
+  investigations: [],
+  followUpDate: "",
+  isEditable: false,
+};
+
 const usePrescriptionStore = create<PrescriptionState>((set) => ({
-  prescription: {
-    appointmentId: "",
-    medications: [],
-    instructions: [],
-    complaints: [],
-    history: [],
-    diagnosisList: [],
-    investigations: [],
-    followUpDate: "",
-    isEditable: false,
-  },
+  prescription: initialPrescription,
   prescriptionHeader: null,
   isEditable: false,
   modal: null,
   modalOpen: false,
   setPrescription: (newPrescription: Prescription) =>
     set({ prescription: newPrescription }),
+  resetPrescription: () => set({ prescription: initialPrescription }),
   // Prescription updates (Start)
   addMedication: (medication: Medication) =>
     set((state) => ({

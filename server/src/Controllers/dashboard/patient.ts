@@ -40,13 +40,6 @@ const savePatient = async (req: Request, res: Response): Promise<any> => {
     const savedAppointment = await appointment.save();
     console.log("Appointment saved:", savedAppointment);
 
-    // TODO: create a prescription for the patient
-    // const prescription = new Prescription({
-    //   patientId: savedPatient._id,
-    //   doctorId: doctorId,
-    //   date: new Date(),
-    // });
-
     // filter response
     const response = {
       key: savedPatient._id,
@@ -55,7 +48,9 @@ const savePatient = async (req: Request, res: Response): Promise<any> => {
       weight: savedPatient.weight,
       phone: savedPatient.phone,
       address: savedPatient.address,
+      appointmentId: savedAppointment?._id,
     };
+    if (!instant) delete response.appointmentId;
 
     return res.status(201).json({ success: true, data: response });
   } catch (error) {

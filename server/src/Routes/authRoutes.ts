@@ -14,6 +14,11 @@ router.post("/refresh-token", tokenController.refreshAccessToken);
 router.post("/logout", authenticateToken, authController.logoutUser);
 router.post("/activate", authenticateToken, authController.activateUser);
 router.get("/profile", authenticateToken, userController.getUserProfile); // Get user profile
+router.get(
+  "/dashboard/metrics",
+  authenticateToken,
+  userController.getDashboard,
+); // Get user dashboard
 
 // Password Reset Routes
 router.post("/forgot-password/send-otp", forgetPassController.sendOtp); // Send OTP

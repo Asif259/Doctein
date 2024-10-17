@@ -29,17 +29,23 @@ function Page({ params }: { params: { appointmentId: string } }) {
     },
   });
   const [isPrint, setIsPrint] = useState<boolean>(false);
-  const { prescription, setPrescriptionHeader, setEditable } =
-    usePrescriptionStore(
-      useShallow((state) => ({
-        prescription: state.prescription,
-        setPrescriptionHeader: state.setPrescriptionHeader,
-        setEditable: state.setEditable,
-      })),
-    );
+  const {
+    prescription,
+    resetPrescription,
+    setPrescriptionHeader,
+    setEditable,
+  } = usePrescriptionStore(
+    useShallow((state) => ({
+      prescription: state.prescription,
+      resetPrescription: state.resetPrescription,
+      setPrescriptionHeader: state.setPrescriptionHeader,
+      setEditable: state.setEditable,
+    })),
+  );
 
   // handle appointment ID from params
   useEffect(() => {
+    resetPrescription();
     (async () => {
       const appointmentId = params.appointmentId;
       const res = await getAppointmentById(appointmentId);

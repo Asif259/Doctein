@@ -1,5 +1,4 @@
 import axios from "@/config/axios";
-import { doctor } from "@/types/dashboard";
 
 // Register a new user
 export const registerUser = async (
@@ -53,7 +52,8 @@ export const sendOtp = async (email: string) => {
     const response = await axios.post(`/forgot-password/send-otp`, { email });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    console.log(error);
+    // throw new Error(error.response?.data?.data);
   }
 };
 
@@ -66,17 +66,19 @@ export const verifyOtp = async (email: string, otp: string) => {
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    console.log(error);
+    // throw new Error(error.response?.data?.data);
   }
 };
 
 //Activate user
 export const activateUser = async (email: string) => {
   try {
-    const response = await axios.post('/activate', { email });
+    const response = await axios.post("/activate", { email });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to activate user');
+    console.log(error);
+    // throw new Error(error.response?.data?.message || 'Failed to activate user');
   }
 };
 
@@ -89,7 +91,8 @@ export const resetPassword = async (email: string, newPassword: string) => {
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    console.log(error);
+    // throw new Error(error.response?.data?.data);
   }
 };
 
@@ -99,7 +102,8 @@ export const getUserProfile = async () => {
     const response = await axios.get(`/profile`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    console.log(error);
+    // throw new Error(error.response?.data?.data);
   }
 };
 
@@ -109,8 +113,7 @@ export const logoutUser = async () => {
     const response = await axios.post(`/logout`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    console.log(error);
+    // throw new Error(error.response?.data?.data);
   }
 };
-
-

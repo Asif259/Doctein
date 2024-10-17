@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import Prescription, {
   IPrescription,
 } from "../../Models/dashboard/prescription";
+import Appointment from "../../Models/dashboard/appointment";
 
 const addPrescription = async (req: Request, res: Response): Promise<any> => {
   const { doctorId } = req.body as { doctorId: string };
@@ -39,6 +40,16 @@ const addPrescription = async (req: Request, res: Response): Promise<any> => {
         upsert: true,
       },
     );
+
+    // change the status of the appointment upcoming -> completed
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      appointmentId,
+      {
+        status: "completed",
+      },
+      { new: true },
+    );
+    console.log("Updated Appointment:", updatedAppointment);
 
     const response = {
       id: prescription._id,

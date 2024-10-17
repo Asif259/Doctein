@@ -21,12 +21,12 @@ import { PlusIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { appointment, patient } from "@/types/dashboard";
 import { getAppointmentByPatientId } from "@/api/dashboard/appointmentAPI";
-import toast from "react-hot-toast";
 import { extractDateAndTime } from "@/utilities/timeZone";
 import Link from "next/link";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import { useRouter } from "next/navigation";
 import DragAndDropInput from "@/app/dashboard/prescription/dnd-input";
+import { useShallow } from "zustand/react/shallow";
 
 const patientCols = [
   { name: "PATIENT NAME", uid: "patientName" },
@@ -51,7 +51,12 @@ export default function Page() {
   const [filteredAppointments, setFilteredAppointments] = React.useState<
     appointment[]
   >([]);
-  const { patients, addPatients } = useDashboardStore((state) => state);
+  const { patients, addPatients } = useDashboardStore(
+    useShallow((state) => ({
+      patients: state.patients,
+      addPatients: state.addPatients,
+    })),
+  );
   const [filteredPatients, setFilteredPatients] = useState<patient[]>(patients);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
