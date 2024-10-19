@@ -13,9 +13,13 @@ interface DashboardState {
   toggleSidebar: () => void;
   setTabKey: (key: string) => void;
   addPatients: (newPatients: patient[]) => void;
+  resetPatients: () => void;
   addAppointments: (newAppointments: appointment[]) => void;
-  addStaff: (newStaff: staff) => void;
+  resetAppointments: () => void;
+  addStaffs: (newStaff: staff[]) => void;
+  resetStaff: () => void;
   addPrescriptions: (newPrescriptions: Prescription[]) => void;
+  resetPrescriptions: () => void;
   setEditable: (isEditable: boolean) => void;
 }
 
@@ -31,12 +35,15 @@ const useDashboardStore = create<DashboardState>((set) => ({
     set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   setTabKey: (key: string) => set({ tabKey: key }),
   addPatients: (newPatients: patient[]) => set({ patients: newPatients }),
+  resetPatients: () => set({ patients: [] }),
   addAppointments: (newAppointment: appointment[]) =>
     set({ appointments: newAppointment }),
-  addStaff: (newStaff: staff) =>
-    set((state) => ({ staffs: [...state.staffs, newStaff] })),
+  resetAppointments: () => set({ appointments: [] }),
+  addStaffs: (newStaffs: staff[]) =>set({ staffs: newStaffs }),
+  resetStaff: () => set({ staffs: [] }),
   addPrescriptions: (newPrescriptions: Prescription[]) =>
     set({ prescriptions: [...newPrescriptions] }),
+  resetPrescriptions: () => set({ prescriptions: [] }),
   setEditable: (isEditable: boolean) => set({ isEditable }),
 }));
 
