@@ -30,7 +30,7 @@ function CircleIconGray({
 import { Atom, Baby, Dna, House, Menu, Pill, Search } from "lucide-react"; // oilo
 const Nav = () => {
     return (
-        <Navbar className="w-full ">
+        <Navbar className="w-full bg-green-300">
             <NavbarBrand>
                 <Image src="/Logo.png" alt="Logo is here" height={50} />
                 <p className="font-bold text-inherit">Mental.me</p>

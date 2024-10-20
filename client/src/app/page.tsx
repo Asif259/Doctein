@@ -1,18 +1,20 @@
 "use client";
 
-import Footer from "@/components/landing-page/footer";
-import Hero from "@/components/landing-page/hero";
 import Blog from "@/components/landing-page/blog";
-import Card from "@/components/landing-page/card";
-import CardDemo from "@/components/landing-page/card";
+import Customer from "@/components/landing-page/customer";
+import IntegrationsSection from "@/components/landing-page/integration";
 import Nav from "@/components/landing-page/nav";
+import Payment from "@/components/landing-page/payment";
+import Footer from "@/components/landing-page/footer";
 
 export default function Component() {
     return (
-        <div className="">
+        <div className="h-fit">
             <Nav />
+            <IntegrationsSection />
+            <Customer />
             <Blog />
-            <Hero />
+            <Payment />
             <Footer />
         </div>
     );

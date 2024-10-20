@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, Avatar, Image, CardBody } from "@nextui-org/react";
 import { CalendarDays } from "lucide-react";
+import SectionContainer from "@/components/landing-page/section_container";
+import Card_container from "@/components/landing-page/card_container";
 
 interface BlogPost {
     category: string;
@@ -67,7 +69,7 @@ const blogPosts: BlogPost[] = [
 
 export default function Blog() {
     return (
-        <div className="py-16 px-4 max-w-full mx-28">
+        <SectionContainer Background="bg-white">
             <div className="text-center text-lg text-indigo-600 font-semibold mb-2">
                 Our Blog
             </div>
@@ -78,43 +80,39 @@ export default function Blog() {
                 Here's what some of our customers say about our platform.
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Card_container gap={4} md_cols={2}>
                 {blogPosts.map((post, index) => (
-                    <Card key={index} shadow={"none"} radius={"none"}>
-                        <CardBody className="overflow-hidden grid grid-cols-1 md:grid-cols-7 gap-1">
-                            <div
-                                className={
-                                    "h-full w-full col-span-3 flex flex-row items-center justify-center"
-                                }
-                            >
-                                <img
-                                    src={post.image}
-                                    alt={post.title}
-                                    className=" h-5/6 object-cover rounded-2xl "
-                                />
-                            </div>
+                    <Card key={index} shadow={"none"} radius={"lg"}>
+                        <CardBody className="overflow-hidden items-center flex-row flex gap-8">
+                            {/*<div className={"items-center flex-row flex"}>*/}
+                            <img
+                                src={post.image}
+                                alt={post.title}
+                                className="max-w-80 max-h-72 object-cover rounded-2xl p-0 m=0"
+                            />
+                            {/*</div>*/}
 
-                            <div className="p-2 col-span-4">
+                            <div className="p-2 ">
                                 <div className="text-indigo-600 font-semibold mb-2">
                                     {post.category}
                                 </div>
-                                <div className="text-2xl font-bold text-black mb-2">
+                                <div className="text-3xl font-semibold text-black mb-2">
                                     {post.title}
                                 </div>
-                                <div className="text-gray-600 mb-4">
+                                <div className="text-gray-600 mb-4 text-xl">
                                     {post.description}
                                 </div>
                                 <div className="flex items-center">
                                     <Avatar
                                         src={post.author.avatar}
-                                        size="sm"
+                                        size="md"
                                     />
-                                    <div className="ml-3">
-                                        <div className="text-gray-600 text-sm ">
+                                    <div className="ml-3 ">
+                                        <div className="text-gray-600 text-sm text-xl">
                                             <span>{post.author.name}</span>
                                             <div
                                                 className={
-                                                    "rounded-full border-0 bg-green-400 inline-flex w-2 h-2 mx-2"
+                                                    "rounded-full border-0 bg-green-400 inline-flex w-3 h-3 mx-2"
                                                 }
                                             ></div>
                                             <span>{post.date}</span>
@@ -125,7 +123,7 @@ export default function Blog() {
                         </CardBody>
                     </Card>
                 ))}
-            </div>
-        </div>
+            </Card_container>
+        </SectionContainer>
     );
 }

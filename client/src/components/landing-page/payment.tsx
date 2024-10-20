@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { ArrowRight } from "lucide-react";
 
-export default function Hero() {
+export default function Payment() {
     return (
         <div className="h-fit flex flex-col justify-center items-center text-center bg-indigo-600 px-4 py-16">
             <h1 className="text-4xl md:text-7xl text-white  leading-tight flex flex-col justify-center items-center">
