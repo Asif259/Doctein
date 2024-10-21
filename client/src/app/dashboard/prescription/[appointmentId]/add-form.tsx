@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
-import { Input } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Input } from "@nextui-org/react";
 import FormButton from "@/app/dashboard/prescription/[appointmentId]/form-button";
 import { usePrescriptionStore } from "@/store/prescription-store";
 import {
@@ -13,6 +13,8 @@ import {
 } from "@/types/prescription";
 import { useShallow } from "zustand/react/shallow";
 import { CalendarIcon } from "lucide-react";
+import { getMedication } from "@/api/dashboard/medicationAPI";
+import { Key } from "@react-types/shared";
 
 function AddForm({
   id,
@@ -97,13 +99,22 @@ function MedicationForm({
       updateMedication: state.updateMedication,
     })),
   );
+  const [value, setValue] = React.useState<Key | null>(null);
+  const [items, setItems] = React.useState<
+    {
+      _id: string;
+      dosage_type: string;
+      brand: string;
+      generic: string;
+      strength: string;
+    }[]
+  >([]);
 
   const formik = useFormik<Medication>({
     initialValues: {
       id: 0,
-      type: "",
-      name: "",
-      dosage: "",
+      medicationId: null,
+      medication: "",
       duration: "",
       frequency: "",
       note: "",
@@ -132,6 +143,18 @@ function MedicationForm({
     }
   }, [data]);
 
+  // search medication
+  const searchMedication = async (search: string) => {
+    if (!search) {
+      setItems([]);
+      return;
+    }
+    const response = await getMedication(search);
+    if (response.success) {
+      setItems(response.data);
+    }
+  };
+
   const handleSubmit = () => {
     formik.handleSubmit();
   };
@@ -139,23 +162,100 @@ function MedicationForm({
     <form className="space-y-4">
       <h2 className="text-lg font-semibold">Add Medication</h2>
       <div className="flex flex-row gap-2">
-        <Input
-          className="w-1/3"
-          label="Medication Type"
-          {...formik.getFieldProps("type")}
-        />
-        <Input
-          className="w-2/3"
+        <Autocomplete
           label="Medication Name"
-          {...formik.getFieldProps("name")}
-        />
+          variant="bordered"
+          items={items}
+          placeholder="Search medication"
+          selectedKey={value}
+          onInputChange={(value) => searchMedication(value)}
+          onSelectionChange={(key) => {
+            formik.setFieldValue("medicationId", key);
+            const item = items.find((item) => item._id === key);
+            if (item) {
+              formik.setFieldValue(
+                "medication",
+                `${item.dosage_type} ${item.brand}`,
+              );
+            }
+            setValue(key);
+          }}
+        >
+          {(item) => (
+            <AutocompleteItem key={item._id as string}>
+              {`${item.dosage_type} | ${item.brand} | ${item.generic} | ${item.strength}`}
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
       </div>
       <div className="flex flex-row gap-2">
-        <Input label="Dosage" {...formik.getFieldProps("dosage")} />
-        <Input label="Duration" {...formik.getFieldProps("duration")} />
-        <Input label="Frequency" {...formik.getFieldProps("frequency")} />
+        <Autocomplete
+          label="Frequency"
+          variant="bordered"
+          items={[
+            { label: "1+1+1" },
+            { label: "1+0+1" },
+            { label: "0+1+1" },
+            { label: "1+1+0" },
+            { label: "1+0+0" },
+            { label: "0+1+0" },
+            { label: "0+0+1" },
+          ]}
+          placeholder="Select frequency"
+          selectedKey={formik.values.frequency}
+          onSelectionChange={(key) => formik.setFieldValue("frequency", key)}
+        >
+          {(item) => (
+            <AutocompleteItem key={item.label}>{item.label}</AutocompleteItem>
+          )}
+        </Autocomplete>
+        <Autocomplete
+          label="Duration"
+          variant="bordered"
+          items={[
+            {
+              key: "1 week",
+              label: "1 week",
+            },
+            {
+              key: "2 weeks",
+              label: "2 weeks",
+            },
+            {
+              key: "3 weeks",
+              label: "3 weeks",
+            },
+            {
+              key: "1 month",
+              label: "1 month",
+            },
+            {
+              key: "2 months",
+              label: "2 months",
+            },
+            {
+              key: "3 months",
+              label: "3 months",
+            },
+            {
+              key: "6 months",
+              label: "6 months",
+            },
+          ]}
+          placeholder="Select duration"
+          selectedKey={formik.values.duration}
+          onSelectionChange={(key) => formik.setFieldValue("duration", key)}
+        >
+          {(item) => (
+            <AutocompleteItem key={item.label}>{item.label}</AutocompleteItem>
+          )}
+        </Autocomplete>
       </div>
-      <Input label="Note" {...formik.getFieldProps("note")} />
+      <Input
+        variant="bordered"
+        label="Note"
+        {...formik.getFieldProps("note")}
+      />
       <FormButton onClose={onClose} handleSubmit={handleSubmit} />
     </form>
   );

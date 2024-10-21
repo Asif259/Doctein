@@ -194,9 +194,9 @@ const PrescriptionTemplate = forwardRef<
                 <Medication
                   key={medication.id}
                   id={medication.id}
-                  type={medication.type}
-                  name={medication.name}
-                  dosage={medication.dosage}
+                  // type={medication.type}
+                  medication={medication.medication}
+                  // dosage={medication.dosage}
                   duration={medication.duration}
                   frequency={medication.frequency}
                 />
@@ -449,17 +449,17 @@ function ListItem({
 
 function Medication({
   id,
-  type,
-  name,
-  dosage,
+  // type,
+  // name,
+  medication,
   duration,
   quantity,
   frequency,
 }: {
   id: number;
-  type: string;
-  name: string;
-  dosage: string;
+  // type: string;
+  medication: string;
+  // dosage: string;
   duration: string;
   quantity?: string;
   frequency: string;
@@ -498,7 +498,7 @@ function Medication({
     <div className="flex flex-row justify-between">
       <div className="text-sm">
         <p className="font-semibold">
-          {type} {name} {dosage} ---- {quantity || "40pcs"}
+          {medication} ---- {quantity || "40pcs"}
         </p>
         <p>
           {frequency} ---- {duration}

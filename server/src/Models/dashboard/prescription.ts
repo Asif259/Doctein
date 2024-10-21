@@ -2,8 +2,7 @@ import { Schema, model, Document, ObjectId } from "mongoose";
 
 export interface IMedication extends Document {
   id: number;
-  type: string;
-  name: string;
+  medicationId: string;
   dosage: string;
   duration: string;
   frequency: string;
@@ -68,8 +67,7 @@ const prescriptionSchema = new Schema<IPrescription>(
     medications: [
       {
         id: Number,
-        type: { type: String },
-        name: String,
+        medicationId: { type: Schema.Types.ObjectId, ref: "Medication" },
         dosage: String,
         duration: String,
         frequency: String,

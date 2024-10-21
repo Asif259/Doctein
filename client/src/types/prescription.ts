@@ -36,9 +36,8 @@ export interface Prescription {
 
 export interface Medication {
   id: number;
-  type: string;
-  name: string;
-  dosage: string;
+  medicationId: string | null;
+  medication: string;
   duration: string;
   frequency: string;
   note: string;
