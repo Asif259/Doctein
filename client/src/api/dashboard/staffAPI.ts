@@ -37,14 +37,16 @@ export const getStaffById = async (id: string) => {
 };
 
 // Update a staff by ID
-export const updateStaff = async (id: number | undefined, updatedData: staff) => {
+export const updateStaff = async (staffId: string, data: staff) => {
     try {
-        const response = await axios.put(`/staffs/${id}`, updatedData);
-        return response.data;
+        const res = await axios.put(`staffs/${staffId}`, data);
+        return res.data;
     } catch (error) {
         console.error("Error updating staff:", error);
+        throw error;
     }
 };
+
 
 // Delete a staff by ID
 export const deleteStaff = async (id: string | undefined) => {
@@ -53,6 +55,7 @@ export const deleteStaff = async (id: string | undefined) => {
         const response = await axios.delete(`/staffs/${id}`);
         return response.data;
     } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+        console.error("Error deleting staff:", error);
+        throw error;
     }
 };

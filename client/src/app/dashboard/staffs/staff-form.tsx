@@ -1,62 +1,65 @@
-import React from "react";
-import { Button, Input } from "@nextui-org/react";
+import React, {useEffect} from "react";
+import { Button, Input, Select, SelectItem } from "@nextui-org/react";
+import { ShieldCheck, ShieldBan, TicketsPlane } from 'lucide-react';
 import { useFormik } from "formik";
-import { staff } from "@/types/dashboard";
+import { staff, StatusOption } from "@/types/dashboard";
 import { saveStaff, updateStaff } from "@/api/dashboard/staffAPI";
 import { useDashboardStore } from "@/store/dashboard-store";
 import toast from "react-hot-toast";
 
-function StaffForm({staff,onClose,}: { staff?: staff | null; onClose: () => void;}) {
+
+function StaffForm({staff, onClose}: {
+    staff?: staff | null;
+    onClose: () => void;
+}) {
     const { staffs, addStaffs } = useDashboardStore((state) => state);
+
+    const statusOptions: StatusOption[] = [
+        { key: "active", value: "active", startContent: <ShieldCheck />, children: "Active" },
+        { key: "inactive", value: "inactive", startContent: <ShieldBan />, children: "Inactive" },
+        { key: "vacation", value: "vacation", startContent: <TicketsPlane />, children: "Vacation" }
+    ];
 
     const formik = useFormik({
         initialValues: {
-            id: staff?.id || 0,
+            id: 0,
             name: staff?.name || "",
             phone: staff?.phone || "",
             address: staff?.address || "",
-            status: staff?.status || "active",
+            status: staff?.status || "",
         },
         enableReinitialize: true,
         onSubmit: async (values) => {
             const { name, phone, address, status } = values;
-
             try {
-                if (staff) {
-                    const res = await updateStaff(staff?.id, {
-                        ...staff,
-                        name,
-                        phone,
-                        address,
-                        status,
-                    });
+                if (staff && staff.key) {
+                    const res = await updateStaff(staff.key, { name, phone, address, status });
                     if (res?.success) {
                         const updatedStaffs = staffs.map((p) =>
-                            p.id === staff.id ? res.data : p
+                            p.key === staff.key ? res.data : p
                         );
                         addStaffs(updatedStaffs);
                         toast.success("Staff updated successfully");
                         onClose();
                         return;
                     }
-                }
-                const res = await saveStaff({
-                        id: staffs.length ? staffs.length + 1 : 1,
-                        name,
-                        phone,
-                        address,
-                        status,
-                    });
+                } else {
+                    const res = await saveStaff({ name, phone, address, status });
                     if (res?.success) {
                         addStaffs([...staffs, res.data]);
                         toast.success("Staff saved successfully");
                         onClose();
                     }
+                }
             } catch (error) {
                 console.error("Error saving staff:", error);
             }
         },
     });
+
+    useEffect(() => {
+        console.log(staff);
+    }, [staff]);
 
     return (
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
@@ -75,15 +78,27 @@ function StaffForm({staff,onClose,}: { staff?: staff | null; onClose: () => void
                 placeholder="Enter staff address"
                 {...formik.getFieldProps("address")}
             />
-            <Input
+            <Select
                 label="Status"
-                placeholder="Enter staff status (active, inactive, vacation)"
-                {...formik.getFieldProps("status")}
-            />
-            <Button
-                className="bg-secondary-600 text-secondary-100 mr-2"
-                type="submit"
+                placeholder="Select status"
+                aria-label="Staff Status"
+                onChange={(event) => {
+                    const selectedValue = event.target.value;
+                    formik.setFieldValue("status", selectedValue);
+                }}
             >
+                {statusOptions.map((option) => (
+                    <SelectItem
+                        key={option.key}
+                        startContent={option.startContent}
+                        value={formik.values.status}
+                    >
+                        {option.children}
+                    </SelectItem>
+                ))}
+            </Select>
+
+            <Button className="bg-secondary-600 text-secondary-100 mr-2" type="submit">
                 {!staff ? "Add Staff" : "Update Staff"}
             </Button>
         </form>

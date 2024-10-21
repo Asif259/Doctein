@@ -29,5 +29,7 @@ router.put('/doctors', authenticate, doctorController.updateDoctor);
 router.post('/staffs', authenticate, staffController.saveStaff);
 router.get("/staffs", authenticate, staffController.getStaffs);
 router.put("/staffs/:staffId", authenticate, staffController.updateStaff);
+router.delete("/staffs/:staffId", authenticate, staffController.deleteStaff);
+
 
 export default router;

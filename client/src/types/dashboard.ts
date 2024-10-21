@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface patient {
   id?: number;
   key?: string;
@@ -26,7 +28,7 @@ export interface staff {
   name: string;
   phone: string;
   address: string;
-  status: "active" | "inactive" | "vacation";
+  status: "active" | "inactive" | "vacation" | " ";
 }
 
 export interface doctor {
@@ -40,3 +42,10 @@ export interface doctor {
   bmdcNumber: string; 
   digitalSignature?: string;
 }
+
+export type StatusOption = {
+  key: string;
+  value: string;
+  startContent?: React.ReactNode;
+  children: React.ReactNode;
+};

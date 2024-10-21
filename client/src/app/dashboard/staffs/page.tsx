@@ -21,6 +21,7 @@ import {deleteStaff, getStaffs} from "@/api/dashboard/staffAPI";
 import {staff} from "@/types/dashboard";
 import {useDashboardStore} from "@/store/dashboard-store";
 import StaffForm from "@/app/dashboard/staffs/staff-form";
+import toast from "react-hot-toast";
 
 const columns = [
     {name: "NAME", uid: "name"},
@@ -38,6 +39,7 @@ export default function Page() {
     const [updateStaff, setUpdateStaff] = React.useState<staff | null>(null);
 
     const handleUpdate = (staff: staff) => {
+        console.log("Updating staff:", staff);
         setUpdateStaff(staff);
         setOpen(true);
     };
@@ -56,7 +58,7 @@ export default function Page() {
                     return p && p.key !== staff.key;
                 });
                 addStaffs([...updatedStaffs]);
-                alert("Staff deleted successfully");
+                toast.success("Staff deleted successfully");
             }
         },
         [addStaffs]
@@ -119,14 +121,23 @@ export default function Page() {
     );
 
     useEffect(() => {
-        (async () => {
-            const res = await getStaffs();
-            if (res?.success) {
-                console.log("Staffs fetched successfully");
-                addStaffs(res?.data);
+        const fetchStaffs = async () => {
+            try {
+                const res = await getStaffs();
+                if (res?.success) {
+                    console.log("Staffs fetched successfully");
+                    addStaffs(res?.data);
+                } else {
+                    Error("Failed to fetch staffs");
+                }
+            } catch (error: any) {
+                console.error(error.message);
+                toast.error("Error fetching staffs");
             }
-        })();
-    }, []);
+        };
+
+        fetchStaffs();
+    }, [addStaffs]);
 
     useEffect(() => {
         console.log("Staffs:", staffs);
@@ -141,13 +152,13 @@ export default function Page() {
 
         const searchValue = search.toLowerCase();
         const filtered = staffs.filter((user) =>
-            Object.values(user).some((value) =>
-                String(value).toLowerCase().includes(searchValue)
-            )
+            user.name.toLowerCase().includes(searchValue) ||
+            user.phone.toLowerCase().includes(searchValue) ||
+            user.address.toLowerCase().includes(searchValue)
         );
 
         setFilteredStaffs(filtered);
-    }, [search]);
+    }, [search, staffs]);
 
     return (
         <>
@@ -176,7 +187,10 @@ export default function Page() {
                     className="max-w-xs mb-4"
                 />
                 <Button
-                    onClick={() => setOpen(true)}
+                    onClick={() => {
+                        setUpdateStaff(null);
+                        setOpen(true);
+                    }}
                     startContent={<PlusIcon/>}
                     className="bg-secondary-600 text-secondary-100"
                     variant="solid"
