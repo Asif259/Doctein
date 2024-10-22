@@ -1,39 +1,26 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { inter, robotoMono } from "@/app/fonts";
 import "./globals.css";
 import React from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { Toaster } from "react-hot-toast";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
 export const metadata: Metadata = {
-  title: "Landing page | Dochub",
-  description: "Coming soon",
+    title: "Landing page | Dochub",
+    description: "Coming soon",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <Toaster position="bottom-right" />
-        <NextUIProvider>{children}</NextUIProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+            <body className="antialiased">
+                <Toaster position="bottom-right" />
+                <NextUIProvider>{children}</NextUIProvider>
+            </body>
+        </html>
+    );
 }
