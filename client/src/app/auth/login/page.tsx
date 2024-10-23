@@ -1,24 +1,23 @@
 "use client";
-import {useRouter, useSearchParams} from "next/navigation";
+import {useRouter} from "next/navigation";
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {authenticateUser, loginUser, getUserProfile, sendOtp} from "@/api/api";
 import {useAuthStore} from "@/store/auth-store";
 import React, {useEffect, useState} from "react";
-import {Input, Spinner} from "@nextui-org/react";
+import {Image, Input, Spinner} from "@nextui-org/react";
 import toast from "react-hot-toast";
 import {IoEyeOutline, IoEyeOffOutline} from "react-icons/io5";
-
 
 export default function Login() {
     const {login} = useAuthStore((state) => state);
     const [loading, setLoading] = useState<boolean>(true);
-    const searchParams = useSearchParams();
-    const role = searchParams.get("role");
     const router = useRouter();
 
-    const [showPassword, setShowPassword] = useState(false);
-    
+    const [isVisible, setIsVisible] = useState(false);
+    const toggleVisibility = () => setIsVisible(!isVisible);
+
+
     useEffect(() => {
         const checkAuthStatus = async () => {
             const authData = await authenticateUser();
@@ -46,7 +45,6 @@ export default function Login() {
 
         checkAuthStatus();
     }, [login, router]);
-
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -104,10 +102,10 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex justify-between items-center" style={{backgroundColor: "#1d2129"}}>
+        <div className="min-h-screen flex justify-between items-center bg-dark-200">
             <div className="w-full flex-1 pl-28 p-8">
-                <h2 className="text-2xl font-semibold text-gray-800">Login</h2>
-                <p className="text-gray-600">Enter your credentials to login</p>
+                <h2 className="text-2xl font-semibold text-white">Login</h2>
+                <p className="text-neutral">Enter your credentials to login</p>
 
                 {/* General error message display */}
                 {formik.status?.message && !formik.status.success && (
@@ -119,7 +117,7 @@ export default function Login() {
 
                 <form className="mt-4" onSubmit={formik.handleSubmit}>
                     <div className="mb-4">
-                        <label className="block text-gray-700">Email address</label>
+                        <label className="block text-neutral">Email address</label>
                         <Input
                             placeholder="Enter your email"
                             type="email"
@@ -130,25 +128,23 @@ export default function Login() {
                             }
                             classNames={{
                                 input: [
-                                    "bg-[#1a1d21]",
-                                    "text-[#e2e2e3]",
-                                    "placeholder:text-[#e2e2e3]",
-                                    "hover:bg-[#21252a]",
+                                    "bg-dark-300",
+                                    "text-neutral",
+                                    "placeholder:text-dark-50",
+                                    "hover:bg-dark-100",
                                 ],
                                 inputWrapper: [
-                                    "bg-[#1a1d21]",
-                                    "hover:bg-[#21252a]",
-                                    "group-data-[focus=true]:bg-[#1a1d21]",
+                                    "bg-dark-300",
+                                    "hover:bg-dark-100",
+                                    "group-data-[focus=true]:bg-dark-300",
                                 ],
                             }}
-
                         />
                     </div>
                     <div className="relative">
-                        <label className="block mb-2" style={{color: "#abb7c4"}}>Password</label>
+                        <label className="block mb-2 text-neutral">Password</label>
                         <Input
                             placeholder="Enter your password"
-                            type={showPassword ? "text" : "password"}
                             {...formik.getFieldProps("password")}
                             isInvalid={formik.touched.password && Boolean(formik.errors.password)}
                             errorMessage={
@@ -156,32 +152,37 @@ export default function Login() {
                             }
                             classNames={{
                                 input: [
-                                    "bg-transparent",
-                                    "text-white/90",
-                                    "placeholder:text-default-700/50 ",
+                                    "bg-dark-300",
+                                    "text-neutral",
+                                    "placeholder:text-dark-50",
+                                    "hover:bg-dark-100",
                                 ],
-                                innerWrapper: "bg-transparent",
                                 inputWrapper: [
-                                    "bg-default-200/50",
-                                    "hover:bg-primary-200/70",
-                                    "group-data-[focus=true]:bg-default-200/50",
+                                    "bg-dark-300",
+                                    "hover:bg-dark-100",
+                                    "group-data-[focus=true]:bg-dark-300",
                                 ],
                             }}
+                            endContent={
+                                <button className="focus:outline-none" type="button" onClick={toggleVisibility}
+                                        aria-label="toggle password visibility">
+                                    {isVisible ? (
+                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none"/>
+                                    ) : (
+                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none"/>
+                                    )}
+                                </button>
+                            }
+                            type={isVisible ? "text" : "password"}
                         />
-                        <div
-                            className="absolute right-3 top-3/4 transform -translate-y-1/2 cursor-pointer text-white"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? <IoEyeOffOutline size={20}/> : <IoEyeOutline size={20}/>}
-                        </div>
 
                     </div>
 
                     {/* Forgot Password Link */}
-                    <div className="mb-4 text-right">
+                    <div className="mb-4 mt-2 text-neutral">
                         <a
                             href="/auth/forgot-password"
-                            className="text-primary-800 hover:underline"
+                            className="text-neutral hover:underline hover:text-primary"
                         >
                             Forgot your password?
                         </a>
@@ -189,25 +190,31 @@ export default function Login() {
 
                     <button
                         type="submit"
-                        className="w-full bg-primary-800 text-white py-2 px-4 rounded-lg"
+                        className="w-full bg-primary text-white py-2 px-4 rounded-lg"
                         disabled={formik.isSubmitting}
                     >
                         {formik.isSubmitting ? "Logging in..." : "Login"}
                     </button>
                 </form>
 
-                <p className="mt-4 text-gray-600">
+                <p className="mt-4 text-neutral">
                     Don&#39;t have an account?
-                    <a href={`/auth`} className="text-primary-800 hover:underline ml-1">
+                    <a href={`/auth`} className="text-primary hover:underline ml-1">
                         Register
                     </a>
                 </p>
             </div>
 
-            <div className="md:block w-full md:w-1/2 bg-primary-800 p-8 m-3 rounded-lg">
-                <h2 className="text-2xl font-semibold text-white">
-                    Welcome back, {role}
-                </h2>
+            <div className="relative flex-1 w-full bg-white h-full">
+                <Image
+                    classNames={{
+                        wrapper: "w-full max-w-xl p-0",
+                        img: "w-full p-0",
+                    }}
+                    alt="NextUI hero Image"
+                    src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg"
+                    height={720}
+                />
             </div>
         </div>
     )

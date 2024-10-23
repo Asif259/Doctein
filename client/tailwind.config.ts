@@ -17,23 +17,33 @@ const config: Config = {
         "icon-xl": "1.5rem",
       },
       colors: {
-        primary: "var(--primary-color)",
-        secondary: "var(--secondary-color)",
-        text: "var(--text-color)",
+        primary: "#24ae7c",
+        secondary: {
+          100: "#70a8db",
+          500: "#152432"
+        },
+        dark: {
+          50: "#76818d",
+          100: "#21252a",
+          200: "#1d2129",
+          300: "#1a1d21",
+        },
+        neutral: "#abb7c4",
+        yellow: "#ffd147",
         disabled: "var(--disabled-color)",
         danger: {
-          100: colors.red[100],
+          100: "#3e1716",
           200: colors.red[200],
           300: colors.red[300],
           400: colors.red[400],
-          500: colors.red[500],
+          500: "#f37877",
           600: colors.red[600],
           700: colors.red[700],
           800: colors.red[800],
           900: colors.red[900],
         },
         btn: {
-          bg: "var(--button-background)",
+          light: "var(--button-background)",
           text: "var(--button-text)",
         },
       },
@@ -41,4 +51,5 @@ const config: Config = {
   },
   plugins: [nextui()],
 };
+
 export default config;
