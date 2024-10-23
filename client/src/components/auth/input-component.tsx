@@ -28,7 +28,7 @@ const InputComponent: React.FC<InputComponentProps> = ({
         value={value}
         onChange={onChange}
         onBlur={onBlur}
-        className={`w-full border rounded-lg px-3 py-2 ${
+        className={`w-full border rounded-lg px-3 py-2  ${
           isInvalid ? 'border-red-500' : 'border-gray-300'
         }`}
         {...props}

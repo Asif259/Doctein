@@ -26,7 +26,7 @@ function StaffForm({staff, onClose}: {
             name: staff?.name || "",
             phone: staff?.phone || "",
             address: staff?.address || "",
-            status: staff?.status || "",
+            status: staff?.status || " ",
         },
         enableReinitialize: true,
         onSubmit: async (values) => {
