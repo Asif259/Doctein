@@ -65,10 +65,10 @@ const addPrescription = async (req: Request, res: Response): Promise<any> => {
     };
     return res.status(201).json({ success: true, data: response });
   } catch (error) {
-    console.error("Error adding prescription:", error);
+    console.error("Error adding prescriptions:", error);
     return res
       .status(500)
-      .json({ success: false, data: "Error adding prescription" });
+      .json({ success: false, data: "Error adding prescriptions" });
   }
 };
 
@@ -127,10 +127,10 @@ const updatePrescription = async (
     };
     return res.status(200).json({ success: true, data: response });
   } catch (error) {
-    console.error("Error updating prescription:", error);
+    console.error("Error updating prescriptions:", error);
     return res
       .status(500)
-      .json({ success: false, data: "Error updating prescription" });
+      .json({ success: false, data: "Error updating prescriptions" });
   }
 };
 
@@ -194,10 +194,10 @@ const getPrescriptionById = async (
     };
     return res.status(200).json({ success: true, data: response });
   } catch (error) {
-    console.error("Error fetching prescription:", error);
+    console.error("Error fetching prescriptions:", error);
     return res
       .status(500)
-      .json({ success: false, data: "Error fetching prescription" });
+      .json({ success: false, data: "Error fetching prescriptions" });
   }
 };
 
@@ -217,10 +217,41 @@ const deletePrescription = async (
       .status(200)
       .json({ success: true, data: "Prescription deleted" });
   } catch (error) {
-    console.error("Error deleting prescription:", error);
+    console.error("Error deleting prescriptions:", error);
     return res
       .status(500)
-      .json({ success: false, data: "Error deleting prescription" });
+      .json({ success: false, data: "Error deleting prescriptions" });
+  }
+};
+
+const uploadPrescription = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  const { appointmentId } = req.params as { appointmentId: string };
+  try {
+    if (!req.file) return res.status(400).send("No files were uploaded.");
+
+    // Save the file path to the database
+    const prescription = await Prescription.findOneAndUpdate(
+      { appointmentId },
+      {
+        snapshot: req.file.path,
+      },
+      { new: true, upsert: true },
+    );
+    // change the status of the appointment upcoming -> completed and add prescriptionId
+    await Appointment.findByIdAndUpdate(
+      appointmentId,
+      { prescriptionId: prescription._id, status: "completed" },
+      { new: true },
+    );
+    return res.status(201).json({ success: true, data: req.file.path });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Error uploading file" });
   }
 };
 
@@ -229,4 +260,5 @@ export {
   updatePrescription,
   getPrescriptionById,
   deletePrescription,
+  uploadPrescription,
 };

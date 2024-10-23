@@ -87,10 +87,6 @@ export default function Page() {
   }, [selectedPatient]);
 
   useEffect(() => {
-    console.log("Selected Appointment:", selectedAppointment);
-  }, [selectedAppointment]);
-
-  useEffect(() => {
     if (!search) {
       setFilteredPatients(patients);
       return;
@@ -127,7 +123,7 @@ export default function Page() {
     setFilteredAppointments(appointments);
   }, [appointments]);
 
-  const handleUploadSnapshot = (appointmentId: string | undefined) => {
+  const handleUploadSnapshot = (_appointmentId: string | undefined) => {
     setIsModalOpen(true);
     // toast.success("Snapshot uploaded successfully");
   };
@@ -140,7 +136,7 @@ export default function Page() {
             <>
               <ModalHeader>Add Snapshot</ModalHeader>
               <ModalBody>
-                <DragAndDropInput />
+                <DragAndDropInput appointmentId={selectedAppointment} />
               </ModalBody>
             </>
           )}
@@ -231,14 +227,34 @@ export default function Page() {
                       <Chip color="success">{appointment.status}</Chip>
                     </TableCell>
                     <TableCell className="flex flex-row gap-2 justify-center">
-                      <Button
-                        size="sm"
-                        variant="solid"
-                        className="bg-secondary-600 text-secondary-100"
-                        onClick={() => handleUploadSnapshot(appointment.key)}
-                      >
-                        Add Snapshot
-                      </Button>
+                      {appointment?.snapshot ? (
+                        <Button
+                          size="sm"
+                          variant="solid"
+                          className="bg-secondary-600 text-secondary-100"
+                          onClick={() => {
+                            if (!appointment.key) return;
+                            setSelectedAppointment(appointment.key);
+                            console.log(appointment.key);
+                          }}
+                        >
+                          View Snapshot
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="solid"
+                          className="bg-secondary-600 text-secondary-100"
+                          onClick={() => {
+                            if (!appointment.key) return;
+                            setSelectedAppointment(appointment.key);
+                            handleUploadSnapshot(appointment.key);
+                          }}
+                        >
+                          Add Snapshot
+                        </Button>
+                      )}
+
                       <Button
                         size="sm"
                         variant="solid"

@@ -54,7 +54,7 @@ function PatientForm({ patient }: { patient?: patient | null }) {
           addPatients([...patients, res.data]);
           toast.success("Patient saved successfully");
 
-          // for instant patients redirect to prescription app on patient save
+          // for instant patients redirect to prescriptions app on patient save
           if (instant && res?.data?.appointmentId)
             router.push(`/dashboard/prescription/${res.data.appointmentId}`);
         }

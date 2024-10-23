@@ -19,6 +19,7 @@ export interface appointment {
   date: string;
   time: string;
   note?: string;
+  snapshot?: boolean;
   status: "upcoming" | "completed" | "cancelled";
 }
 
@@ -35,11 +36,11 @@ export interface doctor {
   [x: string]: any;
   key?: string;
   name: string;
-  degrees: string[]; 
+  degrees: string[];
   designation: string;
   specialization: string;
   phone: string[];
-  bmdcNumber: string; 
+  bmdcNumber: string;
   digitalSignature?: string;
 }
 

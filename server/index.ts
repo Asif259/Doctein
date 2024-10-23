@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import express = require("express");
 import cors = require("cors");
-// import helmet = require("helmet");
 import hpp = require("hpp");
 import bodyParser = require("body-parser");
 import mongoose = require("mongoose");
 import dotenv = require("dotenv");
 import cookieParser from "cookie-parser";
+import path from "path";
 
 import authRouter from "./src/Routes/authRoutes";
 import userRouter from "./src/Routes/userRoutes";
@@ -28,8 +28,8 @@ app.use(
   }),
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// [appointmentId].use(helmet);
 app.use(hpp({ checkBody: true, checkQuery: true }));
 
 const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || "";
@@ -37,6 +37,9 @@ mongoose
   .connect(MONGODB_CONNECTION)
   .then(() => console.log("MongoDB Connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "/uploads")));
 
 // Use API router
 app.use("/api/v1", authRouter);

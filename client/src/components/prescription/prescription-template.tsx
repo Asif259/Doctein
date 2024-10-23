@@ -66,7 +66,7 @@ const PrescriptionTemplate = forwardRef<
             toast.success("Prescription loaded successfully");
           }
         } else {
-          toast.success("Add new prescription");
+          toast.success("Add new prescriptions");
           setPrescription({
             ...prescription,
             appointmentId: appointmentId,

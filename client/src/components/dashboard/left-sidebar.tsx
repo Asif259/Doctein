@@ -71,7 +71,7 @@ function LeftSidebar() {
           </Link>
         </NavbarItem>
         <NavbarItem
-          className={`${currentPath === "/dashboard/prescription" ? "bg-gradient-to-l from-secondary-600 to-secondary-900  text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
+          className={`${currentPath === "/dashboard/prescriptions" ? "bg-gradient-to-l from-secondary-600 to-secondary-900  text-white hover:bg-opacity-90 hover:bg-gradient-to-r" : ""}`}
         >
           <Link
             color="foreground"

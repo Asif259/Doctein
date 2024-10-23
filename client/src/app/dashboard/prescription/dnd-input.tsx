@@ -1,7 +1,14 @@
 import React, { useState, DragEvent, ChangeEvent } from "react";
 import { Card, Button } from "@nextui-org/react";
+import { uploadPrescription } from "@/api/dashboard/prescriptionAPI";
+import toast from "react-hot-toast";
+import Image from "next/image";
 
-const DragAndDropFileUpload = () => {
+const DragAndDropFileUpload = ({
+  appointmentId,
+}: {
+  appointmentId: string;
+}) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
 
@@ -36,10 +43,14 @@ const DragAndDropFileUpload = () => {
   };
 
   // Handle file upload (Mocked in this case)
-  const handleUpload = (): void => {
-    if (selectedFile) {
+  const handleUpload = async () => {
+    console.log("DND", appointmentId);
+    if (selectedFile && appointmentId) {
       // Here you'd typically upload the file using an API or FormData
-      alert(`File uploaded: ${selectedFile.name}`);
+      const res = await uploadPrescription(selectedFile, appointmentId);
+      if (res.success) {
+        toast.success("Prescription uploaded successfully");
+      }
     }
   };
 
@@ -62,7 +73,16 @@ const DragAndDropFileUpload = () => {
           className="bg-gray-200 border-dashed border-2 border-gray-300 p-4 rounded-md cursor-pointer h-[250px] flex items-center justify-center"
           style={{}}
         >
-          Choose a file or drag it here
+          {selectedFile ? (
+            <Image
+              src={URL.createObjectURL(selectedFile)}
+              alt={selectedFile.name}
+              width={150}
+              height={150}
+            />
+          ) : (
+            <p>Drag & Drop your file here</p>
+          )}
         </label>
       </div>
 

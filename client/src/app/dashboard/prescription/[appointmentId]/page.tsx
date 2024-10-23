@@ -58,13 +58,13 @@ function Page({ params }: { params: { appointmentId: string } }) {
     })();
   }, []);
 
-  // handle print prescription
+  // handle print prescriptions
   const handlePrint = () => {
     setIsPrint(true);
     printFn();
   };
 
-  // handle save prescription to database
+  // handle save prescriptions to database
   const handleSave = async () => {
     console.log("Prescription:", prescription);
     if (prescription.appointmentId === "") {

@@ -93,11 +93,14 @@ const getAppointmentByPatientId = async (
         $ne: null,
       },
     })
-      .populate("patientId", "name phone status")
-      .select("patientId date note status");
+      .populate("patientId", "name phone")
+      .populate("prescriptionId", "snapshot")
+      .select("patientId prescriptionId date note status");
 
     const response = appointments.map((appointment) => {
       const patient = appointment.patientId as any;
+      const snapshot = appointment.prescriptionId as any;
+      console.log("Appointment:", appointment);
       const date = appointment.date;
       return {
         key: appointment._id,
@@ -106,9 +109,10 @@ const getAppointmentByPatientId = async (
         date: date,
         note: appointment.note,
         status: appointment.status,
+        snapshot: !!snapshot?.snapshot,
       };
     });
-    console.log("Response:", response);
+    // console.log("Response:", response);
     return res.status(200).json({ success: true, data: response });
   } catch (error) {
     console.error("Error fetching appointments:", error);
