@@ -5,9 +5,10 @@ import * as Yup from "yup";
 import {authenticateUser, loginUser, getUserProfile, sendOtp} from "@/api/api";
 import {useAuthStore} from "@/store/auth-store";
 import React, {useEffect, useState} from "react";
-import {Image, Input, Spinner} from "@nextui-org/react";
+import {Image, Input, Modal, ModalBody, ModalContent, ModalHeader, Spinner} from "@nextui-org/react";
 import toast from "react-hot-toast";
 import {IoEyeOutline, IoEyeOffOutline} from "react-icons/io5";
+import ForgetPassword from "../enter-otp";
 
 export default function Login() {
     const {login} = useAuthStore((state) => state);
@@ -16,7 +17,7 @@ export default function Login() {
 
     const [isVisible, setIsVisible] = useState(false);
     const toggleVisibility = () => setIsVisible(!isVisible);
-
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         const checkAuthStatus = async () => {
@@ -216,6 +217,24 @@ export default function Login() {
                     height={720}
                 />
             </div>
+
+            <Modal
+                className="p-5 bg-dark-200"
+                size="md"
+                closeButton
+                aria-labelledby="modal-title"
+                isOpen={modalVisible}
+                onClose={() => setModalVisible(false)}
+            >
+                <ModalContent>
+                    <ModalHeader>
+                        <h3 className="text-white">Enter OTP</h3>
+                    </ModalHeader>
+                    <ModalBody>
+                        <ForgetPassword onClose={() => setModalVisible(false)} />
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     )
         ;

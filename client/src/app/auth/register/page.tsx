@@ -1,14 +1,22 @@
-"use client";
+'use client'
 
-import {useState} from "react";
-import {useRouter, useSearchParams} from "next/navigation";
+import { useState, useEffect  } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import {Input, Image} from "@nextui-org/react";
-import {registerUser, sendOtp} from "@/api/api";
-import {useFormik} from "formik";
+import {
+    Input,
+    Image,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalContent,
+} from "@nextui-org/react";
+import { registerUser, sendOtp } from "@/api/api";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import toast from "react-hot-toast";
-import {IoEyeOutline, IoEyeOffOutline} from "react-icons/io5";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import EnterOTP from "../enter-otp";
 
 export default function Register() {
     const searchParams = useSearchParams();
@@ -17,12 +25,18 @@ export default function Register() {
 
     const [isVisible, setIsVisible] = useState(false);
     const [isConfirmVisible, setConfirmIsVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [email, setEmail] = useState("");
 
+    useEffect(() => {
+        if (!role) {
+            router.push("/auth");
+        }
+    }, [role, router]);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
     const toggleConfirmVisibility = () => setConfirmIsVisible(!isConfirmVisible);
 
-    // Formik validation schema
     const validationSchema = Yup.object({
         email: Yup.string()
             .email("Invalid email format")
@@ -37,7 +51,6 @@ export default function Register() {
             .required("Re-enter your password"),
     });
 
-    // Formik form handling
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -45,32 +58,47 @@ export default function Register() {
             confirmPassword: "",
         },
         validationSchema,
-        onSubmit: async (values, {setSubmitting, setErrors}) => {
+        onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await registerUser(
+                const response = await registerUser(
                     values.email,
                     values.password,
                     values.confirmPassword,
                     role as string
                 );
-                setSubmitting(false);
 
-                toast.success("Registration successful! Please check your email for OTP.");
+                console.log("Response from registerUser:", response);
 
-                await sendOtp(values.email);
-                router.push(`/auth/enter-otp?email=${values.email}&from=register`);
+                if (!response.success) {
+                    if (response.requireOtp === true) {
+                        toast.success("User not active. OTP sent to your email");
+                        setEmail(values.email);
+                        await sendOtp(values.email);
+                        setModalVisible(true);
+                    } else {
+                        console.log("User already exists or other error");
+                        toast.error(response.data || "User already exists");
+                    }
+                } else {
+                    console.log("Registration successful, opening OTP modal...");
+                    toast.success("Registration successful! Please check your email for confirmation.");
+                    setEmail(values.email);
+                    await sendOtp(values.email);
+                    setModalVisible(true);
+                }
             } catch (err: any) {
                 toast.error(err.message || "Registration failed. Please try again.");
-                setErrors({email: err.message});
+                setErrors({ email: err.message });
+            } finally {
                 setSubmitting(false);
             }
-        },
-    });
+        }
 
+    });
 
     return (
         <div className="min-h-screen flex justify-between items-center bg-dark-200">
-            <div className="w-full flex-1 pl-28 p-8 ">
+            <div className="w-full flex-1 pl-28 p-8">
                 <h2 className="text-2xl font-semibold text-white">
                     Register as {role}
                 </h2>
@@ -87,7 +115,9 @@ export default function Register() {
                             {...formik.getFieldProps("email")}
                             isInvalid={formik.touched.email && Boolean(formik.errors.email)}
                             errorMessage={
-                                formik.touched.email && formik.errors.email ? formik.errors.email : undefined
+                                formik.touched.email && formik.errors.email
+                                    ? formik.errors.email
+                                    : undefined
                             }
                             classNames={{
                                 input: [
@@ -103,7 +133,6 @@ export default function Register() {
                                 ],
                             }}
                         />
-
                     </div>
 
                     <div className="relative">
@@ -113,7 +142,9 @@ export default function Register() {
                             {...formik.getFieldProps("password")}
                             isInvalid={formik.touched.password && Boolean(formik.errors.password)}
                             errorMessage={
-                                formik.touched.password && formik.errors.password ? formik.errors.email : undefined
+                                formik.touched.password && formik.errors.password
+                                    ? formik.errors.password
+                                    : undefined
                             }
                             classNames={{
                                 input: [
@@ -129,18 +160,21 @@ export default function Register() {
                                 ],
                             }}
                             endContent={
-                                <button className="focus:outline-none" type="button" onClick={toggleVisibility} aria-label="toggle password visibility">
+                                <button
+                                    className="focus:outline-none"
+                                    type="button"
+                                    onClick={toggleVisibility}
+                                    aria-label="toggle password visibility"
+                                >
                                     {isVisible ? (
-                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none"/>
                                     ) : (
-                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none"/>
                                     )}
                                 </button>
                             }
                             type={isVisible ? "text" : "password"}
                         />
-
-
                     </div>
 
                     <div className="relative">
@@ -170,17 +204,21 @@ export default function Register() {
                                 ],
                             }}
                             endContent={
-                                <button className="focus:outline-none" type="button" onClick={toggleConfirmVisibility} aria-label="toggle password visibility">
+                                <button
+                                    className="focus:outline-none"
+                                    type="button"
+                                    onClick={toggleConfirmVisibility}
+                                    aria-label="toggle password visibility"
+                                >
                                     {isConfirmVisible ? (
-                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none"/>
                                     ) : (
-                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none"/>
                                     )}
                                 </button>
                             }
                             type={isConfirmVisible ? "text" : "password"}
                         />
-
                     </div>
 
                     <button
@@ -211,6 +249,24 @@ export default function Register() {
                     height={720}
                 />
             </div>
+
+            <Modal
+                className="p-5 bg-dark-200"
+                size="md"
+                closeButton
+                aria-labelledby="modal-title"
+                isOpen={modalVisible}
+                onClose={() => setModalVisible(false)}
+            >
+                <ModalContent>
+                    <ModalHeader>
+                        <h3 className="text-white">Enter OTP</h3>
+                    </ModalHeader>
+                    <ModalBody>
+                        <EnterOTP email={email} from="register" onClose={() => setModalVisible(false)} />
+                    </ModalBody>
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
