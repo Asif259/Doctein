@@ -7,11 +7,10 @@ const config: Config = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
-  theme: {},
   plugins: [
     nextui({
       prefix: "tw-",
-      defaultTheme: "dark",
+      defaultTheme: "light",
       themes: {
         light: {},
         dark: {

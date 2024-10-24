@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import Image from "next/image";
 import { usePrescriptionStore } from "@/store/prescription-store";
 import { extractDateAndTime } from "@/utilities/timeZone";
 
@@ -50,13 +49,13 @@ function PrescriptionHeader() {
             BMDC: {prescriptionHeader?.doctor.bmdcNumber}
           </p>
         </div>
-        <Image
-          src="/placeholder.svg"
-          alt="Hospital Logo"
-          width={80}
-          height={80}
-          className="bg-green-600"
-        />
+        {/*<Image*/}
+        {/*  src="/placeholder.svg"*/}
+        {/*  alt="Hospital Logo"*/}
+        {/*  width={80}*/}
+        {/*  height={80}*/}
+        {/*  className="bg-green-600"*/}
+        {/*/>*/}
       </div>
       <div className="border-t border-b border-gray-300 py-2 mb-4 flex flex-wrap justify-between text-sm">
         <div>

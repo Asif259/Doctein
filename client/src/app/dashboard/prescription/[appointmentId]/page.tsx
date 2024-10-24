@@ -22,21 +22,27 @@ function Page({ params }: { params: { appointmentId: string } }) {
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const printableDiv = useRef<HTMLDivElement>(null);
+  const [isPrint, setIsPrint] = useState<boolean>(false);
+
   const printFn = useReactToPrint({
-    contentRef: printableDiv,
+    onBeforePrint: async () => {
+      setIsPrint(true);
+    },
     onAfterPrint: () => {
       setIsPrint(false);
     },
   });
-  const [isPrint, setIsPrint] = useState<boolean>(false);
+
   const {
     prescription,
+    isEditable,
     resetPrescription,
     setPrescriptionHeader,
     setEditable,
   } = usePrescriptionStore(
     useShallow((state) => ({
       prescription: state.prescription,
+      isEditable: state.isEditable,
       resetPrescription: state.resetPrescription,
       setPrescriptionHeader: state.setPrescriptionHeader,
       setEditable: state.setEditable,
@@ -61,8 +67,14 @@ function Page({ params }: { params: { appointmentId: string } }) {
   // handle print prescriptions
   const handlePrint = () => {
     setIsPrint(true);
-    printFn();
   };
+
+  useEffect(() => {
+    console.log("Printable Div: sadasd", printableDiv.current);
+    if (isPrint && printableDiv.current) {
+      printFn(() => printableDiv.current);
+    }
+  }, [isPrint, printableDiv]);
 
   // handle save prescriptions to database
   const handleSave = async () => {
@@ -86,12 +98,17 @@ function Page({ params }: { params: { appointmentId: string } }) {
 
   return (
     <div>
-      <div className="flex flex-row justify-between items-center mb-5">
-        <h1>Prescription App</h1>
+      <div className="flex flex-row justify-between items-center mb-5 bg-secondary-600 p-3 rounded-md">
+        <h1 className="font-black text-2xl">Prescription App</h1>
         <div className="flex flex-row gap-3">
-          <Button onClick={() => handleSave()}>Save</Button>
-          <Button onClick={() => setEditable(false)}>Preview</Button>
-          <Button onClick={() => setEditable(true)}>Edit</Button>
+          {isEditable ? (
+            <>
+              <Button onClick={() => handleSave()}>Save</Button>
+              <Button onClick={() => setEditable(false)}>Preview</Button>
+            </>
+          ) : (
+            <Button onClick={() => setEditable(true)}>Edit</Button>
+          )}
           <Button onClick={handlePrint}>Print</Button>
         </div>
       </div>
@@ -113,15 +130,18 @@ function Page({ params }: { params: { appointmentId: string } }) {
           </Card>
         </div>
         <div className="w-3/4">
-          {isPrint ? (
-            <PrescriptionTemplate appointmentId={params.appointmentId} />
-          ) : (
+          <PrescriptionTemplate
+            isEditable={isEditable}
+            appointmentId={params.appointmentId}
+          />
+          <div className="hidden">
             <PrescriptionTemplate
-              appointmentId={params.appointmentId}
-              ref={printableDiv}
+              isEditable={false}
               isPrint={isPrint}
+              ref={printableDiv}
+              appointmentId={params.appointmentId}
             />
-          )}
+          </div>
         </div>
       </div>
     </div>
