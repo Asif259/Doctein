@@ -109,8 +109,8 @@ export default function Register() {
 
         <form className="space-y-4 max-w-lg" onSubmit={formik.handleSubmit}>
           <div>
-            <label className="block mb-2 text-neutral">Email address</label>
             <Input
+              label="Email address"
               placeholder="Enter your email"
               type="email"
               {...formik.getFieldProps("email")}
@@ -124,8 +124,8 @@ export default function Register() {
           </div>
 
           <div className="relative">
-            <label className="block mb-2 text-neutral">Password</label>
             <Input
+              label="Password"
               placeholder="Enter your password"
               {...formik.getFieldProps("password")}
               isInvalid={
@@ -155,8 +155,8 @@ export default function Register() {
           </div>
 
           <div className="relative">
-            <label className="block mb-2 text-neutral">Confirm password</label>
             <Input
+              label="Confirm Password"
               placeholder="Re-enter your password"
               {...formik.getFieldProps("confirmPassword")}
               isInvalid={
@@ -219,7 +219,7 @@ export default function Register() {
       </div>
 
       <Modal
-        className="p-5 bg-dark-200"
+        className="p-5"
         size="md"
         closeButton
         aria-labelledby="modal-title"

@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
 import { setAuthCookies } from "../../Helpers/authVerify"; // Import the middleware
 import User from "../../Models/userModel";
-
-dotenv.config();
 
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,15 +16,15 @@ const validatePassword = (password: string): boolean => {
 
 // Register User
 export const registerUser = async (
-    req: Request,
-    res: Response,
+  req: Request,
+  res: Response,
 ): Promise<any> => {
   const { email, password, confirmPassword, role } = req.body;
 
   if (!validateEmail(email)) {
     return res
-        .status(400)
-        .json({ success: false, data: "Invalid email format" });
+      .status(400)
+      .json({ success: false, data: "Invalid email format" });
   }
 
   if (!validatePassword(password)) {
@@ -39,8 +36,8 @@ export const registerUser = async (
 
   if (password !== confirmPassword) {
     return res
-        .status(400)
-        .json({ success: false, data: "Passwords do not match" });
+      .status(400)
+      .json({ success: false, data: "Passwords do not match" });
   }
 
   try {
@@ -48,13 +45,16 @@ export const registerUser = async (
 
     if (existingUser) {
       if (!existingUser.active) {
-        return res
-            .status(403)
-            .json({ success: true, data: "User not active, resend OTP required", requireOtp: true });
+        return res.status(200).json({
+          success: true,
+          data: "User not active, resend OTP required",
+          requireOtp: true,
+        });
       }
-      return res
-          .status(400)
-          .json({ success: false, data: "User already exists, Log in to your account" });
+      return res.status(200).json({
+        success: false,
+        data: "User already exists, Log in to your account",
+      });
     }
 
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
@@ -69,16 +69,15 @@ export const registerUser = async (
     await user.save();
 
     return res
-        .status(201)
-        .json({ success: true, data: "User registered successfully", user });
+      .status(201)
+      .json({ success: true, data: "User registered successfully", user });
   } catch (error) {
     console.error("Error registering user:", error);
     return res
-        .status(500)
-        .json({ success: false, data: "Error registering user", error });
+      .status(500)
+      .json({ success: false, data: "Error registering user", error });
   }
 };
-
 
 // Login User
 export const loginUser = async (req: Request, res: Response): Promise<any> => {

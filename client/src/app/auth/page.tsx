@@ -14,11 +14,11 @@ export default function Login() {
   };
 
   return (
-    <div className="h-[100dvh] flex justify-center items-center bg-gray-100">
+    <div className="h-[100dvh] flex justify-center items-center">
       <div className="h-[90dvh] flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
         {/* Left Section - Doctor */}
         <div
-          className="w-1/2 bg-primary-800 flex flex-col items-center justify-center cursor-pointer hover:bg-primary-900"
+          className="w-1/2 bg-primary flex flex-col items-center justify-center cursor-pointer hover:bg-opacity-75"
           onClick={() => handleRoleSelection("doctor")}
         >
           <h2 className="text-white text-3xl font-bold">Register as Doctor</h2>

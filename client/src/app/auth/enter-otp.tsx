@@ -4,8 +4,7 @@ import * as Yup from "yup";
 import { verifyOtp, activateUser, sendOtp } from "@/api/api";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import { Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import { Input, Button } from "@nextui-org/react";
 
 export default function EnterOTP({
   email,
@@ -76,7 +75,7 @@ export default function EnterOTP({
     <div className="space-y-4">
       <p className="text-neutral">Enter the OTP sent to your email</p>
 
-      <form onSubmit={formik.handleSubmit}>
+      <form className="space-y-4" onSubmit={formik.handleSubmit}>
         <Input
           type="text"
           name="otp"
@@ -84,19 +83,6 @@ export default function EnterOTP({
           value={formik.values.otp}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          classNames={{
-            input: [
-              "bg-dark-300",
-              "text-neutral",
-              "placeholder:text-dark-50",
-              "hover:bg-dark-100",
-            ],
-            inputWrapper: [
-              "bg-dark-300",
-              "hover:bg-dark-100",
-              "group-data-[focus=true]:bg-dark-300",
-            ],
-          }}
         />
         {formik.touched.otp && formik.errors.otp && (
           <p className="error-text">{formik.errors.otp}</p>
