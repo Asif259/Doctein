@@ -16,7 +16,7 @@ export const registerUser = async (
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    return error.response?.data;
   }
 };
 
@@ -29,7 +29,7 @@ export const loginUser = async (email: string, password: string) => {
     });
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.data);
+    return error.response?.data;
   }
 };
 
