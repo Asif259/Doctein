@@ -6,21 +6,23 @@ import { NextUIProvider } from "@nextui-org/react";
 import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
-    title: "Landing page | Dochub",
-    description: "Coming soon",
+  title: "Landing page | Dochub",
+  description: "Coming soon",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
-            <body className="antialiased">
-                <Toaster position="bottom-right" />
-                <NextUIProvider>{children}</NextUIProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+      <body className="antialiased">
+        <Toaster position="bottom-right" />
+        <NextUIProvider>
+          <main className="dark text-foreground bg-background">{children}</main>
+        </NextUIProvider>
+      </body>
+    </html>
+  );
 }
