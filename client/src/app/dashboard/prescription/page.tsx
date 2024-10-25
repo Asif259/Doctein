@@ -16,6 +16,7 @@ import {
   ModalHeader,
   ModalContent,
   ModalBody,
+  ModalFooter,
 } from "@nextui-org/react";
 import { PlusIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboard-store";
@@ -27,6 +28,7 @@ import { getPatients } from "@/api/dashboard/patientAPI";
 import { useRouter } from "next/navigation";
 import DragAndDropInput from "@/app/dashboard/prescription/dnd-input";
 import { useShallow } from "zustand/react/shallow";
+import Image from "next/image";
 
 const patientCols = [
   { name: "PATIENT NAME", uid: "patientName" },
@@ -46,7 +48,7 @@ export default function Page() {
   const [search, setSearch] = React.useState("");
   const [selectedPatient, setSelectedPatient] = React.useState<string>("");
   const [selectedAppointment, setSelectedAppointment] =
-    React.useState<string>("");
+    React.useState<appointment | null>(null);
   const [appointments, addAppointments] = useState<appointment[]>([]);
   const [filteredAppointments, setFilteredAppointments] = React.useState<
     appointment[]
@@ -59,6 +61,7 @@ export default function Page() {
   );
   const [filteredPatients, setFilteredPatients] = useState<patient[]>(patients);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Selected Patient:", selectedPatient);
@@ -123,6 +126,20 @@ export default function Page() {
     setFilteredAppointments(appointments);
   }, [appointments]);
 
+  // Handle upload snapshot
+  useEffect(() => {
+    console.log("Selected Appointment:", selectedAppointment);
+    if (selectedAppointment?.snapshot) {
+      setFilteredAppointments((appointments) =>
+        appointments.map((appointment) =>
+          appointment.key === selectedAppointment.key
+            ? { ...appointment, snapshot: selectedAppointment.snapshot }
+            : appointment,
+        ),
+      );
+    }
+  }, [selectedAppointment]);
+
   const handleUploadSnapshot = (_appointmentId: string | undefined) => {
     setIsModalOpen(true);
     // toast.success("Snapshot uploaded successfully");
@@ -132,12 +149,64 @@ export default function Page() {
     <>
       <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
         <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>
+                {selectedAppointment?.snapshot ? "Update" : "Add"} Snapshot
+              </ModalHeader>
+              <ModalBody>
+                {selectedAppointment && (
+                  <DragAndDropInput
+                    onClose={onClose}
+                    appointment={selectedAppointment}
+                    setAppointment={setSelectedAppointment}
+                  />
+                )}
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <Modal
+        size="5xl"
+        isOpen={isViewModalOpen}
+        onOpenChange={setIsViewModalOpen}
+      >
+        <ModalContent>
           {() => (
             <>
-              <ModalHeader>Add Snapshot</ModalHeader>
+              <ModalHeader>View Snapshot</ModalHeader>
               <ModalBody>
-                <DragAndDropInput appointmentId={selectedAppointment} />
+                {selectedAppointment?.snapshot && (
+                  <Image
+                    src={
+                      process.env.NEXT_PUBLIC_API_STATIC_URL +
+                      selectedAppointment.snapshot
+                    }
+                    alt="Snapshot"
+                    className="w-fit h-fit"
+                    width={600}
+                    height={800}
+                  />
+                )}
               </ModalBody>
+              <ModalFooter>
+                <Button
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                  }}
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => {
+                    setIsViewModalOpen(false);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  Update
+                </Button>
+              </ModalFooter>
             </>
           )}
         </ModalContent>
@@ -203,7 +272,13 @@ export default function Page() {
               selectionMode="single"
               onSelectionChange={(key) => {
                 const set = new Set(key);
-                setSelectedAppointment(set.values().next().value as string);
+                setSelectedAppointment({
+                  key: set.values().next().value as string,
+                  date: "",
+                  phone: "",
+                  time: "",
+                  status: "",
+                });
               }}
               classNames={{
                 base: "h-full",
@@ -234,8 +309,8 @@ export default function Page() {
                           className="bg-secondary-600 text-secondary-100"
                           onClick={() => {
                             if (!appointment.key) return;
-                            setSelectedAppointment(appointment.key);
-                            console.log(appointment.key);
+                            setSelectedAppointment(appointment);
+                            setIsViewModalOpen(true);
                           }}
                         >
                           View Snapshot
@@ -247,7 +322,7 @@ export default function Page() {
                           className="bg-secondary-600 text-secondary-100"
                           onClick={() => {
                             if (!appointment.key) return;
-                            setSelectedAppointment(appointment.key);
+                            setSelectedAppointment(appointment);
                             handleUploadSnapshot(appointment.key);
                           }}
                         >

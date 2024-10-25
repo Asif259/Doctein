@@ -3,11 +3,16 @@ import { Card, Button } from "@nextui-org/react";
 import { uploadPrescription } from "@/api/dashboard/prescriptionAPI";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { appointment } from "@/types/dashboard";
 
 const DragAndDropFileUpload = ({
-  appointmentId,
+  appointment,
+  setAppointment,
+  onClose,
 }: {
-  appointmentId: string;
+  appointment: appointment | null;
+  setAppointment: (appointment: appointment) => void;
+  onClose: () => void;
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
@@ -44,12 +49,14 @@ const DragAndDropFileUpload = ({
 
   // Handle file upload (Mocked in this case)
   const handleUpload = async () => {
-    console.log("DND", appointmentId);
-    if (selectedFile && appointmentId) {
+    console.log("DND", appointment?.key);
+    if (selectedFile && appointment?.key) {
       // Here you'd typically upload the file using an API or FormData
-      const res = await uploadPrescription(selectedFile, appointmentId);
-      if (res.success) {
+      const res = await uploadPrescription(selectedFile, appointment?.key);
+      if (res?.success) {
         toast.success("Prescription uploaded successfully");
+        setAppointment({ ...appointment, snapshot: res.data });
+        onClose();
       }
     }
   };
@@ -77,11 +84,27 @@ const DragAndDropFileUpload = ({
             <Image
               src={URL.createObjectURL(selectedFile)}
               alt={selectedFile.name}
+              className="h-fit"
               width={150}
               height={150}
             />
           ) : (
-            <p>Drag & Drop your file here</p>
+            <>
+              {appointment?.snapshot ? (
+                <Image
+                  src={
+                    process.env.NEXT_PUBLIC_API_STATIC_URL +
+                    appointment?.snapshot
+                  }
+                  alt="Prescription"
+                  className="w-auto h-auto"
+                  width={150}
+                  height={150}
+                />
+              ) : (
+                <p>Drag & Drop your file here</p>
+              )}
+            </>
           )}
         </label>
       </div>
