@@ -19,9 +19,15 @@ export default function ForgotPassword({ onSuccess }: { onSuccess: (email: strin
         }),
         onSubmit: async (values, { setSubmitting, setErrors }) => {
             try {
-                await sendOtp(values.email);
-                toast.success("OTP sent successfully!");
-                onSuccess(values.email);
+                const response = await sendOtp(values.email);
+
+                if (response?.success) {
+                    toast.success("OTP sent successfully!");
+                    onSuccess(values.email);
+                } else {
+                    toast.error(response.data || "Failed to send OTP. Please try again.");
+                    setErrors({ email: response.data || "Error sending OTP." });
+                }
             } catch (error: any) {
                 toast.error(`Error sending OTP: ${error.message}`);
                 setErrors({ email: error.message });
@@ -29,6 +35,7 @@ export default function ForgotPassword({ onSuccess }: { onSuccess: (email: strin
                 setSubmitting(false);
             }
         },
+
     });
 
     return (

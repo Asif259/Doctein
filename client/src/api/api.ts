@@ -52,8 +52,7 @@ export const sendOtp = async (email: string) => {
     const response = await axios.post(`/forgot-password/send-otp`, { email });
     return response.data;
   } catch (error: any) {
-    console.log(error);
-    // throw new Error(error.response?.data?.data);
+    return error.response?.data;
   }
 };
 
