@@ -19,17 +19,17 @@ import { useShallow } from "zustand/react/shallow";
 
 const PrescriptionTemplate = forwardRef<
   HTMLDivElement,
-  { isPrint?: boolean; appointmentId: string }
+  { isPrint?: boolean; isEditable: boolean; appointmentId: string }
 >(
   (
     {
       isPrint = false,
+      isEditable = false,
       appointmentId,
-    }: { isPrint?: boolean; appointmentId: string },
+    }: { isPrint?: boolean; isEditable: boolean; appointmentId: string },
     ref,
   ) => {
     const {
-      isEditable,
       setModal,
       modalOpen,
       setModalOpen,
@@ -40,7 +40,6 @@ const PrescriptionTemplate = forwardRef<
       useShallow((state) => ({
         prescription: state.prescription,
         setPrescription: state.setPrescription,
-        isEditable: state.isEditable,
         setModal: state.setModal,
         modalOpen: state.modalOpen,
         setModalOpen: state.setModalOpen,
@@ -75,10 +74,6 @@ const PrescriptionTemplate = forwardRef<
       })();
     }, []);
 
-    useEffect(() => {
-      console.log("Prescription:", prescription);
-    }, [prescription]);
-
     const handleAdd = () => {
       setModal({
         type: "medication",
@@ -89,13 +84,14 @@ const PrescriptionTemplate = forwardRef<
       <div
         ref={ref}
         id="print-precription"
-        className={`${isPrint ? "w-[210mm] h-[297mm]" : "w-full h-full"} mx-auto p-8 rounded-lg bg-white shadow-lg print:shadow-none`}
+        className={`${isPrint ? "w-[210mm] h-[297mm]" : "w-full h-full"} mx-auto p-8 bg-background rounded-lg shadow-lg print:shadow-none`}
       >
         <PrescriptionModal isOpen={modalOpen} onOpenChange={setModalOpen} />
         <PrescriptionHeader />
         <div className="flex">
           <div className="w-1/3 pr-4">
             <Section
+              isEditable={isEditable}
               type="complaint"
               title="Chief Complaints"
               icon={<ClipboardList className="w-4 h-4" />}
@@ -103,6 +99,7 @@ const PrescriptionTemplate = forwardRef<
               <ul className="list-disc pl-5 text-sm">
                 {prescription?.complaints?.map((complaint) => (
                   <ListItem
+                    isEditable={isEditable}
                     type="complaint"
                     description={complaint.description}
                     key={complaint.id}
@@ -116,6 +113,7 @@ const PrescriptionTemplate = forwardRef<
             </Section>
 
             <Section
+              isEditable={isEditable}
               type="history"
               title="History"
               icon={<FileText className="w-4 h-4" />}
@@ -123,6 +121,7 @@ const PrescriptionTemplate = forwardRef<
               <ul className="list-disc pl-5 text-sm">
                 {prescription?.history?.map((item) => (
                   <ListItem
+                    isEditable={isEditable}
                     type="history"
                     description={item.description}
                     key={item.id}
@@ -135,13 +134,19 @@ const PrescriptionTemplate = forwardRef<
             </Section>
 
             <Section
+              isEditable={isEditable}
               type="diagnosis"
               title="Diagnosis"
               icon={<Stethoscope className="w-4 h-4" />}
             >
               <ul className="list-disc pl-5 text-sm">
                 {prescription?.diagnosisList?.map((item) => (
-                  <ListItem type="diagnosis" id={item.id} key={item.id}>
+                  <ListItem
+                    isEditable={isEditable}
+                    type="diagnosis"
+                    id={item.id}
+                    key={item.id}
+                  >
                     {item.name} -{" "}
                     <span className="text-[11px] text-gray-600">
                       ({item.date})
@@ -152,6 +157,7 @@ const PrescriptionTemplate = forwardRef<
             </Section>
 
             <Section
+              isEditable={isEditable}
               type="investigation"
               title="Investigation"
               icon={<Activity className="w-4 h-4" />}
@@ -159,6 +165,7 @@ const PrescriptionTemplate = forwardRef<
               <ul className="list-disc pl-5 text-sm">
                 {prescription?.investigations?.map((item) => (
                   <ListItem
+                    isEditable={isEditable}
                     type="investigation"
                     description={item.description}
                     key={item.id}
@@ -192,23 +199,32 @@ const PrescriptionTemplate = forwardRef<
             <div className="space-y-4">
               {prescription?.medications?.map((medication) => (
                 <Medication
+                  isEditable={isEditable}
                   key={medication.id}
                   id={medication.id}
-                  // type={medication.type}
                   medication={medication.medication}
-                  // dosage={medication.dosage}
                   duration={medication.duration}
                   frequency={medication.frequency}
+                  note={medication.note}
                 />
               ))}
             </div>
 
             <div className="mt-6">
-              <Header type="instruction" title="Instructions" />
+              <Header
+                isEditable={isEditable}
+                type="instruction"
+                title="Instructions"
+              />
               {
                 <ol className="pl-5 list-decimal text-sm">
                   {prescription.instructions?.map((item) => (
-                    <ListItem type="instruction" id={item.id} key={item.id}>
+                    <ListItem
+                      isEditable={isEditable}
+                      type="instruction"
+                      id={item.id}
+                      key={item.id}
+                    >
                       {item.instruction}
                     </ListItem>
                   ))}
@@ -217,7 +233,11 @@ const PrescriptionTemplate = forwardRef<
             </div>
 
             <div className="mt-4">
-              <Header type="followUp" title="Follow Up" />
+              <Header
+                type="followUp"
+                title="Follow Up"
+                isEditable={isEditable}
+              />
               <div className="flex flex-row gap-5">
                 <p className="text-sm">
                   <span className="underline">Next Visit:</span>{" "}
@@ -256,17 +276,18 @@ export function Section({
   title,
   children,
   icon,
+  isEditable,
 }: {
   type: "complaint" | "history" | "diagnosis" | "investigation";
   title: string;
   children: ReactNode;
   icon?: ReactNode;
+  isEditable: boolean;
 }) {
-  const { setModal, setModalOpen, isEditable } = usePrescriptionStore(
+  const { setModal, setModalOpen } = usePrescriptionStore(
     useShallow((state) => ({
       setModal: state.setModal,
       setModalOpen: state.setModalOpen,
-      isEditable: state.isEditable,
     })),
   );
 
@@ -300,16 +321,17 @@ function Header({
   type,
   title,
   icon,
+  isEditable,
 }: {
   type: "followUp" | "instruction";
   title: string;
   icon?: ReactNode;
+  isEditable: boolean;
 }) {
-  const { setModal, setModalOpen, isEditable } = usePrescriptionStore(
+  const { setModal, setModalOpen } = usePrescriptionStore(
     useShallow((state) => ({
       setModal: state.setModal,
       setModalOpen: state.setModalOpen,
-      isEditable: state.isEditable,
     })),
   );
 
@@ -340,18 +362,19 @@ function ListItem({
   type,
   children,
   description,
+  isEditable,
 }: {
   id: number;
   type: "complaint" | "history" | "diagnosis" | "investigation" | "instruction";
   children: ReactNode;
   description?: string;
+  isEditable: boolean;
 }) {
-  const { setModal, setModalOpen, isEditable, prescription, setPrescription } =
+  const { setModal, setModalOpen, prescription, setPrescription } =
     usePrescriptionStore(
       useShallow((state) => ({
         setModal: state.setModal,
         setModalOpen: state.setModalOpen,
-        isEditable: state.isEditable,
         prescription: state.prescription,
         setPrescription: state.setPrescription,
       })),
@@ -425,7 +448,7 @@ function ListItem({
     <li>
       <div className="flex flex-row justify-between">
         <div>
-          <p className="text-gray-900">{children}</p>
+          <p>{children}</p>
           <span className="text-[12px] text-gray-500">{description}</span>
         </div>
         {isEditable && (
@@ -449,27 +472,26 @@ function ListItem({
 
 function Medication({
   id,
-  // type,
-  // name,
-  medication,
+  medication, // TODO: medication name not showing after reloading the page. Fix it
   duration,
   quantity,
   frequency,
+  note,
+  isEditable,
 }: {
   id: number;
-  // type: string;
   medication: string;
-  // dosage: string;
   duration: string;
   quantity?: string;
   frequency: string;
+  note?: string;
+  isEditable: boolean;
 }) {
-  const { setModal, setModalOpen, isEditable, prescription, setPrescription } =
+  const { setModal, setModalOpen, prescription, setPrescription } =
     usePrescriptionStore(
       useShallow((state) => ({
         setModal: state.setModal,
         setModalOpen: state.setModalOpen,
-        isEditable: state.isEditable,
         prescription: state.prescription,
         setPrescription: state.setPrescription,
       })),
@@ -503,6 +525,7 @@ function Medication({
         <p>
           {frequency} ---- {duration}
         </p>
+        <p className="text-sm text-gray-400">{note}</p>
       </div>
       {isEditable && (
         <div className="flex flex-row gap-1">
