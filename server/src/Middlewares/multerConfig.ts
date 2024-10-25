@@ -7,18 +7,25 @@ const storage = multer.diskStorage({
     console.log(_file);
     const { appointmentId } = req.params as { appointmentId: string };
     if (appointmentId) {
-      return cb(null, path.join(__dirname + "../../uploads/prescriptions/"));
+      return cb(null, path.join(__dirname + "../../../uploads/prescriptions/"));
     }
-    cb(null, path.join(__dirname + "../../uploads/"));
+    cb(null, path.join(__dirname + "../../../uploads/"));
   },
   filename: function (req, file, cb) {
     const { doctorId } = req.headers as { doctorId: string };
     const { appointmentId } = req.params as { appointmentId: string };
+    console.log("Doctor ID:", doctorId);
+    console.log("Appointment ID:", appointmentId);
 
     if (appointmentId && doctorId) {
       cb(
         null,
-        doctorId + "-" + appointmentId + path.extname(file.originalname),
+        doctorId +
+          "-" +
+          appointmentId +
+          "-" +
+          Date.now().toString() +
+          path.extname(file.originalname),
       );
     }
   },
@@ -33,6 +40,10 @@ const fileFilter = (_req: any, file: any, cb: any) => {
   cb(null, true);
 };
 
-const upload = multer({ storage, fileFilter });
+const upload = multer({
+  storage,
+  fileFilter,
+  limits: { fileSize: 1024 * 1024 },
+});
 
 export default upload;

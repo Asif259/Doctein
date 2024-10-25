@@ -39,7 +39,7 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err));
 
 // Serve static files
-app.use(express.static(path.join(__dirname, "/uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Use API router
 app.use("/api/v1", authRouter);

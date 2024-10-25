@@ -109,7 +109,7 @@ const getAppointmentByPatientId = async (
         date: date,
         note: appointment.note,
         status: appointment.status,
-        snapshot: !!snapshot?.snapshot,
+        snapshot: snapshot?.snapshot,
       };
     });
     // console.log("Response:", response);
