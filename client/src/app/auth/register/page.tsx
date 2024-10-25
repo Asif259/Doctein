@@ -5,6 +5,7 @@
   import Link from "next/link";
   import {
     Input,
+    Button,
     Image,
     Modal,
     ModalHeader,
@@ -134,7 +135,7 @@
                     : undefined
                 }
                 endContent={
-                  <button
+                  <Button
                     className="focus:outline-none"
                     type="button"
                     onClick={toggleVisibility}
@@ -145,7 +146,7 @@
                     ) : (
                       <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
                     )}
-                  </button>
+                  </Button>
                 }
                 type={isVisible ? "text" : "password"}
               />
@@ -166,7 +167,7 @@
                     : undefined
                 }
                 endContent={
-                  <button
+                  <Button
                     className="focus:outline-none"
                     type="button"
                     onClick={toggleConfirmVisibility}
@@ -177,19 +178,19 @@
                     ) : (
                       <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
                     )}
-                  </button>
+                  </Button>
                 }
                 type={isConfirmVisible ? "text" : "password"}
               />
             </div>
 
-            <button
+            <Button
               type="submit"
               className="w-full text-white py-2 px-4 rounded-lg transition-colors duration-300 ease-in-out bg-primary hover:bg-primary-500"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Registering..." : "Register"}
-            </button>
+            </Button>
           </form>
 
           <p className="mt-6" style={{ color: "#abb7c4" }}>
@@ -231,7 +232,7 @@
               <EnterOTP
                 email={email}
                 from="register"
-                onClose={() => setModalVisible(false)}
+                onSuccess={() => setModalVisible(false)}
               />
             </ModalBody>
           </ModalContent>

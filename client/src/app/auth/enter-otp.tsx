@@ -1,15 +1,14 @@
 "use client";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {verifyOtp, activateUser, sendOtp} from "@/api/api";
-import {useState, useEffect} from "react";
+import { verifyOtp, activateUser, sendOtp } from "@/api/api";
+import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import {Input, Button} from "@nextui-org/react";
-import {useRouter} from "next/navigation";
+import { Input, Button } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
-
-export default function EnterOTP({email, from, onClose}: { email?: string; from?: string; onClose: () => void;}) {
-    const [resendTimer, setResendTimer] = useState<number>(120); // Timer starts at 120 seconds
+export default function EnterOTP({email, from, onSuccess,}: { email?: string; from?: string; onSuccess: (email: string) => void; }) {
+    const [resendTimer, setResendTimer] = useState<number>(120);
     const router = useRouter();
 
     // Function to handle OTP resend
@@ -31,40 +30,44 @@ export default function EnterOTP({email, from, onClose}: { email?: string; from?
     };
 
     useEffect(() => {
-        // Decrement the timer every second
         const timer = setInterval(() => {
             setResendTimer((prev) => (prev > 0 ? prev - 1 : 0));
         }, 1000);
 
-        return () => clearInterval(timer); // Cleanup interval on component unmount
+        return () => clearInterval(timer);
     }, []);
 
     const formik = useFormik({
-        initialValues: {otp: ""},
+        initialValues: { otp: "" },
         validationSchema: Yup.object({
             otp: Yup.string()
                 .required("Please enter the OTP")
-                .min(6, "OTP must be exactly 6 characters")
-                .max(6, "OTP must be exactly 6 characters"),
+                .length(6, "OTP must be exactly 6 characters"),
         }),
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: async (values, { setSubmitting }) => {
             if (!email) return;
             try {
                 const response = await verifyOtp(email, values.otp);
                 if (response.success) {
                     if (from === "register") {
                         await activateUser(email);
+                        router.push("/auth/login");
+                        toast.success("OTP verified successfully!");
                     }
-                    toast.success("OTP verified successfully!");
-                    setSubmitting(false);
-                    onClose();
-                    router.push("/auth/login");
+
+                    if (from === "login") {
+                        onSuccess(email);
+                        toast.success("OTP verified successfully!");
+
+                    }
                 }
             } catch (err: any) {
                 toast.error("Invalid OTP. Please try again.");
+            } finally {
                 setSubmitting(false);
             }
-        },
+        }
+
     });
 
     return (
@@ -73,9 +76,9 @@ export default function EnterOTP({email, from, onClose}: { email?: string; from?
 
             <form className="space-y-4" onSubmit={formik.handleSubmit}>
                 <Input
+                    label="Enter Otp"
                     type="text"
                     name="otp"
-                    placeholder="Enter OTP"
                     value={formik.values.otp}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -88,6 +91,7 @@ export default function EnterOTP({email, from, onClose}: { email?: string; from?
                     <Button
                         type="submit"
                         className="submit-btn bg-primary text-white"
+                        disabled={formik.isSubmitting}
                     >
                         {formik.isSubmitting ? "Verifying..." : "Verify OTP"}
                     </Button>
