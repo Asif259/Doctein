@@ -4,6 +4,7 @@ import Prescription, {
   IPrescription,
 } from "../../Models/dashboard/prescription";
 import Appointment from "../../Models/dashboard/appointment";
+import * as fs from "node:fs";
 
 const addPrescription = async (req: Request, res: Response): Promise<any> => {
   const { doctorId } = req.body as { doctorId: string };
@@ -232,21 +233,39 @@ const uploadPrescription = async (
   try {
     if (!req.file) return res.status(400).send("No files were uploaded.");
 
-    // Save the file path to the database
-    const prescription = await Prescription.findOneAndUpdate(
-      { appointmentId },
-      {
-        snapshot: req.file.path,
-      },
-      { new: true, upsert: true },
-    );
+    let prescription = await Prescription.findOne({ appointmentId });
+    console.log("Prescription:", prescription);
+
+    if (!prescription) {
+      // Create a new prescription if it doesn't exist
+      prescription = new Prescription({
+        appointmentId,
+        snapshot: `\\prescriptions\\${req.file.filename}`,
+      });
+      await prescription.save();
+    } else {
+      // Update the snapshot if it already exists and delete the previous snapshot
+      const prevSnapshot = prescription.snapshot;
+      if (prevSnapshot) {
+        // Delete the previous snapshot
+        const path = `uploads${prevSnapshot}`;
+        fs.unlink(path, (err) => {
+          if (err) {
+            console.error("Error deleting file:", err);
+          }
+        });
+      }
+      prescription.snapshot = `\\prescriptions\\${req.file.filename}`;
+      await prescription.save();
+    }
+
     // change the status of the appointment upcoming -> completed and add prescriptionId
     await Appointment.findByIdAndUpdate(
       appointmentId,
       { prescriptionId: prescription._id, status: "completed" },
       { new: true },
     );
-    return res.status(201).json({ success: true, data: req.file.path });
+    return res.status(201).json({ success: true, data: prescription.snapshot });
   } catch (error) {
     console.error("Error uploading file:", error);
     return res

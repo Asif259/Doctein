@@ -14,13 +14,13 @@ export interface patient {
 export interface appointment {
   id?: number;
   key?: string;
-  patientName: string;
-  phone: string;
+  patientName?: string;
+  phone?: string;
   date: string;
   time: string;
   note?: string;
-  snapshot?: boolean;
-  status: "upcoming" | "completed" | "cancelled";
+  snapshot?: string;
+  status: "upcoming" | "completed" | "cancelled" | "";
 }
 
 export interface staff {

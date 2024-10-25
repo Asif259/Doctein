@@ -2,7 +2,7 @@ import express from "express";
 
 import * as prescriptionController from "../Controllers/dashboard/prescription";
 import * as medicationController from "../Controllers/dashboard/medicine";
-import upload from "../Helpers/multerConfig";
+import upload from "../Middlewares/multerConfig";
 
 const router = express.Router();
 
