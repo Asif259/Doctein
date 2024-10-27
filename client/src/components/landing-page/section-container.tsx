@@ -2,16 +2,14 @@ import React from "react";
 
 const SectionContainer = ({
     children,
-    Background,
-    extra_className = "",
+    className,
 }: {
     children: React.ReactNode;
-    Background: String;
-    extra_className?: string;
+    className?: string;
 }) => {
     return (
         <div
-            className={`${Background} py-16 px-36 max-w-full ${extra_className}`}
+            className={`${className ? className : ""} my-10 max-w-screen-xl mx-auto`}
         >
             {children}
         </div>

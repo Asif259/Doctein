@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, CardBody, Button, CardHeader, Image } from "@nextui-org/react";
-import SectionContainer from "@/components/landing-page/section_container";
-import Card_container from "@/components/landing-page/card_container";
+import { Button, Image } from "@nextui-org/react";
+import SectionContainer from "@/components/landing-page/section-container";
+import CardContainer from "@/components/landing-page/card-container";
 
 interface Integration {
     image: string;
@@ -50,51 +50,38 @@ const integrations: Integration[] = [
 
 export default function IntegrationsSection() {
     return (
-        <SectionContainer Background="bg-white">
-            <div className="text-center mb-28">
-                <div className="text-indigo-600 font-semibold mb-8 text-xl">
+        <SectionContainer className="grid-cols-3 space-y-5">
+            <div className="flex flex-col justify-center items-center gap-2">
+                <div className="font-semibold text-primary text-xl">
                     Integrations
                 </div>
-                <div className="text-4xl md:text-7xl text-semibold mb-8 flex flex-col gap-5  ">
-                    <span>Make Payments Easier with</span>
-                    <span>50+ Integrations</span>
+                <div className="text-5xl font-medium flex flex-col gap-5 max-w-xl text-center">
+                    Make Payments Easier with 50+ Integrations
                 </div>
             </div>
 
-            <Card_container
-                gap={4}
-                md_cols={2}
-                lg_cols={3}
-                extra_className={"mb-12 gap-y-28"}
-            >
+            <CardContainer className="grid grid-cols-3 gap-5">
                 {integrations.map((integration, index) => (
-                    <div key={index} className="bg-gray-50 rounded-2xl h-64 ">
-                        <div
-                            className={
-                                "flex flex-col items-center justify-center relative -top-10"
-                            }
-                        >
-                            <Image
-                                width={100}
-                                alt={integration.name}
-                                src={integration.image}
-                            />
-                            <div
-                                className={
-                                    "mt-6 text-black text-2xl text-center"
-                                }
-                            >
-                                {integration.name}
-                            </div>
-                        </div>
-                        <div className="px-6 text-center text-xl">
+                    <div
+                        key={index}
+                        className="flex flex-col gap-3 justify-center items-center rounded-2xl h-52"
+                    >
+                        <Image
+                            width={50}
+                            alt={integration.name}
+                            src={integration.image}
+                        />
+                        <p className="font-medium text-xl text-center">
+                            {integration.name}
+                        </p>
+                        <p className="px-6 text-center text-gray-600">
                             {integration.description}
-                        </div>
+                        </p>
                     </div>
                 ))}
-            </Card_container>
+            </CardContainer>
 
-            <div className="text-center mb-12 text-gray-600 max-w-6xl mx-auto text-2xl">
+            <div className="text-center text-gray-600 max-w-3xl mx-auto">
                 Streamline your business operations with seamless integrations.
                 Connect with Xero, WooCommerce, Zapier, Stripe, Shopify,
                 QuickBooks, and many other platforms.
@@ -102,9 +89,9 @@ export default function IntegrationsSection() {
 
             <div className="text-center">
                 <Button
-                    color="primary"
+                    className="bg-black text-white"
+                    size="lg"
                     variant="solid"
-                    className="w-56 h-16 text-xl bg-black text-white hover:bg-gray-800"
                 >
                     See All Integrations
                 </Button>

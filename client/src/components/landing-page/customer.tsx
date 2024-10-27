@@ -8,8 +8,7 @@ import {
     CardFooter,
 } from "@nextui-org/react";
 import { Star } from "lucide-react";
-import SectionContainer from "@/components/landing-page/section_container";
-import Card_container from "@/components/landing-page/card_container";
+import CardContainer from "@/components/landing-page/card-container";
 
 interface customerCardProperties {
     rating: number;
@@ -66,58 +65,48 @@ const objs: customerCardProperties[] = [
 
 export default function Customer() {
     return (
-        <SectionContainer Background={"bg-gray-200"}>
-            <div className="text-center mb-16">
+        <div className="bg-gray-100 py-10">
+            <div className="text-center mb-16 space-y-4">
                 <div className="text-indigo-600 font-semibold mb-8 text-xl">
                     Our Customers
                 </div>
-                <div className="text-4xl md:text-7xl text-semibold mb-8 flex flex-col gap-5  ">
-                    <span>See What Our</span>
-                    <span>Customers Are Saying</span>
+                <div className="text-5xl max-w-xl mx-auto font-medium flex flex-col gap-5">
+                    See What Our Customers Are Saying
                 </div>
-                <div className="text-gray-600 text-2xl mx-auto">
+                <div className="text-gray-600 mx-auto">
                     Here's what some of our customers say about our platform.
                 </div>
             </div>
 
-            <Card_container
-                gap={4}
-                md_cols={2}
-                lg_cols={3}
-                extra_className="relative mb-12"
-            >
+            <CardContainer className="max-w-screen-xl mx-auto grid grid-cols-3 gap-5">
                 {objs.map((obj, index) => (
-                    <>
+                    <div key={index}>
                         <Card
-                            className={`max-w-lg p-8 ${index >= 3 ? "relative" : ""}`}
+                            className={`max-w-md p-5 h-full ${index >= 3 ? "relative" : ""}`}
                         >
                             <CardHeader className="flex items-center mt-2">
                                 {[...Array(5)].map((_, i) => (
                                     <Star
                                         key={i}
-                                        className={`w-7 h-7 ${i < Math.floor(obj.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
+                                        className={`w-4 h-4 ${i < Math.floor(obj.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"}`}
                                     />
                                 ))}
-                                <span className="ml-2 text-xl font-semibold text-gray-700">
+                                <span className="ml-2 font-semibold text-gray-700">
                                     {obj.rating.toFixed(1)}
                                 </span>
                             </CardHeader>
                             <CardBody className="p-2">
-                                <div className="text-2xl font-medium text-gray-800 mb-6">
+                                <div className="font-medium text-gray-800 mb-6">
                                     "{obj.quote}"
                                 </div>
                             </CardBody>
                             <CardFooter className="flex items-center">
-                                <Avatar
-                                    src={obj.avatarSrc}
-                                    className=""
-                                    size={"lg"}
-                                />
+                                <Avatar src={obj.avatarSrc} size="sm" />
                                 <div className="ml-4">
-                                    <p className="font-semibold text-gray-800 text-xl">
+                                    <p className="font-semibold text-gray-800">
                                         {obj.authorName}
                                     </p>
-                                    <p className="text-lg text-gray-600">
+                                    <p className="text-sm text-gray-600">
                                         {obj.authorTitle}
                                     </p>
                                 </div>
@@ -126,21 +115,20 @@ export default function Customer() {
                                 )}
                             </CardFooter>
                         </Card>
-                    </>
+                    </div>
                 ))}
-                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
-            </Card_container>
+                {/*<div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>*/}
+            </CardContainer>
 
             <div className="text-center relative z-10">
                 <Button
-                    color="primary"
                     variant="solid"
-                    size="lg"
+                    size="md"
                     className="bg-black text-white hover:bg-gray-800"
                 >
                     See All Customer Stories
                 </Button>
             </div>
-        </SectionContainer>
+        </div>
     );
 }

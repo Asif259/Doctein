@@ -1,110 +1,69 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import {
     Navbar,
     NavbarBrand,
     NavbarContent,
     NavbarItem,
     Link,
-    Tooltip,
     Button,
-    Image,
 } from "@nextui-org/react";
-function CircleIconGray({
-    children,
-    content,
-}: {
-    children: ReactNode;
-    content: String;
-}) {
-    return (
-        <Tooltip content={content}>
-            <Button
-                isIconOnly
-                className={"rounded-full bg-gray-200 m-1 p-2 border-1"}
-            >
-                {children}
-            </Button>
-        </Tooltip>
-    );
-}
-import { Atom, Baby, Dna, House, Menu, Pill, Search } from "lucide-react"; // oilo
+import { SettingsIcon } from "lucide-react";
+
 const Nav = () => {
     return (
-        <Navbar className="w-full bg-green-300">
+        <Navbar
+            classNames={{
+                base: "w-full py-2",
+                wrapper: "max-w-full flex justify-around items-center",
+            }}
+        >
             <NavbarBrand>
-                <Image src="/Logo.png" alt="Logo is here" height={50} />
-                <p className="font-bold text-inherit">Mental.me</p>
+                <SettingsIcon className="size-10 bg-black rounded-full text-white p-2" />
+                <p className="ml-2 font-me text-2xl">Docten</p>
             </NavbarBrand>
-
             <NavbarContent className="gap-4" justify="center">
                 <NavbarItem>
                     <Link color="foreground" href="#">
-                        <CircleIconGray content={"Prescription"}>
-                            <Pill
-                                color="#000000"
-                                strokeWidth={1.75}
-                                absoluteStrokeWidth
-                            />
-                        </CircleIconGray>
+                        Features
                     </Link>
                 </NavbarItem>
                 <NavbarItem isActive>
                     <Link href="#" color="foreground">
-                        <CircleIconGray content={""}>
-                            <Image
-                                src="/tooth.png"
-                                alt="Teeth"
-                                height={24}
-                                width={24}
-                            />
-                        </CircleIconGray>
+                        Solutions
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="#">
-                        <CircleIconGray content={"Dashboard"}>
-                            <House
-                                color="#000000"
-                                strokeWidth={1.75}
-                                absoluteStrokeWidth
-                            />
-                        </CircleIconGray>
+                        Customers
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Link color="foreground" href="#">
-                        <CircleIconGray content={""}>
-                            <Atom
-                                color="#000000"
-                                strokeWidth={1.75}
-                                absoluteStrokeWidth
-                            />
-                        </CircleIconGray>
+                        Resources
+                    </Link>
+                </NavbarItem>
+                <NavbarItem>
+                    <Link color="foreground" href="#">
+                        Pricing
                     </Link>
                 </NavbarItem>
             </NavbarContent>
             <NavbarContent justify="end">
                 <NavbarItem>
-                    <Link href="#">
-                        <CircleIconGray content={"Search"}>
-                            <Search
-                                color="#000000"
-                                strokeWidth={1.75}
-                                absoluteStrokeWidth
-                            />
-                        </CircleIconGray>
-                    </Link>
+                    <Button
+                        variant="bordered"
+                        className="rounded-lg hover:bg-gray-200"
+                    >
+                        Login
+                    </Button>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link href="#">
-                        <CircleIconGray content={"Menu"}>
-                            <Menu
-                                color="#000000"
-                                strokeWidth={1.75}
-                                absoluteStrokeWidth
-                            />
-                        </CircleIconGray>
-                    </Link>
+                    <Button
+                        variant="solid"
+                        className="bg-black text-white rounded-lg hover:bg-gray-900"
+                    >
+                        Get Started
+                    </Button>
                 </NavbarItem>
             </NavbarContent>
         </Navbar>

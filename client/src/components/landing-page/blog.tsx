@@ -1,8 +1,7 @@
 import React from "react";
 import { Card, Avatar, Image, CardBody } from "@nextui-org/react";
-import { CalendarDays } from "lucide-react";
-import SectionContainer from "@/components/landing-page/section_container";
-import Card_container from "@/components/landing-page/card_container";
+import SectionContainer from "@/components/landing-page/section-container";
+import CardContainer from "@/components/landing-page/card-container";
 
 interface BlogPost {
     category: string;
@@ -69,52 +68,47 @@ const blogPosts: BlogPost[] = [
 
 export default function Blog() {
     return (
-        <SectionContainer Background="bg-white">
-            <div className="text-center text-lg text-indigo-600 font-semibold mb-2">
+        <SectionContainer className="space-y-4">
+            <div className="text-center text-xl text-indigo-600 font-semibold">
                 Our Blog
             </div>
-            <div className="text-5xl  text-center mb-4">
+            <div className="text-5xl font-medium max-w-xl mx-auto text-center">
                 Learn From The Blogs
             </div>
-            <div className="text-md text-center text-gray-600 mb-12">
+            <div className="text-md text-center text-gray-600">
                 Here's what some of our customers say about our platform.
             </div>
 
-            <Card_container gap={4} md_cols={2}>
+            <CardContainer className="grid grid-cols-2">
                 {blogPosts.map((post, index) => (
-                    <Card key={index} shadow={"none"} radius={"lg"}>
-                        <CardBody className="overflow-hidden items-center flex-row flex gap-8">
-                            {/*<div className={"items-center flex-row flex"}>*/}
-                            <img
-                                src={post.image}
-                                alt={post.title}
-                                className="max-w-80 max-h-72 object-cover rounded-2xl p-0 m=0"
-                            />
-                            {/*</div>*/}
-
-                            <div className="p-2 ">
-                                <div className="text-indigo-600 font-semibold mb-2">
+                    <Card key={index} shadow="none" radius="lg">
+                        <CardBody className=" items-center justify-center flex-row flex gap-4">
+                            <div className="w-60 flex items-center">
+                                <Image
+                                    src={post.image}
+                                    alt={post.title}
+                                    className="rounded-2xl p-0 m-0"
+                                />
+                            </div>
+                            <div className="p-2 space-y-3">
+                                <p className="text-indigo-600 font-semibold">
                                     {post.category}
-                                </div>
-                                <div className="text-3xl font-semibold text-black mb-2">
+                                </p>
+                                <p className="text-xl font-semibold text-black">
                                     {post.title}
-                                </div>
-                                <div className="text-gray-600 mb-4 text-xl">
+                                </p>
+                                <p className="text-gray-600 text-sm">
                                     {post.description}
-                                </div>
+                                </p>
                                 <div className="flex items-center">
                                     <Avatar
                                         src={post.author.avatar}
-                                        size="md"
+                                        size="sm"
                                     />
-                                    <div className="ml-3 ">
-                                        <div className="text-gray-600 text-sm text-xl">
+                                    <div className="ml-3 text-sm">
+                                        <div className="text-gray-600">
                                             <span>{post.author.name}</span>
-                                            <div
-                                                className={
-                                                    "rounded-full border-0 bg-green-400 inline-flex w-3 h-3 mx-2"
-                                                }
-                                            ></div>
+                                            <div className="rounded-full border-0 bg-default inline-flex w-2 h-2 mx-2"></div>
                                             <span>{post.date}</span>
                                         </div>
                                     </div>
@@ -123,7 +117,7 @@ export default function Blog() {
                         </CardBody>
                     </Card>
                 ))}
-            </Card_container>
+            </CardContainer>
         </SectionContainer>
     );
 }

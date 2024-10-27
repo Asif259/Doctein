@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@nextui-org/react";
-import { Linkedin, Twitter, Facebook } from "lucide-react";
+import { Linkedin, SettingsIcon } from "lucide-react";
 
 interface FooterColumn {
     title: string;
@@ -43,34 +43,40 @@ const Footer = () => {
     return (
         <div className="bg-[#111111] text-white py-12 w-full">
             <div className="mx-4 px-32">
-                <div className="grid grid-cols-1 md:grid-cols-7 gap-2">
-                    <div className="col-span-3">
-                        <h3 className="text-2xl font-bold mb-4">Metafi</h3>
+                <div className="flex flex-row justify-between">
+                    <div className="flex flex-row gap-2">
+                        <h3 className="text-xl font-bold mb-4 flex flex-row">
+                            <SettingsIcon size={25} />
+                            <span className="ml-2">Metafi</span>
+                        </h3>
                     </div>
-                    {Object.values(footerData).map((column, index) => (
-                        <div key={index} className="col-span-1">
-                            <h4 className="text-lg font-semibold mb-2">
-                                {column.title}
-                            </h4>
-                            <ul className="space-y-2">
-                                {column.links.map((link, linkIndex) => (
-                                    <li key={linkIndex}>
-                                        <Link
-                                            href="#"
-                                            className="text-white hover:text-gray-300 transition-colors"
-                                        >
-                                            {link}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    <div className="flex flex-row gap-20">
+                        {Object.values(footerData).map((column, index) => (
+                            <div key={index} className="space-y-2">
+                                <h4 className="text-sm font-medium text-default-400 mb-2">
+                                    {column.title}
+                                </h4>
+                                <div className="border border-gray-400"></div>
+                                <ul className="space-y-2">
+                                    {column.links.map((link, linkIndex) => (
+                                        <li key={linkIndex}>
+                                            <Link
+                                                href="#"
+                                                className="text-white text-sm hover:text-gray-300 transition-colors"
+                                            >
+                                                {link}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-700 grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     <div>
                         <p className="text-sm text-gray-400">
-                            © 2023 Metafi. All rights reserved
+                            &copy; 2024 Metafi. All rights reserved
                         </p>
                     </div>
                     <div className="flex justify-end space-x-4 ">

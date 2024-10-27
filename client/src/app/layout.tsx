@@ -15,14 +15,16 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
-      <body className="antialiased">
-        <Toaster position="bottom-right" />
-        <NextUIProvider>
-          <main className="dark text-foreground bg-background">{children}</main>
-        </NextUIProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+            <body className="antialiased">
+                <Toaster position="bottom-right" />
+                <NextUIProvider>
+                    <main className="text-foreground bg-background">
+                        {children}
+                    </main>
+                </NextUIProvider>
+            </body>
+        </html>
+    );
 }
