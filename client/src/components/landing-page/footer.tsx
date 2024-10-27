@@ -56,7 +56,7 @@ const Footer = () => {
                                 <h4 className="text-sm font-medium text-default-400 mb-2">
                                     {column.title}
                                 </h4>
-                                <div className="border border-gray-400"></div>
+                                <div className="border-t border-gray-700"></div>
                                 <ul className="space-y-2">
                                     {column.links.map((link, linkIndex) => (
                                         <li key={linkIndex}>
