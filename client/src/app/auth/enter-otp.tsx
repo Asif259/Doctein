@@ -55,10 +55,15 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
                         toast.success("OTP verified successfully!");
                     }
 
-                    if (from === "login") {
+                    if (from === "forgetPassword") {
                         onSuccess(email);
                         toast.success("OTP verified successfully!");
+                    }
 
+                    if (from === "login") {
+                        await activateUser(email);
+                        onSuccess(email);
+                        toast.success("OTP verified successfully!");
                     }
                 }
             } catch (err: any) {
