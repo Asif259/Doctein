@@ -32,35 +32,21 @@ export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
   const [modalVisible, setModalVisible] = useState(false);
-  const [currentModal, setCurrentModal] = useState<"forgetPassword" | "enterOtp" | "resetPassword">("forgetPassword");
+  const [currentModal, setCurrentModal] = useState<"forgetPassword" | "enterOtp" | "resetPassword" | "login">("forgetPassword");
   const [email, setEmail] = useState("");
+  const [from, setFrom] = useState("");
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const authData = await authenticateUser();
       if (authData.success) {
         login();
-
-        const userProfile = await getUserProfile();
-        const { email, role: userRole, userId, active } = userProfile.data;
-
-        if (!active) {
-          await sendOtp(email);
-        } else {
-          if (userRole === "doctor" && userId) {
-            router.push("/dashboard");
-          } else if (userRole === "doctor" && !userId) {
-            router.push("/profile");
-          } else if (userRole === "patient") {
-            router.push("/dashboard");
-          }
-        }
       }
       setLoading(false);
     };
 
     checkAuthStatus();
-  }, [login, router]);
+  }, [login]);
 
   const formik = useFormik({
     initialValues: {
@@ -77,19 +63,27 @@ export default function Login() {
     }),
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
-        const data = await loginUser(values.email, values.password);
-        if (data.status === "success") {
-          toast.success("Login successful!");
-          setStatus({ success: true });
-          login();
+        setLoading(true);
+        const loginResponse = await loginUser(values.email, values.password);
 
+        if (loginResponse.status === "success") {
           const userProfile = await getUserProfile();
           const { email, role: userRole, userId, active } = userProfile.data;
 
           if (!active) {
+            toast.success("User is not verified! Please verify your account.");
             setEmail(email);
-            setCurrentModal("enterOtp");
-            setModalVisible(true);
+            const response = await sendOtp(values.email);
+
+            if (response?.success) {
+              setCurrentModal("enterOtp");
+              setFrom("login");
+              setModalVisible(true);
+              toast.success("OTP sent successfully!");
+            } else {
+              setStatus({ email: response.data || "Error sending OTP." });
+              toast.error(response.data || "Failed to send OTP. Please try again.");
+            }
           } else {
             if (userRole === "doctor" && userId) {
               router.push("/dashboard");
@@ -98,7 +92,13 @@ export default function Login() {
             } else if (userRole === "patient") {
               router.push("/dashboard");
             }
+
+            toast.success("Login successful!");
+            setStatus({ success: true });
+            login();
           }
+        } else {
+          toast.error("Invalid email or password.");
         }
       } catch (err: any) {
         setStatus({
@@ -106,8 +106,10 @@ export default function Login() {
           message: err.message || "Login failed. Please try again.",
         });
         toast.error("Login failed. Please try again.");
+      } finally {
+        setSubmitting(false);
+        setLoading(false);
       }
-      setSubmitting(false);
     },
   });
 
@@ -116,9 +118,6 @@ export default function Login() {
     setModalVisible(true);
   };
 
-
-
-  // Show loading spinner while checking user authentication
   if (loading) {
     return (
         <div className="flex h-dvh w-full justify-center items-center gap-4">
@@ -133,7 +132,6 @@ export default function Login() {
           <h2 className="text-2xl font-semibold text-white">Login</h2>
           <p className="text-neutral">Enter your credentials to login</p>
 
-          {/* General error message display */}
           {formik.status?.message && !formik.status.success && (
               <div className="text-red-500 mb-4">{formik.status.message}</div>
           )}
@@ -187,7 +185,6 @@ export default function Login() {
               />
             </div>
 
-            {/* Forgot Password Link */}
             <div className="mb-4 mt-2 text-neutral">
               <Link
                   className="text-neutral text-sm hover:underline hover:text-primary cursor-pointer"
@@ -251,12 +248,15 @@ export default function Login() {
             ) : currentModal === "enterOtp" ? (
                 <EnterOtp
                     email={email}
-                    from="login"
-                    onSuccess={(email) => {
-                      setEmail(email);
-                      setCurrentModal("resetPassword");
-                      console.log("Reset modal")
-                      setModalVisible(true);
+                    from={from === "login" ? "login" : "forgetPassword"}
+                    onSuccess={() => {
+                      if (from === "login") {
+                        setModalVisible(false);
+                      } else {
+                        setEmail(email);
+                        setCurrentModal("resetPassword");
+                        setModalVisible(true);
+                      }
                     }}
                 />
             ) : currentModal === "resetPassword" ? (
@@ -269,7 +269,6 @@ export default function Login() {
             ) : null}
           </div>
         </CustomModal>
-
       </div>
   );
 }

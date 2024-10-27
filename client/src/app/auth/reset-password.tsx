@@ -33,7 +33,7 @@ export default function ResetPassword({ email, onSuccess }:{email: string; onSuc
                     onSuccess();
                 }
             } catch (error: any) {
-                toast.error("Failed to reset password. Please try again.");
+                toast.error(error?.response?.data?.message || "Failed to reset password. Please try again.");
             } finally {
                 setIsSubmitting(false);
             }

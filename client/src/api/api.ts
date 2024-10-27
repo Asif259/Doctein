@@ -52,8 +52,7 @@ export const sendOtp = async (email: string) => {
     const response = await axios.post(`/forgot-password/send-otp`, { email });
     return response.data;
   } catch (error: any) {
-    console.log(error);
-    // throw new Error(error.response?.data?.data);
+    return error.response?.data;
   }
 };
 
@@ -67,7 +66,7 @@ export const verifyOtp = async (email: string, otp: string) => {
     return response.data;
   } catch (error: any) {
     console.log(error);
-    // throw new Error(error.response?.data?.data);
+    return error.response?.data;
   }
 };
 
@@ -78,7 +77,7 @@ export const activateUser = async (email: string) => {
     return response.data;
   } catch (error: any) {
     console.log(error);
-    // throw new Error(error.response?.data?.message || 'Failed to activate user');
+    return error.response?.data?.message || 'Failed to activate user';
   }
 };
 
@@ -92,7 +91,7 @@ export const resetPassword = async (email: string, newPassword: string) => {
     return response.data;
   } catch (error: any) {
     console.log(error);
-    // throw new Error(error.response?.data?.data);
+    return (error.response?.data?.data || 'Failed to reset password');
   }
 };
 
