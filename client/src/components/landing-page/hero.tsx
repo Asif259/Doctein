@@ -6,15 +6,15 @@ function HeroSection() {
         <div className="flex flex-col gap-10 justify-center items-center min-h-[500px] h-[60vh] mx-4 rounded-3xl bg-black">
             <div className="text-center space-y-5 mt-12 max-w-2xl">
                 <p className="text-5xl font-medium text-white">
-                    Simplify your medical needs
+                    Revolutionize Your Prescription Management
                 </p>
                 <p className="text-foreground-400 text-sm">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                    Architecto aspernatur at ea illum, impedit inventore
+                    Effortlessly manage patients, appointments, and
+                    prescriptions with our comprehensive solution.
                 </p>
                 <div className="flex justify-center space-x-4">
                     <Button color="primary" className="font-medium">
-                        Get Started
+                        Get Started for Free
                     </Button>
                     <Button className="font-medium">Learn More</Button>
                 </div>

@@ -70,8 +70,8 @@ export default function Customer() {
                 <div className="text-indigo-600 font-semibold mb-8 text-xl">
                     Our Customers
                 </div>
-                <div className="text-5xl max-w-xl mx-auto font-medium flex flex-col gap-5">
-                    See What Our Customers Are Saying
+                <div className="text-5xl max-w-xl mx-auto font-medium gap-5">
+                    What Doctors Using <strong>Docten</strong> Are Saying
                 </div>
                 <div className="text-gray-600 mx-auto">
                     Here's what some of our customers say about our platform.
