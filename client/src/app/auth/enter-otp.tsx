@@ -41,8 +41,10 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
         initialValues: { otp: "" },
         validationSchema: Yup.object({
             otp: Yup.string()
-                .required("Please enter the OTP")
-                .length(6, "OTP must be exactly 6 characters"),
+                .required()
+                .matches(/^[0-9]+$/, "OTP must be only digits")
+                .min(6, 'OTP must be exactly 6 digits')
+                .max(6, 'OTP must be exactly 6 digits')
         }),
         onSubmit: async (values, { setSubmitting }) => {
             if (!email) return;
@@ -77,20 +79,23 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
 
     return (
         <div className="space-y-4">
-            <p className="text-neutral">Enter the OTP sent to your email</p>
+            <p className="text-default">Enter the OTP sent to your email</p>
 
             <form className="space-y-4" onSubmit={formik.handleSubmit}>
                 <Input
-                    label="Enter Otp"
+                    label="Enter your OTP"
                     type="text"
                     name="otp"
                     value={formik.values.otp}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
+                    isInvalid={formik.touched.otp && Boolean(formik.errors.otp)}
+                    errorMessage={
+                        formik.touched.otp && formik.errors.otp
+                            ? formik.errors.otp
+                            : undefined
+                    }
                 />
-                {formik.touched.otp && formik.errors.otp && (
-                    <p className="error-text">{formik.errors.otp}</p>
-                )}
 
                 <div className="flex justify-between mt-2">
                     <Button

@@ -8,7 +8,10 @@ import {
 
 const CustomModal = ({title, isOpen, onClose , children }: {title: string; isOpen: boolean; onClose: () => void;  children: React.ReactNode;}) => {
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose}
+               size={"md"}
+               className="bg-default-100"
+        >
             <ModalContent>
                 <ModalHeader>
                     <h2 className="text-lg">{title}</h2>

@@ -23,6 +23,7 @@ import ForgetPassword from "../forget-password";
 import EnterOtp from "../enter-otp";
 import CustomModal from "../customModal";
 import ResetPassword from "../reset-password";
+import CustomInput from "@/components/globals/customInput";
 
 export default function Login() {
   const { login } = useAuthStore((state) => state);
@@ -127,7 +128,7 @@ export default function Login() {
   }
 
   return (
-      <div className="min-h-screen flex justify-between items-center bg-dark-200">
+      <div className="min-h-screen flex justify-between items-center bg-default">
         <div className="w-full flex-1 pl-28 p-8">
           <h2 className="text-2xl font-semibold text-white">Login</h2>
           <p className="text-neutral">Enter your credentials to login</p>
@@ -141,7 +142,7 @@ export default function Login() {
 
           <form className="mt-4 space-y-4 max-w-md" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
-              <Input
+              <CustomInput
                   placeholder="Enter your email"
                   type="email"
                   label="Email"
@@ -152,32 +153,50 @@ export default function Login() {
                         ? formik.errors.email
                         : undefined
                   }
+                  classNames={{
+                    label: "text-default-300",
+                    input: [
+                      "placeholder:text-default-400",
+                    ],
+                    inputWrapper: [
+                      "bg-default-500",
+                        "hover:bg-default-300"
+                    ]
+                  }}
               />
             </div>
             <div className="relative">
-              <Input
+              <CustomInput
                   placeholder="Enter your password"
                   label="Password"
                   {...formik.getFieldProps("password")}
-                  isInvalid={
-                      formik.touched.password && Boolean(formik.errors.password)
-                  }
+                  isInvalid={formik.touched.password && Boolean(formik.errors.password)}
                   errorMessage={
                     formik.touched.password && formik.errors.password
                         ? formik.errors.password
                         : undefined
                   }
+                  classNames={{
+                    label: "text-default-300",
+                    input: [
+                      "placeholder:text-default-400",
+                    ],
+                    inputWrapper: [
+                      "bg-default-500",
+                      "hover:bg-default-200"
+                    ]
+                  }}
                   endContent={
                     <Button
-                        className="focus:outline-none"
+                        className="focus:outline-none bg-default-500 hover:bg-[#3f3f46]"
                         type="button"
                         onClick={toggleVisibility}
                         aria-label="toggle password visibility"
                     >
                       {isVisible ? (
-                          <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                          <IoEyeOutline className="text-2xl text-default-400 pointer-events-none"/>
                       ) : (
-                          <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                          <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none"/>
                       )}
                     </Button>
                   }
@@ -196,7 +215,7 @@ export default function Login() {
 
             <Button
                 type="submit"
-                className="w-full bg-primary text-white py-2 px-4 rounded-lg"
+                className="w-full bg-primary py-2 px-4 rounded-lg"
                 disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Logging in..." : "Login"}

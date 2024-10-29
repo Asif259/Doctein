@@ -7,10 +7,6 @@
     Input,
     Button,
     Image,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalContent,
   } from "@nextui-org/react";
   import { registerUser, sendOtp } from "@/api/api";
   import { useFormik } from "formik";
@@ -18,6 +14,8 @@
   import toast from "react-hot-toast";
   import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
   import EnterOTP from "../enter-otp";
+  import CustomModal from "@/app/auth/customModal";
+  import CustomInput from "@/components/globals/customInput";
 
   export default function Register() {
     const searchParams = useSearchParams();
@@ -96,7 +94,7 @@
     });
 
     return (
-      <div className="min-h-screen flex justify-between items-center bg-dark-200">
+      <div className="min-h-screen flex justify-between items-center bg-default">
         <div className="w-full flex-1 pl-28 p-8">
           <h2 className="text-2xl font-semibold text-white">
             Register as {role}
@@ -107,7 +105,7 @@
 
           <form className="space-y-4 max-w-lg" onSubmit={formik.handleSubmit}>
             <div>
-              <Input
+              <CustomInput
                 label="Email address"
                 placeholder="Enter your email"
                 type="email"
@@ -118,11 +116,21 @@
                     ? formik.errors.email
                     : undefined
                 }
+                classNames={{
+                  label: "text-default-300",
+                  input: [
+                    "placeholder:text-default-400",
+                  ],
+                  inputWrapper: [
+                    "bg-default-500",
+                    "hover:bg-default-200"
+                  ]
+                }}
               />
             </div>
 
             <div className="relative">
-              <Input
+              <CustomInput
                 label="Password"
                 placeholder="Enter your password"
                 {...formik.getFieldProps("password")}
@@ -136,7 +144,7 @@
                 }
                 endContent={
                   <Button
-                    className="focus:outline-none"
+                    className="focus:outline-none bg-default-100"
                     type="button"
                     onClick={toggleVisibility}
                     aria-label="toggle password visibility"
@@ -166,9 +174,19 @@
                     ? formik.errors.confirmPassword
                     : undefined
                 }
+                classNames={{
+                  label: "text-default-300",
+                  input: [
+                    "placeholder:text-default-400",
+                  ],
+                  inputWrapper: [
+                    "bg-default-500",
+                    "hover:bg-default-300"
+                  ]
+                }}
                 endContent={
                   <Button
-                    className="focus:outline-none"
+                    className="focus:outline-none bg-default-100"
                     type="button"
                     onClick={toggleConfirmVisibility}
                     aria-label="toggle password visibility"
@@ -186,7 +204,7 @@
 
             <Button
               type="submit"
-              className="w-full text-white py-2 px-4 rounded-lg transition-colors duration-300 ease-in-out bg-primary hover:bg-primary-500"
+              className="w-full py-2 px-4 rounded-lg bg-primary"
               disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Registering..." : "Register"}
@@ -216,27 +234,17 @@
           />
         </div>
 
-        <Modal
-          className="p-5"
-          size="md"
-          closeButton
-          aria-labelledby="modal-title"
+        <CustomModal
           isOpen={modalVisible}
           onClose={() => setModalVisible(false)}
+          title={"Enter OTP"}
         >
-          <ModalContent>
-            <ModalHeader>
-              <h3 className="text-white">Enter OTP</h3>
-            </ModalHeader>
-            <ModalBody>
               <EnterOTP
                 email={email}
                 from="register"
                 onSuccess={() => setModalVisible(false)}
               />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        </CustomModal>
       </div>
     );
   }
