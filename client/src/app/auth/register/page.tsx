@@ -73,8 +73,8 @@
               await sendOtp(values.email);
               setModalVisible(true);
             } else {
-              console.log("User already exists or other error");
               toast.error(response.data || "User already exists");
+              router.push('/auth/login');
             }
           } else {
             console.log("Registration successful, opening OTP modal...");
@@ -99,7 +99,7 @@
           <h2 className="text-2xl font-semibold text-white">
             Register as {role}
           </h2>
-          <p className="mb-6 text-neutral">
+          <p className="mb-6 text-default-300">
             Enter your credentials to register as a {role}
           </p>
 
@@ -142,9 +142,19 @@
                     ? formik.errors.password
                     : undefined
                 }
+                classNames={{
+                  label: "text-default-300",
+                  input: [
+                    "placeholder:text-default-400",
+                  ],
+                  inputWrapper: [
+                    "bg-default-500",
+                    "hover:bg-default-200"
+                  ]
+                }}
                 endContent={
                   <Button
-                    className="focus:outline-none bg-default-100"
+                    className="focus:outline-none bg-default-500 hover:bg-default-200"
                     type="button"
                     onClick={toggleVisibility}
                     aria-label="toggle password visibility"
@@ -181,24 +191,24 @@
                   ],
                   inputWrapper: [
                     "bg-default-500",
-                    "hover:bg-default-300"
+                    "hover:bg-default-200"
                   ]
                 }}
                 endContent={
                   <Button
-                    className="focus:outline-none bg-default-100"
-                    type="button"
-                    onClick={toggleConfirmVisibility}
-                    aria-label="toggle password visibility"
+                      className="focus:outline-none bg-default-500 hover:bg-default-200"
+                      type="button"
+                      onClick={toggleConfirmVisibility}
+                      aria-label="toggle password visibility"
                   >
-                    {isConfirmVisible ? (
-                      <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                    {isVisible ? (
+                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
                     ) : (
-                      <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
                     )}
                   </Button>
                 }
-                type={isConfirmVisible ? "text" : "password"}
+                type={isVisible ? "text" : "password"}
               />
             </div>
 
@@ -211,10 +221,10 @@
             </Button>
           </form>
 
-          <p className="mt-6" style={{ color: "#abb7c4" }}>
+          <p className="mt-6 text-default-300">
             Already have an account?
             <Link
-              href={`/auth/login?role=${role}`}
+              href={`/auth/login`}
               className="text-primary hover:underline ml-1"
             >
               Login

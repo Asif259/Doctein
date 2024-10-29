@@ -131,7 +131,7 @@ export default function Login() {
       <div className="min-h-screen flex justify-between items-center bg-default">
         <div className="w-full flex-1 pl-28 p-8">
           <h2 className="text-2xl font-semibold text-white">Login</h2>
-          <p className="text-neutral">Enter your credentials to login</p>
+          <p className="text-default-300">Enter your credentials to login</p>
 
           {formik.status?.message && !formik.status.success && (
               <div className="text-red-500 mb-4">{formik.status.message}</div>
@@ -188,7 +188,7 @@ export default function Login() {
                   }}
                   endContent={
                     <Button
-                        className="focus:outline-none bg-default-500 hover:bg-[#3f3f46]"
+                        className="focus:outline-none bg-default-500 hover:bg-default-200"
                         type="button"
                         onClick={toggleVisibility}
                         aria-label="toggle password visibility"

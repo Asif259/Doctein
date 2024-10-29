@@ -20,6 +20,7 @@ import {
 import { doctor } from "@/types/dashboard";
 import { useProfileStore } from "@/store/profile-store";
 import { MdOutlineCancel } from "react-icons/md";
+import CustomInput from "@/components/globals/customInput";
 
 const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; onProfileUpdate: (doctor: doctor) => void }) => {
   const router = useRouter();
@@ -130,7 +131,7 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
   };
 
   return (
-    <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-secondary-100 border-none shadow-none">
+    <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-default border-none shadow-none">
       <CardHeader className="flex flex-col items-center pb-0 pt-6">
         <Avatar
           src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
@@ -143,12 +144,12 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
             .join("")}
         />
       </CardHeader>
-      <CardBody className="flex flex-col gap-6 relative p-9">
+      <CardBody className="flex flex-col gap-6 relative p-9 bg-default">
         <form
           className="space-y-4 overflow-y-auto"
           onSubmit={formik.handleSubmit}
         >
-          <Input
+          <CustomInput
             label="Full Name"
             name="name"
             value={formik.values.name}
@@ -161,8 +162,18 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 <span style={{ color: "red" }}>{formik.errors.name}</span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
-          <Input
+          <CustomInput
             label="Degrees"
             name="degrees"
             value={formik.values.degrees.join(", ")}
@@ -180,8 +191,18 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 <span style={{ color: "red" }}>{formik.errors.degrees}</span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
-          <Input
+          <CustomInput
             label="Designation"
             name="designation"
             value={formik.values.designation}
@@ -198,8 +219,18 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 </span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
-          <Input
+          <CustomInput
             label="Specialization"
             name="specialization"
             value={formik.values.specialization}
@@ -216,8 +247,18 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 </span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
-          <Input
+          <CustomInput
             label="Primary Phone"
             name="phone[0]"
             value={formik.values.phone[0]}
@@ -230,18 +271,38 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 <span style={{ color: "red" }}>{formik.errors.phone}</span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
 
           {/* Additional Phones */}
           {additionalPhones.map((phone, index) => (
-            <div key={index} className="flex items-center mb-4">
-              <Input
+            <div key={index} className="flex items-center mb-4 ">
+              <CustomInput
                 label={`Additional Phone ${index + 1}`}
                 name={`phone[${index + 1}]`}
                 value={phone}
                 onChange={(e) =>
                   handleAdditionalPhoneChange(index, e.target.value)
                 }
+                classNames={{
+                  label: "text-default-300",
+                  input: [
+                    "placeholder:text-default-400",
+                  ],
+                  inputWrapper: [
+                    "bg-default-500",
+                    "hover:bg-default-200"
+                  ]
+                }}
                 isInvalid={!!formik.errors.phone}
               />
               <Button
@@ -252,7 +313,7 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                   );
                   setAdditionalPhones(updatedPhones);
                 }}
-                className="ml-2 text-red-500"
+                className="ml-2 text-red-500 bg-primary"
               >
                 <MdOutlineCancel className="size-5" />
               </Button>
@@ -262,12 +323,12 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
           <Button
             type="button"
             onClick={handleAddPhone}
-            className="mb-4 bg-secondary-600 text-white"
+            className="mb-4 bg-primary text-white"
           >
             Add additional phone
           </Button>
 
-          <Input
+          <CustomInput
             label="BMDC Number"
             name="bmdcNumber"
             value={formik.values.bmdcNumber}
@@ -280,8 +341,18 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 <span style={{ color: "red" }}>{formik.errors.bmdcNumber}</span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
-          <Input
+          <CustomInput
             label="Digital Signature"
             name="digitalSignature"
             value={formik.values.digitalSignature}
@@ -299,13 +370,23 @@ const ProfileComponent = ({ doctor, onProfileUpdate }: { doctor: doctor | null; 
                 </span>
               )
             }
+            classNames={{
+              label: "text-default-300",
+              input: [
+                "placeholder:text-default-400",
+              ],
+              inputWrapper: [
+                "bg-default-500",
+                "hover:bg-default-200"
+              ]
+            }}
           />
 
-          <div className="sticky bottom-0 bg-white pt-4">
+          <div className="sticky bottom-0 pt-4 bg-default">
             <Button
               type="submit"
               isLoading={loading}
-              className="w-full bg-secondary-600 text-white"
+              className="w-full bg-primary text-white"
             >
               {doctor ? "Update Profile" : "Save Profile"}
             </Button>
