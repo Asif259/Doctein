@@ -76,7 +76,7 @@ const ProfilePage = () => {
         <span>Logout</span>
       </div>
   
-      <div className="border border-default-300 shadow-lg rounded-lg bg-default w-full max-w-2xl">
+      <div className="border border-default-300 shadow-lg rounded-lg bg-default w-full max-w-3xl">
         <ProfileComponent doctor={Doctor} onProfileUpdate={() => {}} />
       </div>
     </div>

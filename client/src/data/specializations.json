@@ -1,0 +1,22 @@
+[
+  { "key": "1", "value": "cardiology", "label": "Cardiology" },
+  { "key": "2", "value": "neurology", "label": "Neurology" },
+  { "key": "3", "value": "orthopedics", "label": "Orthopedics" },
+  { "key": "4", "value": "pediatrics", "label": "Pediatrics" },
+  { "key": "5", "value": "dermatology", "label": "Dermatology" },
+  { "key": "6", "value": "psychiatry", "label": "Psychiatry" },
+  { "key": "7", "value": "gynecology", "label": "Gynecology" },
+  { "key": "8", "value": "oncology", "label": "Oncology" },
+  { "key": "9", "value": "gastroenterology", "label": "Gastroenterology" },
+  { "key": "10", "value": "endocrinology", "label": "Endocrinology" },
+  { "key": "11", "value": "urology", "label": "Urology" },
+  { "key": "12", "value": "rheumatology", "label": "Rheumatology" },
+  { "key": "13", "value": "nephrology", "label": "Nephrology" },
+  { "key": "14", "value": "pulmonology", "label": "Pulmonology" },
+  { "key": "15", "value": "internal_medicine", "label": "Internal Medicine" },
+  { "key": "16", "value": "family_medicine", "label": "Family Medicine" },
+  { "key": "17", "value": "infectious_diseases", "label": "Infectious Diseases" },
+  { "key": "18", "value": "anesthesiology", "label": "Anesthesiology" },
+  { "key": "19", "value": "radiology", "label": "Radiology" },
+  { "key": "20", "value": "emergency_medicine", "label": "Emergency Medicine" }
+]

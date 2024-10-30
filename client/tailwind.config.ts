@@ -19,7 +19,11 @@ const config: Config = {
                     },
                 },
                 dark: {
-                    layout: {},
+                    layout: {
+                        // radius: {
+                        //     small: "0.22rem"
+                        // }
+                    },
                     colors: {
                         background: "#1d2129",
                         primary: {
