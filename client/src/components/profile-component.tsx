@@ -30,9 +30,7 @@ const ProfileComponent = ({
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const { addDoctor } = useProfileStore((state) =>
-        useShallow(state.addDoctor),
-    );
+    const addDoctor = useProfileStore((state) => useShallow(state.addDoctor));
 
     // Manage additional phone numbers
     const [additionalPhones, setAdditionalPhones] = useState<string[]>(
