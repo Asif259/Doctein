@@ -1,37 +1,38 @@
 "use client";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {
-    Card,
-    CardBody,
-    CardHeader,
-    Avatar,
-    Button,
-    AutocompleteItem
-} from "@nextui-org/react";
-import React, {useState} from "react";
-import {useRouter} from "next/navigation";
-import {parsePhoneNumberFromString} from "libphonenumber-js";
+import { Card, CardBody, CardHeader, Avatar, Button } from "@nextui-org/react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import toast from "react-hot-toast";
 import {
     saveDoctorProfile,
     updateDoctorProfile,
 } from "@/api/dashboard/profileAPI";
-import {doctor} from "@/types/dashboard";
-import {useProfileStore} from "@/store/profile-store";
-import {MdOutlineCancel} from "react-icons/md";
-import CustomInput from "@/components/globals/customInput";
-import CustomAutoComplete from "@/components/globals/cutomAutoComplete";
-import degrees from "@/data/degrees.json"
-import specializations from "@/data/specializations.json"
+import { doctor } from "@/types/dashboard";
+import { useProfileStore } from "@/store/profile-store";
+import { MdOutlineCancel } from "react-icons/md";
+import CustomInput from "@/components/globals/custom-input";
+import CustomAutocomplete, {
+    Item,
+} from "@/components/globals/custom-autocomplete";
+import degrees from "@/data/degrees.json";
+import specializations from "@/data/specializations.json";
+import { useShallow } from "zustand/react/shallow";
 
-const ProfileComponent = ({doctor, onProfileUpdate}: {
+const ProfileComponent = ({
+    doctor,
+    onProfileUpdate,
+}: {
     doctor: doctor | null;
-    onProfileUpdate: (doctor: doctor) => void
+    onProfileUpdate: (doctor: doctor) => void;
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const {Doctor, addDoctor} = useProfileStore((state) => state);
+    const { addDoctor } = useProfileStore((state) =>
+        useShallow(state.addDoctor),
+    );
 
     // Manage additional phone numbers
     const [additionalPhones, setAdditionalPhones] = useState<string[]>(
@@ -50,19 +51,30 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
         },
         validationSchema: Yup.object({
             name: Yup.string().required("Name is required"),
-            degrees: Yup.array().of(Yup.string().required("Degrees are required")),
+            degrees: Yup.array().of(
+                Yup.string().required("Degrees are required"),
+            ),
             designation: Yup.string().required("Designation is required"),
             specialization: Yup.string().required("Specialization is required"),
             phone: Yup.array().of(
                 Yup.string()
-                    .test("valid-phone", "Phone number is not valid", (value) => {
-                        const phoneNumber = parsePhoneNumberFromString(value || "", "US");
-                        return phoneNumber ? phoneNumber.isValid() : false;
-                    })
+                    .test(
+                        "valid-phone",
+                        "Phone number is not valid",
+                        (value) => {
+                            const phoneNumber = parsePhoneNumberFromString(
+                                value || "",
+                                "US",
+                            );
+                            return phoneNumber ? phoneNumber.isValid() : false;
+                        },
+                    )
                     .required("Phone number is required"),
             ),
             bmdcNumber: Yup.string().required("BMDC Number is required"),
-            digitalSignature: Yup.string().required("Digital signature is required"),
+            digitalSignature: Yup.string().required(
+                "Digital signature is required",
+            ),
         }),
         onSubmit: async (values: doctor) => {
             setLoading(true);
@@ -143,7 +155,7 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                     src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                     alt={formik.values.name}
                     className="text-large"
-                    style={{height: "120px", width: "120px"}}
+                    style={{ height: "120px", width: "120px" }}
                     fallback={formik.values.name
                         .split(" ")
                         .map((n) => n[0])
@@ -151,10 +163,7 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                 />
             </CardHeader>
             <CardBody className="flex relative bg-default">
-                <form
-                    className="space-y-4 "
-                    onSubmit={formik.handleSubmit}
-                >
+                <form className="space-y-4 " onSubmit={formik.handleSubmit}>
                     <div className="flex space-x-14">
                         <div className="w-full space-y-6">
                             <CustomInput
@@ -163,62 +172,85 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 value={formik.values.name}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.name && formik.touched.name}
+                                isInvalid={
+                                    !!formik.errors.name && formik.touched.name
+                                }
                                 errorMessage={
                                     formik.touched.name &&
-                                    formik.errors.name && (<span style={{color: "red"}}>{formik.errors.name}</span>)
+                                    formik.errors.name && (
+                                        <span style={{ color: "red" }}>
+                                            {formik.errors.name}
+                                        </span>
+                                    )
                                 }
                                 classNames={{
                                     label: "text-default-300",
-                                    input: ["placeholder:text-default-400",],
-                                    inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
                                 }}
                             />
-                            <CustomAutoComplete
-                                defaultItems={degrees}
+                            <CustomAutocomplete
+                                items={degrees as unknown as Item[]}
                                 label="Degrees"
                                 name="degrees"
                                 color="default"
                                 value={formik.values.degrees}
                                 onSelectionChange={(selectedDegree) => {
-                                    if (selectedDegree && !formik.values.degrees.includes(selectedDegree as string)) {
-                                        formik.setFieldValue('degrees', [...formik.values.degrees, selectedDegree]);
+                                    if (
+                                        selectedDegree &&
+                                        !formik.values.degrees.includes(
+                                            selectedDegree as string,
+                                        )
+                                    ) {
+                                        formik.setFieldValue("degrees", [
+                                            ...formik.values.degrees,
+                                            selectedDegree,
+                                        ]);
                                     }
                                 }}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.degrees && formik.touched.degrees}
+                                isInvalid={
+                                    !!formik.errors.degrees &&
+                                    formik.touched.degrees
+                                }
                                 errorMessage={
                                     formik.touched.degrees &&
-                                    formik.errors.degrees}
+                                    formik.errors.degrees
+                                }
                                 // classNames
-                            >
-                                {degrees.map((degree) => (
-                                    <AutocompleteItem key={degree.key} value={degree.value}>
-                                        {degree.label}
-                                    </AutocompleteItem>
-                                ))}
-                            </CustomAutoComplete>
+                            />
 
                             {formik.values.degrees.length > 0 && (
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    {formik.values.degrees.map((degree, index) => (
-                                        <div key={index}
-                                             className="flex items-center gap-1 bg-default px-2 py-1 rounded">
-                                            <span>{degree}</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    formik.setFieldValue(
-                                                        'degrees',
-                                                        formik.values.degrees.filter((d) => d !== degree)
-                                                    );
-                                                }}
-                                                className="text-red-500"
+                                    {formik.values.degrees.map(
+                                        (degree, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex items-center gap-1 bg-default px-2 py-1 rounded"
                                             >
-                                                <MdOutlineCancel className="size-4 mt-1"/>
-                                            </button>
-                                        </div>
-                                    ))}
+                                                <span>{degree}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        formik.setFieldValue(
+                                                            "degrees",
+                                                            formik.values.degrees.filter(
+                                                                (d) =>
+                                                                    d !==
+                                                                    degree,
+                                                            ),
+                                                        );
+                                                    }}
+                                                    className="text-red-500"
+                                                >
+                                                    <MdOutlineCancel className="size-4 mt-1" />
+                                                </button>
+                                            </div>
+                                        ),
+                                    )}
                                 </div>
                             )}
 
@@ -228,45 +260,63 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 value={formik.values.phone[0]}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.phone && formik.touched.phone}
+                                isInvalid={
+                                    !!formik.errors.phone &&
+                                    formik.touched.phone
+                                }
                                 errorMessage={
-                                    formik.touched.phone &&
-                                    formik.errors.phone}
+                                    formik.touched.phone && formik.errors.phone
+                                }
                                 classNames={{
                                     label: "text-default-300",
-                                    input: ["placeholder:text-default-400",],
-                                    inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
                                 }}
                             />
 
                             {/* Additional Phones */}
                             {additionalPhones.map((phone, index) => (
-                                <div key={index} className="flex items-center mb-4 ">
+                                <div
+                                    key={index}
+                                    className="flex items-center mb-4 "
+                                >
                                     <CustomInput
                                         label={`Additional Phone ${index + 1}`}
                                         name={`phone[${index + 1}]`}
                                         value={phone}
                                         onChange={(e) =>
-                                            handleAdditionalPhoneChange(index, e.target.value)
+                                            handleAdditionalPhoneChange(
+                                                index,
+                                                e.target.value,
+                                            )
                                         }
                                         classNames={{
                                             label: "text-default-300",
-                                            input: ["placeholder:text-default-400",],
-                                            inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                            input: [
+                                                "placeholder:text-default-400",
+                                            ],
+                                            inputWrapper: [
+                                                "bg-default-500",
+                                                "hover:bg-default-200",
+                                            ],
                                         }}
                                         isInvalid={!!formik.errors.phone}
                                     />
                                     <Button
                                         type="button"
                                         onClick={() => {
-                                            const updatedPhones = additionalPhones.filter(
-                                                (_, i) => i !== index,
-                                            );
+                                            const updatedPhones =
+                                                additionalPhones.filter(
+                                                    (_, i) => i !== index,
+                                                );
                                             setAdditionalPhones(updatedPhones);
                                         }}
                                         className="text-red-500 "
                                     >
-                                        <MdOutlineCancel className="size-5"/>
+                                        <MdOutlineCancel className="size-5" />
                                     </Button>
                                 </div>
                             ))}
@@ -278,41 +328,39 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                             >
                                 Add additional phone
                             </Button>
-
-
                         </div>
                         <div className="w-full space-y-6">
-
                             <CustomInput
                                 label="Designation"
                                 name="designation"
                                 value={formik.values.designation}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.designation && formik.touched.designation}
+                                isInvalid={
+                                    !!formik.errors.designation &&
+                                    formik.touched.designation
+                                }
                                 errorMessage={
                                     formik.touched.designation &&
-                                    formik.errors.designation}
+                                    formik.errors.designation
+                                }
                                 classNames={{
                                     label: "text-default-300",
-                                    input: ["placeholder:text-default-400",],
-                                    inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
                                 }}
                             />
 
-                            <CustomAutoComplete
-                                defaultItems={specializations}
+                            <CustomAutocomplete
+                                items={specializations as unknown as Item[]}
                                 label="Specializations"
                                 name="specializations"
                                 value={formik.values.specialization}
                                 onSelectionChange={formik.handleChange}
-                            >
-                                {specializations.map((specialization) => (
-                                    <AutocompleteItem key={specialization.key} value={specialization.value}>
-                                        {specialization.label}
-                                    </AutocompleteItem>
-                                ))}
-                            </CustomAutoComplete>
+                            />
 
                             <CustomInput
                                 label="BMDC Number"
@@ -320,15 +368,25 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 value={formik.values.bmdcNumber}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.bmdcNumber && formik.touched.bmdcNumber}
+                                isInvalid={
+                                    !!formik.errors.bmdcNumber &&
+                                    formik.touched.bmdcNumber
+                                }
                                 errorMessage={
                                     formik.touched.bmdcNumber &&
-                                    formik.errors.bmdcNumber && (<span style={{color: "red"}}>{formik.errors.bmdcNumber}</span>)
+                                    formik.errors.bmdcNumber && (
+                                        <span style={{ color: "red" }}>
+                                            {formik.errors.bmdcNumber}
+                                        </span>
+                                    )
                                 }
                                 classNames={{
                                     label: "text-default-300",
-                                    input: ["placeholder:text-default-400",],
-                                    inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
                                 }}
                             />
                             <CustomInput
@@ -337,20 +395,29 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 value={formik.values.digitalSignature}
                                 onChange={formik.handleChange}
                                 onBlur={formik.handleBlur}
-                                isInvalid={!!formik.errors.digitalSignature && formik.touched.digitalSignature}
+                                isInvalid={
+                                    !!formik.errors.digitalSignature &&
+                                    formik.touched.digitalSignature
+                                }
                                 errorMessage={
                                     formik.touched.digitalSignature &&
-                                    formik.errors.digitalSignature && (<span style={{color: "red"}}>{formik.errors.digitalSignature}</span>)
+                                    formik.errors.digitalSignature && (
+                                        <span style={{ color: "red" }}>
+                                            {formik.errors.digitalSignature}
+                                        </span>
+                                    )
                                 }
                                 classNames={{
                                     label: "text-default-300",
-                                    input: ["placeholder:text-default-400",],
-                                    inputWrapper: ["bg-default-500", "hover:bg-default-200"]
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
                                 }}
                             />
                         </div>
                     </div>
-
 
                     <div className="sticky bottom-0 pt-4 bg-default">
                         <Button
@@ -365,6 +432,6 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
             </CardBody>
         </Card>
     );
-}
+};
 
 export default ProfileComponent;
