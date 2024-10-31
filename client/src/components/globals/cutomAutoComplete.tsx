@@ -3,7 +3,7 @@ import React from "react";
 
 const CustomAutoComplete: React.FC<AutocompleteProps> = ({children, ...props}) => {
     return (
-        <Autocomplete {...props}>
+        <Autocomplete radius="sm" {...props}>
             {children}
         </Autocomplete>
     );

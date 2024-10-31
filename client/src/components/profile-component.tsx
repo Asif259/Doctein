@@ -137,26 +137,26 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
     };
 
     return (
-        <Card className="h-[76dvh] w-full max-w-2xl mx-auto bg-default border-none shadow-none">
-            <CardHeader className="flex flex-col items-center pb-0 pt-6">
+        <Card className="h-[76dvh] w-full max-w-3xl mx-auto bg-default p-6 pb-0">
+            <CardHeader className="flex flex-col items-center pb-0 pt-2">
                 <Avatar
                     src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                     alt={formik.values.name}
                     className="text-large"
-                    style={{height: "90px", width: "90px"}}
+                    style={{height: "120px", width: "120px"}}
                     fallback={formik.values.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                 />
             </CardHeader>
-            <CardBody className="flex gap-1 relative p-8 bg-default">
+            <CardBody className="flex relative bg-default">
                 <form
                     className="space-y-4 "
                     onSubmit={formik.handleSubmit}
                 >
-                    <div className="flex space-x-10">
-                        <div className="w-full space-y-4">
+                    <div className="flex space-x-14">
+                        <div className="w-full space-y-6">
                             <CustomInput
                                 label="Full Name"
                                 name="name"
@@ -178,6 +178,7 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 defaultItems={degrees}
                                 label="Degrees"
                                 name="degrees"
+                                color="default"
                                 value={formik.values.degrees}
                                 onSelectionChange={(selectedDegree) => {
                                     if (selectedDegree && !formik.values.degrees.includes(selectedDegree as string)) {
@@ -189,6 +190,7 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
                                 errorMessage={
                                     formik.touched.degrees &&
                                     formik.errors.degrees}
+                                // classNames
                             >
                                 {degrees.map((degree) => (
                                     <AutocompleteItem key={degree.key} value={degree.value}>
@@ -279,7 +281,7 @@ const ProfileComponent = ({doctor, onProfileUpdate}: {
 
 
                         </div>
-                        <div className="w-full space-y-4">
+                        <div className="w-full space-y-6">
 
                             <CustomInput
                                 label="Designation"
