@@ -13,24 +13,28 @@ import {
 import { doctor } from "@/types/dashboard";
 import { useProfileStore } from "@/store/profile-store";
 import { MdOutlineCancel } from "react-icons/md";
-import CustomInput from "@/components/globals/custom-input";
+import CustomInput from "@/components/globals/GInput";
 import CustomAutocomplete, {
     Item,
-} from "@/components/globals/custom-autocomplete";
+} from "@/components/globals/GAutoComplete";
 import degrees from "@/data/degrees.json";
 import specializations from "@/data/specializations.json";
 import { useShallow } from "zustand/react/shallow";
 
 const ProfileComponent = ({
-    doctor,
-    onProfileUpdate,
-}: {
+                              doctor,
+                              onProfileUpdate,
+                          }: {
     doctor: doctor | null;
     onProfileUpdate: (doctor: doctor) => void;
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const addDoctor = useProfileStore((state) => useShallow(state.addDoctor));
+    const { addDoctor } = useProfileStore(
+        useShallow((state) => ({
+            addDoctor: state.addDoctor,
+        })),
+    );
 
     // Manage additional phone numbers
     const [additionalPhones, setAdditionalPhones] = useState<string[]>(
@@ -181,14 +185,7 @@ const ProfileComponent = ({
                                         </span>
                                     )
                                 }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
+
                             />
                             <CustomAutocomplete
                                 items={degrees as unknown as Item[]}
@@ -265,14 +262,6 @@ const ProfileComponent = ({
                                 errorMessage={
                                     formik.touched.phone && formik.errors.phone
                                 }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
                             />
 
                             {/* Additional Phones */}
@@ -304,6 +293,7 @@ const ProfileComponent = ({
                                         isInvalid={!!formik.errors.phone}
                                     />
                                     <Button
+                                        radius="sm"
                                         type="button"
                                         onClick={() => {
                                             const updatedPhones =
@@ -320,6 +310,7 @@ const ProfileComponent = ({
                             ))}
 
                             <Button
+                                radius="sm"
                                 type="button"
                                 onClick={handleAddPhone}
                                 className="bg-primary flex-grow"
@@ -342,14 +333,6 @@ const ProfileComponent = ({
                                     formik.touched.designation &&
                                     formik.errors.designation
                                 }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
                             />
 
                             <CustomAutocomplete
@@ -378,14 +361,6 @@ const ProfileComponent = ({
                                         </span>
                                     )
                                 }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
                             />
                             <CustomInput
                                 label="Digital Signature"
@@ -405,20 +380,13 @@ const ProfileComponent = ({
                                         </span>
                                     )
                                 }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
                             />
                         </div>
                     </div>
 
                     <div className="sticky bottom-0 pt-4 bg-default">
                         <Button
+                            radius="sm"
                             type="submit"
                             isLoading={loading}
                             className="w-full bg-primary text-white"
