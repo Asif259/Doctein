@@ -68,7 +68,8 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
                         toast.success("OTP verified successfully!");
                     }
                 }
-            } catch (err: any) {
+            } catch {
+
                 toast.error("Invalid OTP. Please try again.");
             } finally {
                 setSubmitting(false);

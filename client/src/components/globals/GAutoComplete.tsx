@@ -6,7 +6,7 @@ import {
 import React from "react";
 
 export interface Item {
-    key: number;
+    key: string | number;
     value: string;
     label: string;
 }
@@ -15,16 +15,26 @@ interface ItemProps extends Omit<AutocompleteProps, "children"> {
     items?: Item[];
 }
 
-const CustomAutocomplete = ({ items = [], ...props }: ItemProps) => {
+const GAutoComplete = ({ items = [], ...props }: ItemProps) => {
     return (
-        <Autocomplete {...props}>
+        <Autocomplete
+            radius="sm"
+            inputProps={{
+                classNames: {
+                    input: "placeholder:text-default-400",
+                    inputWrapper: "bg-default-500 hover:bg-default-200",
+                },
+            }}
+            {...props}
+        >
             {items.map((item) => (
                 <AutocompleteItem key={item.key} value={item.value}>
                     {item.label}
                 </AutocompleteItem>
             ))}
         </Autocomplete>
+
     );
 };
 
-export default CustomAutocomplete;
+export default GAutoComplete;
