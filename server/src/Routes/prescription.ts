@@ -29,5 +29,6 @@ router.post(
 // Medication
 router.post("/medication", medicationController.addMedication);
 router.get("/medication/search", medicationController.searchMedication);
+router.get("/medication/:id", medicationController.getMedicationById);
 
 export default router;

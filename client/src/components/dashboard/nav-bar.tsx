@@ -1,76 +1,69 @@
 "use client";
 
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  Link,
-  DropdownItem,
-  DropdownTrigger,
-  Dropdown,
-  DropdownMenu,
-  Avatar,
+    Avatar,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Input,
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
 } from "@nextui-org/react";
 import React from "react";
+import { BsBellFill } from "react-icons/bs";
+import { BiSolidChat } from "react-icons/bi";
 
 export default function NavBar() {
-  return (
-    <Navbar
-      classNames={{
-        base: "items-center",
-      }}
-    >
-      <NavbarBrand>
-        <p className="font-bold text-2xl">Dochub</p>
-      </NavbarBrand>
-      <NavbarContent className="hidden sm:flex gap-4e" justify="center">
-        <NavbarItem isActive>
-          <Link className="text-white" href="#">
-            Dashboard
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link className="text-white" href="#">
-            Workflow Builder
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link
-            title="Patient Relationship Management"
-            className="text-white"
-            href="#"
-          >
-            PRM
-          </Link>
-        </NavbarItem>
-      </NavbarContent>
+    return (
+        <Navbar
+            classNames={{
+                base: "w-full text-white px-6",
+                wrapper: "flex mx-auto items-center justify-between w-full",
+            }}
+        >
+            <NavbarBrand>
+                <p className="text-white animate-pulse font-bold text-xl">
+                    Dochub
+                </p>
+            </NavbarBrand>
 
-      <NavbarContent as="div" justify="end">
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Avatar
-              isBordered
-              as="button"
-              className="transition-transform"
-              color="secondary"
-              name="Jason Hughes"
-              size="sm"
-              src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
-            />
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
-              <p className="font-semibold">Signed in as</p>
-              <p className="font-semibold">zoey@example.com</p>
-            </DropdownItem>
-            <DropdownItem key="settings">Settings</DropdownItem>
-            <DropdownItem key="logout" color="danger">
-              Log Out
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
-      </NavbarContent>
-    </Navbar>
-  );
+            <NavbarContent as="div" justify="end">
+                <Input
+                    type="text"
+                    placeholder="Search..."
+                    radius="sm"
+                    variant="bordered"
+                    className="px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary-600"
+                    onChange={(e) => console.log(e.target.value)}
+                />
+                <BiSolidChat className="text-2xl cursor-pointer" />
+                <BsBellFill className="text-2xl cursor-pointer" />
+                <Dropdown placement="bottom-end">
+                    <DropdownTrigger>
+                        <Avatar
+                            isBordered
+                            as="button"
+                            className="transition-transform"
+                            color="secondary"
+                            name="Jason Hughes"
+                            size="sm"
+                            src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                        />
+                    </DropdownTrigger>
+                    <DropdownMenu aria-label="Profile Actions" variant="flat">
+                        <DropdownItem key="profile" className="h-14 gap-2">
+                            <p className="font-semibold">Signed in as</p>
+                            <p className="font-semibold">zoey@example.com</p>
+                        </DropdownItem>
+                        <DropdownItem key="settings">Settings</DropdownItem>
+                        <DropdownItem key="logout" color="danger">
+                            Log Out
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </NavbarContent>
+        </Navbar>
+    );
 }

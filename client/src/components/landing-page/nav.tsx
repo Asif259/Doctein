@@ -1,15 +1,17 @@
 import React from "react";
 import {
+    Button,
+    Link,
     Navbar,
     NavbarBrand,
     NavbarContent,
     NavbarItem,
-    Link,
-    Button,
 } from "@nextui-org/react";
 import { SettingsIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Nav = () => {
+    const router = useRouter();
     return (
         <Navbar
             classNames={{
@@ -51,6 +53,7 @@ const Nav = () => {
             <NavbarContent justify="end">
                 <NavbarItem>
                     <Button
+                        onClick={() => router.push("/auth/login")}
                         variant="bordered"
                         className="rounded-lg hover:bg-gray-200"
                     >

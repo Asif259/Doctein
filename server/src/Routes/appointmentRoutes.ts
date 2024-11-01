@@ -21,5 +21,9 @@ router.delete(
   "/appointments/:appointmentId",
   appointmentController.deleteAppointment,
 );
+router.put(
+  "/appointments/status/:appointmentId",
+  appointmentController.updateAppointmentStatus,
+);
 
 export default router;

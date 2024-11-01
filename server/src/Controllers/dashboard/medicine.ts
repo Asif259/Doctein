@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { IMedication } from "../../Models/dashboard/medicine";
-import Medication from "../../Models/dashboard/medicine";
+import Medication, { IMedication } from "../../Models/dashboard/medicine";
 
 export const addMedication = async (
   req: Request,
@@ -42,6 +41,33 @@ export const searchMedication = async (
 
     console.log(medications);
     return res.status(200).json({ success: true, data: medications });
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+export const getMedicationById = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  const { id } = req.params;
+  try {
+    const medication = await Medication.findById(id);
+    if (!medication) {
+      return res
+        .status(404)
+        .json({ success: false, data: "Medication not found" });
+    }
+
+    const response = {
+      id: medication._id,
+      dosage_type: medication.dosage_type,
+      brand: medication.brand,
+      generic: medication.generic,
+      strength: medication.strength,
+      manufacturer: medication.manufacturer,
+    };
+    return res.status(200).json({ success: true, data: response });
   } catch (error: any) {
     console.log(error);
   }

@@ -228,6 +228,38 @@ const deleteAppointment = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+const updateAppointmentStatus = async (
+  req: Request,
+  res: Response,
+): Promise<any> => {
+  const { doctorId } = req.body as { doctorId: string };
+  const { appointmentId } = req.params;
+  const { status } = req.body as { status: string };
+  try {
+    if (!doctorId) return res.status(403).json({ data: "Unauthorized" });
+
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment)
+      return res.status(404).json({ data: "Appointment not found" });
+
+    appointment.status = status;
+    await appointment.save();
+
+    const response = {
+      key: appointment._id,
+      patientId: appointment.patientId,
+      date: appointment.date,
+      note: appointment.note,
+      status: appointment.status,
+    };
+    return res.status(200).json({ success: true, data: response });
+  } catch (error) {
+    console.error("Error updating appointment status:", error);
+    return res
+      .status(500)
+      .json({ success: false, data: "Error updating appointment status" });
+  }
+};
 export {
   saveAppointment,
   getAppointments,
@@ -235,4 +267,5 @@ export {
   getAppointmentById,
   updateAppointment,
   deleteAppointment,
+  updateAppointmentStatus,
 };
