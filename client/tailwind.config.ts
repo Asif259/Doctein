@@ -48,7 +48,6 @@ const config: Config = {
                             foreground: "#f37877",
                             100: "#383e47"
                         },
-                        disabled: "var(--disabled-color)",
                         danger: {
                             100: "#3e1716",
                             500: "#f37877",

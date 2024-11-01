@@ -1,25 +1,24 @@
 "use client";
-import { useFormik } from "formik";
+import {useFormik} from "formik";
 import * as Yup from "yup";
-import { Card, CardBody, CardHeader, Avatar, Button } from "@nextui-org/react";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { parsePhoneNumberFromString } from "libphonenumber-js";
+import {Card, CardBody, CardHeader, Avatar, Button, Chip} from "@nextui-org/react";
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {parsePhoneNumberFromString} from "libphonenumber-js";
 import toast from "react-hot-toast";
 import {
     saveDoctorProfile,
     updateDoctorProfile,
 } from "@/api/dashboard/profileAPI";
-import { doctor } from "@/types/dashboard";
-import { useProfileStore } from "@/store/profile-store";
-import { MdOutlineCancel } from "react-icons/md";
-import CustomInput from "@/components/globals/GInput";
-import CustomAutocomplete, {
-    Item,
-} from "@/components/globals/GAutoComplete";
-import degrees from "@/data/degrees.json";
+import {doctor} from "@/types/dashboard";
+import {useProfileStore} from "@/store/profile-store";
+import {MdOutlineCancel} from "react-icons/md";
+import GInput from "@/components/globals/GInput";
+import GAutoComplete, {Item} from "@/components/globals/GAutoComplete";
+import degrees from "@/data/degrees";
 import specializations from "@/data/specializations.json";
-import { useShallow } from "zustand/react/shallow";
+import {useShallow} from "zustand/react/shallow";
+
 
 const ProfileComponent = ({
                               doctor,
@@ -30,7 +29,7 @@ const ProfileComponent = ({
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const { addDoctor } = useProfileStore(
+    const {addDoctor} = useProfileStore(
         useShallow((state) => ({
             addDoctor: state.addDoctor,
         })),
@@ -79,6 +78,7 @@ const ProfileComponent = ({
             ),
         }),
         onSubmit: async (values: doctor) => {
+            console.log(values);
             setLoading(true);
 
             // Merge additional phones with the primary phone
@@ -136,6 +136,10 @@ const ProfileComponent = ({
         },
     });
 
+    useEffect(() => {
+        console.log(formik.values)
+    }, [formik]);
+
     const handleAdditionalPhoneChange = (index: number, value: string) => {
         const updatedPhones = [...additionalPhones];
         updatedPhones[index] = value;
@@ -157,7 +161,7 @@ const ProfileComponent = ({
                     src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                     alt={formik.values.name}
                     className="text-large"
-                    style={{ height: "120px", width: "120px" }}
+                    style={{height: "120px", width: "120px"}}
                     fallback={formik.values.name
                         .split(" ")
                         .map((n) => n[0])
@@ -165,10 +169,10 @@ const ProfileComponent = ({
                 />
             </CardHeader>
             <CardBody className="flex relative bg-default">
-                <form className="space-y-4 " onSubmit={formik.handleSubmit}>
+                <form className="space-y-4" onSubmit={formik.handleSubmit}>
                     <div className="flex space-x-14">
                         <div className="w-full space-y-6">
-                            <CustomInput
+                            <GInput
                                 label="Full Name"
                                 name="name"
                                 value={formik.values.name}
@@ -180,14 +184,14 @@ const ProfileComponent = ({
                                 errorMessage={
                                     formik.touched.name &&
                                     formik.errors.name && (
-                                        <span style={{ color: "red" }}>
+                                        <span style={{color: "red"}}>
                                             {formik.errors.name}
                                         </span>
                                     )
                                 }
 
                             />
-                            <CustomAutocomplete
+                            <GAutoComplete
                                 items={degrees as unknown as Item[]}
                                 label="Degrees"
                                 name="degrees"
@@ -215,7 +219,6 @@ const ProfileComponent = ({
                                     formik.touched.degrees &&
                                     formik.errors.degrees
                                 }
-                                // classNames
                             />
 
                             {formik.values.degrees.length > 0 && (
@@ -226,9 +229,7 @@ const ProfileComponent = ({
                                                 key={index}
                                                 className="flex items-center gap-1 bg-default px-2 py-1 rounded"
                                             >
-                                                <span>{degree}</span>
-                                                <button
-                                                    type="button"
+                                                <Chip
                                                     onClick={() => {
                                                         formik.setFieldValue(
                                                             "degrees",
@@ -239,17 +240,31 @@ const ProfileComponent = ({
                                                             ),
                                                         );
                                                     }}
-                                                    className="text-red-500"
-                                                >
-                                                    <MdOutlineCancel className="size-4 mt-1" />
-                                                </button>
+                                                    className="bg-warning-500 text-black cursor-pointer">{degrees.find(d => d.key === degree)?.label || degree}
+                                                </Chip>
+                                                {/*<button*/}
+                                                {/*    type="button"*/}
+                                                {/*    onClick={() => {*/}
+                                                {/*        formik.setFieldValue(*/}
+                                                {/*            "degrees",*/}
+                                                {/*            formik.values.degrees.filter(*/}
+                                                {/*                (d) =>*/}
+                                                {/*                    d !==*/}
+                                                {/*                    degree,*/}
+                                                {/*            ),*/}
+                                                {/*        );*/}
+                                                {/*    }}*/}
+                                                {/*    className="text-red-500"*/}
+                                                {/*>*/}
+                                                {/*    <MdOutlineCancel className="size-4 mt-1"/>*/}
+                                                {/*</button>*/}
                                             </div>
                                         ),
                                     )}
                                 </div>
                             )}
 
-                            <CustomInput
+                            <GInput
                                 label="Phone"
                                 name="phone[0]"
                                 value={formik.values.phone[0]}
@@ -270,7 +285,7 @@ const ProfileComponent = ({
                                     key={index}
                                     className="flex items-center mb-4 "
                                 >
-                                    <CustomInput
+                                    <GInput
                                         label={`Additional Phone ${index + 1}`}
                                         name={`phone[${index + 1}]`}
                                         value={phone}
@@ -304,7 +319,7 @@ const ProfileComponent = ({
                                         }}
                                         className="text-red-500 "
                                     >
-                                        <MdOutlineCancel className="size-5" />
+                                        <MdOutlineCancel className="size-5"/>
                                     </Button>
                                 </div>
                             ))}
@@ -319,7 +334,7 @@ const ProfileComponent = ({
                             </Button>
                         </div>
                         <div className="w-full space-y-6">
-                            <CustomInput
+                            <GInput
                                 label="Designation"
                                 name="designation"
                                 value={formik.values.designation}
@@ -335,15 +350,32 @@ const ProfileComponent = ({
                                 }
                             />
 
-                            <CustomAutocomplete
+                            <GAutoComplete
                                 items={specializations as unknown as Item[]}
-                                label="Specializations"
-                                name="specializations"
+                                label="Specialization"
+                                name="specialization"
+                                defaultInputValue={formik.values.specialization}
                                 value={formik.values.specialization}
-                                onSelectionChange={formik.handleChange}
+                                onSelectionChange={(selectedSpecialization) => {
+                                    const sp = specializations.find(
+                                        (s) => s.key === selectedSpecialization,
+                                    )
+                                    console.log(selectedSpecialization)
+                                    if (sp) {
+                                        formik.setFieldValue("specialization", sp.value);
+                                    }
+                                }}
+                                isInvalid={
+                                    !!formik.errors.specialization &&
+                                    formik.touched.specialization
+                                }
+                                errorMessage={
+                                    formik.touched.specialization &&
+                                    formik.errors.specialization
+                                }
                             />
 
-                            <CustomInput
+                            <GInput
                                 label="BMDC Number"
                                 name="bmdcNumber"
                                 value={formik.values.bmdcNumber}
@@ -356,13 +388,13 @@ const ProfileComponent = ({
                                 errorMessage={
                                     formik.touched.bmdcNumber &&
                                     formik.errors.bmdcNumber && (
-                                        <span style={{ color: "red" }}>
+                                        <span style={{color: "red"}}>
                                             {formik.errors.bmdcNumber}
                                         </span>
                                     )
                                 }
                             />
-                            <CustomInput
+                            <GInput
                                 label="Digital Signature"
                                 name="digitalSignature"
                                 value={formik.values.digitalSignature}
@@ -375,7 +407,7 @@ const ProfileComponent = ({
                                 errorMessage={
                                     formik.touched.digitalSignature &&
                                     formik.errors.digitalSignature && (
-                                        <span style={{ color: "red" }}>
+                                        <span style={{color: "red"}}>
                                             {formik.errors.digitalSignature}
                                         </span>
                                     )
@@ -385,12 +417,7 @@ const ProfileComponent = ({
                     </div>
 
                     <div className="sticky bottom-0 pt-4 bg-default">
-                        <Button
-                            radius="sm"
-                            type="submit"
-                            isLoading={loading}
-                            className="w-full bg-primary text-white"
-                        >
+                        <Button radius="sm" type="submit" isLoading={loading} className="w-full bg-primary text-white">
                             {doctor ? "Update Profile" : "Save Profile"}
                         </Button>
                     </div>

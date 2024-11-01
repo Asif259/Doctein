@@ -13,7 +13,6 @@ import React, { useEffect, useState } from "react";
 import {
   Image,
   Button,
-  Input,
   Spinner,
   Link,
 } from "@nextui-org/react";
@@ -23,7 +22,7 @@ import ForgetPassword from "../forget-password";
 import EnterOtp from "../enter-otp";
 import CustomModal from "../customModal";
 import ResetPassword from "../reset-password";
-import CustomInput from "@/components/globals/customInput";
+import GInput from "@/components/globals/GInput";
 
 export default function Login() {
   const { login } = useAuthStore((state) => state);
@@ -38,15 +37,13 @@ export default function Login() {
   const [from, setFrom] = useState("");
 
   useEffect(() => {
-    const checkAuthStatus = async () => {
+    (async () => {
       const authData = await authenticateUser();
       if (authData.success) {
         login();
       }
       setLoading(false);
-    };
-
-    checkAuthStatus();
+    })()
   }, [login]);
 
   const formik = useFormik({
@@ -101,10 +98,10 @@ export default function Login() {
         } else {
           toast.error("Invalid email or password.");
         }
-      } catch (err: any) {
+      } catch {
         setStatus({
           success: false,
-          message: err.message || "Login failed. Please try again.",
+          message: "Login failed. Please try again.",
         });
         toast.error("Login failed. Please try again.");
       } finally {
@@ -142,7 +139,7 @@ export default function Login() {
 
           <form className="mt-4 space-y-4 max-w-md" onSubmit={formik.handleSubmit}>
             <div className="mb-4">
-              <CustomInput
+              <GInput
                   placeholder="Enter your email"
                   type="email"
                   label="Email"
@@ -166,7 +163,7 @@ export default function Login() {
               />
             </div>
             <div className="relative">
-              <CustomInput
+              <GInput
                   placeholder="Enter your password"
                   label="Password"
                   {...formik.getFieldProps("password")}

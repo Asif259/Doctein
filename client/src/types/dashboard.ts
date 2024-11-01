@@ -29,11 +29,10 @@ export interface staff {
   name: string;
   phone: string;
   address: string;
-  status: "active" | "inactive" | "vacation" | " ";
+  status: "active" | "inactive" | "vacation";
 }
 
 export interface doctor {
-  [x: string]: any;
   key?: string;
   name: string;
   degrees: string[];
@@ -43,6 +42,7 @@ export interface doctor {
   bmdcNumber: string;
   digitalSignature?: string;
 }
+
 
 export type StatusOption = {
   key: string;

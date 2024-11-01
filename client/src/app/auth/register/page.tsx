@@ -15,7 +15,7 @@
   import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
   import EnterOTP from "../enter-otp";
   import CustomModal from "@/app/auth/customModal";
-  import CustomInput from "@/components/globals/customInput";
+  import GInput from "@/components/globals/GInput";
 
   export default function Register() {
     const searchParams = useSearchParams();
@@ -105,7 +105,7 @@
 
           <form className="space-y-4 max-w-lg" onSubmit={formik.handleSubmit}>
             <div>
-              <CustomInput
+              <GInput
                 label="Email address"
                 placeholder="Enter your email"
                 type="email"
@@ -130,7 +130,7 @@
             </div>
 
             <div className="relative">
-              <CustomInput
+              <GInput
                 label="Password"
                 placeholder="Enter your password"
                 {...formik.getFieldProps("password")}

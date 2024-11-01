@@ -6,7 +6,7 @@ import {
 import React from "react";
 
 export interface Item {
-    key: number;
+    key: string | number;
     value: string;
     label: string;
 }
