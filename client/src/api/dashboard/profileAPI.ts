@@ -2,13 +2,13 @@ import axios from "@/config/axios";
 import { doctor } from "@/types/dashboard";
 
 //save doctor profile
-export const saveDoctorProfile = async (profileData: doctor) => {
+export const saveDoctor = async (profileData: doctor) => {
     try {
       const response = await axios.post(`/doctors`, {
         ...profileData,
       });
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error saving doctor profile:', error);
       throw error;
     }
@@ -19,20 +19,20 @@ export const saveDoctorProfile = async (profileData: doctor) => {
     try {
       const response = await axios.get(`/doctors`);
       return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.message);
+    } catch (error: unknown) {
+      console.error('Error fetching doctor profile:', error);
+      throw error;
     }
   };
   
   //update doctor
-  export const updateDoctorProfile = async ( doctor: doctor) => {
+  export const updateDoctor = async (doctor: doctor) => {
     try {
       const response = await axios.put(`/doctors`, {...doctor, 
       });
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating doctor profile:", error);
-      throw new Error(error.response?.data?.message || "Error updating doctor profile");
     }
   };
   
