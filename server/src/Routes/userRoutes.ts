@@ -3,6 +3,8 @@ import * as patientController from "../Controllers/dashboard/patient";
 import * as doctorController from "../Controllers/dashboard/doctor"
 import * as staffController from "../Controllers/dashboard/staff"
 import authenticate from "../Middlewares/authenticate";
+import { doctorValidationRules } from "../Validators/doctorValidator";
+import { validate } from "../Middlewares/validate";
 
 const router = express.Router();
 
@@ -21,9 +23,9 @@ router.delete(
 );
 
 //doctor
-router.post('/doctors', authenticate, doctorController.saveDoctor);
+router.post('/doctors', authenticate, doctorValidationRules, validate, doctorController.saveDoctor);
 router.get('/doctors', authenticate, doctorController.getDoctor);
-router.put('/doctors', authenticate, doctorController.updateDoctor);
+router.put('/doctors', authenticate, doctorValidationRules, validate, doctorController.updateDoctor);
 
 //staffs
 router.post('/staffs', authenticate, staffController.saveStaff);

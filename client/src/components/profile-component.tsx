@@ -2,17 +2,17 @@
 import {useFormik} from "formik";
 import * as Yup from "yup";
 import {Card, CardBody, CardHeader, Avatar, Button, Chip} from "@nextui-org/react";
+import {Plus, Minus} from "lucide-react";
 import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {parsePhoneNumberFromString} from "libphonenumber-js";
 import toast from "react-hot-toast";
 import {
-    saveDoctorProfile,
-    updateDoctorProfile,
+    saveDoctor,
+    updateDoctor,
 } from "@/api/dashboard/profileAPI";
 import {doctor} from "@/types/dashboard";
 import {useProfileStore} from "@/store/profile-store";
-import {MdOutlineCancel} from "react-icons/md";
 import GInput from "@/components/globals/GInput";
 import GAutoComplete, {Item} from "@/components/globals/GAutoComplete";
 import degrees from "@/data/degrees";
@@ -20,12 +20,8 @@ import specializations from "@/data/specializations.json";
 import {useShallow} from "zustand/react/shallow";
 
 
-const ProfileComponent = ({
-                              doctor,
-                              onProfileUpdate,
-                          }: {
-    doctor: doctor | null;
-    onProfileUpdate: (doctor: doctor) => void;
+const ProfileComponent = ({doctor, onProfileUpdate,}: {
+    doctor: doctor | null; onProfileUpdate: (doctor: doctor) => void;
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
@@ -40,42 +36,43 @@ const ProfileComponent = ({
         doctor?.phone.slice(1) || [],
     );
 
+
     const formik = useFormik({
         initialValues: {
             name: doctor?.name || "",
             degrees: doctor?.degrees || [],
             designation: doctor?.designation || "",
             specialization: doctor?.specialization || "",
-            phone: doctor?.phone ? [doctor.phone[0]] : [], // Keep primary phone separately
+            phone: doctor?.phone ? [doctor.phone[0]] : [],
             bmdcNumber: doctor?.bmdcNumber || "",
             digitalSignature: doctor?.digitalSignature || "",
         },
         validationSchema: Yup.object({
             name: Yup.string().required("Name is required"),
-            degrees: Yup.array().of(
-                Yup.string().required("Degrees are required"),
-            ),
+            degrees: Yup.array()
+                .min(1, "At least one degree is required")
+                .of(Yup.string().required("Degrees are required")),
             designation: Yup.string().required("Designation is required"),
             specialization: Yup.string().required("Specialization is required"),
-            phone: Yup.array().of(
-                Yup.string()
-                    .test(
-                        "valid-phone",
-                        "Phone number is not valid",
-                        (value) => {
-                            const phoneNumber = parsePhoneNumberFromString(
-                                value || "",
-                                "US",
-                            );
-                            return phoneNumber ? phoneNumber.isValid() : false;
-                        },
-                    )
-                    .required("Phone number is required"),
-            ),
+            phone: Yup.array()
+                .min(1, "At least one phone number is required")
+                .of(
+                    Yup.string()
+                        .test(
+                            "valid-phone",
+                            "Phone number is not valid",
+                            (value) => {
+                                const phoneNumber = parsePhoneNumberFromString(value || "", "BD");
+                                return phoneNumber ? phoneNumber.isValid() : false;
+                            }
+                        )
+                        .required("Phone number is required")
+                )
+                .test("unique-phones", "Phone numbers must be unique", (phones) =>
+                    phones ? new Set(phones).size === phones.length : true
+                ),
             bmdcNumber: Yup.string().required("BMDC Number is required"),
-            digitalSignature: Yup.string().required(
-                "Digital signature is required",
-            ),
+            digitalSignature: Yup.string().required("Digital signature is required"),
         }),
         onSubmit: async (values: doctor) => {
             console.log(values);
@@ -96,7 +93,7 @@ const ProfileComponent = ({
             try {
                 if (doctor) {
                     // Updating existing doctor profile
-                    const res = await updateDoctorProfile({
+                    const res = await updateDoctor({
                         ...doctor,
                         name,
                         degrees,
@@ -113,7 +110,7 @@ const ProfileComponent = ({
                     }
                 } else {
                     // Creating new doctor profile
-                    const res = await saveDoctorProfile({
+                    const res = await saveDoctor({
                         name,
                         degrees,
                         designation,
@@ -155,12 +152,11 @@ const ProfileComponent = ({
     };
 
     return (
-        <Card className="h-[76dvh] w-full max-w-3xl mx-auto bg-default p-6 pb-0">
-            <CardHeader className="flex flex-col items-center pb-0 pt-2">
+        <Card className="h-[76dvh] w-full max-w-3xl mx-auto bg-default pb-0 shadow-none">
+            <CardHeader className="flex flex-col items-center p-0">
                 <Avatar
                     src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                     alt={formik.values.name}
-                    className="text-large"
                     style={{height: "120px", width: "120px"}}
                     fallback={formik.values.name
                         .split(" ")
@@ -169,7 +165,7 @@ const ProfileComponent = ({
                 />
             </CardHeader>
             <CardBody className="flex relative bg-default">
-                <form className="space-y-4" onSubmit={formik.handleSubmit}>
+                <form className="space-y-4 h-[80dvh]" onSubmit={formik.handleSubmit}>
                     <div className="flex space-x-14">
                         <div className="w-full space-y-6">
                             <GInput
@@ -182,12 +178,7 @@ const ProfileComponent = ({
                                     !!formik.errors.name && formik.touched.name
                                 }
                                 errorMessage={
-                                    formik.touched.name &&
-                                    formik.errors.name && (
-                                        <span style={{color: "red"}}>
-                                            {formik.errors.name}
-                                        </span>
-                                    )
+                                    formik.touched.name && formik.errors.name
                                 }
 
                             />
@@ -195,7 +186,6 @@ const ProfileComponent = ({
                                 items={degrees as unknown as Item[]}
                                 label="Degrees"
                                 name="degrees"
-                                color="default"
                                 value={formik.values.degrees}
                                 onSelectionChange={(selectedDegree) => {
                                     if (
@@ -210,15 +200,9 @@ const ProfileComponent = ({
                                         ]);
                                     }
                                 }}
-                                onBlur={formik.handleBlur}
-                                isInvalid={
-                                    !!formik.errors.degrees &&
-                                    formik.touched.degrees
-                                }
-                                errorMessage={
-                                    formik.touched.degrees &&
-                                    formik.errors.degrees
-                                }
+                                onBlur={() => formik.setFieldTouched("degrees", true)}
+                                isInvalid={!!formik.errors.degrees && formik.touched.degrees}
+                                errorMessage={formik.touched.degrees && formik.errors.degrees}
                             />
 
                             {formik.values.degrees.length > 0 && (
@@ -242,22 +226,6 @@ const ProfileComponent = ({
                                                     }}
                                                     className="bg-warning-500 text-black cursor-pointer">{degrees.find(d => d.key === degree)?.label || degree}
                                                 </Chip>
-                                                {/*<button*/}
-                                                {/*    type="button"*/}
-                                                {/*    onClick={() => {*/}
-                                                {/*        formik.setFieldValue(*/}
-                                                {/*            "degrees",*/}
-                                                {/*            formik.values.degrees.filter(*/}
-                                                {/*                (d) =>*/}
-                                                {/*                    d !==*/}
-                                                {/*                    degree,*/}
-                                                {/*            ),*/}
-                                                {/*        );*/}
-                                                {/*    }}*/}
-                                                {/*    className="text-red-500"*/}
-                                                {/*>*/}
-                                                {/*    <MdOutlineCancel className="size-4 mt-1"/>*/}
-                                                {/*</button>*/}
                                             </div>
                                         ),
                                     )}
@@ -277,6 +245,9 @@ const ProfileComponent = ({
                                 errorMessage={
                                     formik.touched.phone && formik.errors.phone
                                 }
+                                endContent={
+                                    <Plus className="size-4 cursor-pointer" onClick={handleAddPhone}/>
+                                }
                             />
 
                             {/* Additional Phones */}
@@ -295,43 +266,29 @@ const ProfileComponent = ({
                                                 e.target.value,
                                             )
                                         }
-                                        classNames={{
-                                            label: "text-default-300",
-                                            input: [
-                                                "placeholder:text-default-400",
-                                            ],
-                                            inputWrapper: [
-                                                "bg-default-500",
-                                                "hover:bg-default-200",
-                                            ],
-                                        }}
-                                        isInvalid={!!formik.errors.phone}
+                                        onBlur={formik.handleBlur}
+                                        isInvalid={
+                                            !!formik.errors.phone &&
+                                            formik.touched.phone
+                                        }
+                                        errorMessage={
+                                            formik.touched.phone &&
+                                            formik.errors.phone
+                                        }
+                                        endContent={
+                                            <Minus className="size-4 text-danger cursor-pointer" onClick={() => {
+                                                const updatedPhones =
+                                                    additionalPhones.filter(
+                                                        (_, i) => i !== index,
+                                                    );
+                                                setAdditionalPhones(updatedPhones);
+                                            }}/>
+                                        }
                                     />
-                                    <Button
-                                        radius="sm"
-                                        type="button"
-                                        onClick={() => {
-                                            const updatedPhones =
-                                                additionalPhones.filter(
-                                                    (_, i) => i !== index,
-                                                );
-                                            setAdditionalPhones(updatedPhones);
-                                        }}
-                                        className="text-red-500 "
-                                    >
-                                        <MdOutlineCancel className="size-5"/>
-                                    </Button>
+
                                 </div>
                             ))}
 
-                            <Button
-                                radius="sm"
-                                type="button"
-                                onClick={handleAddPhone}
-                                className="bg-primary flex-grow"
-                            >
-                                Add additional phone
-                            </Button>
                         </div>
                         <div className="w-full space-y-6">
                             <GInput
@@ -387,11 +344,7 @@ const ProfileComponent = ({
                                 }
                                 errorMessage={
                                     formik.touched.bmdcNumber &&
-                                    formik.errors.bmdcNumber && (
-                                        <span style={{color: "red"}}>
-                                            {formik.errors.bmdcNumber}
-                                        </span>
-                                    )
+                                    formik.errors.bmdcNumber
                                 }
                             />
                             <GInput
@@ -406,21 +359,15 @@ const ProfileComponent = ({
                                 }
                                 errorMessage={
                                     formik.touched.digitalSignature &&
-                                    formik.errors.digitalSignature && (
-                                        <span style={{color: "red"}}>
-                                            {formik.errors.digitalSignature}
-                                        </span>
-                                    )
+                                    formik.errors.digitalSignature
                                 }
                             />
                         </div>
                     </div>
 
-                    <div className="sticky bottom-0 pt-4 bg-default">
                         <Button radius="sm" type="submit" isLoading={loading} className="w-full bg-primary text-white">
                             {doctor ? "Update Profile" : "Save Profile"}
                         </Button>
-                    </div>
                 </form>
             </CardBody>
         </Card>

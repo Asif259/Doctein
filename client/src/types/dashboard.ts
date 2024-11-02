@@ -24,28 +24,28 @@ export interface IAppointment {
 }
 
 export interface staff {
-  id?: number;
-  key?: string;
-  name: string;
-  phone: string;
-  address: string;
-  status: "active" | "inactive" | "vacation";
+    id?: number;
+    key?: string;
+    name: string;
+    phone: string;
+    address: string;
+    status: "active" | "inactive" | "vacation";
 }
 
 export interface doctor {
-  key?: string;
-  name: string;
-  degrees: string[];
-  designation: string;
-  specialization: string;
-  phone: string[];
-  bmdcNumber: string;
-  digitalSignature?: string;
+    key?: string;
+    name: string;
+    degrees: string[];
+    designation: string;
+    specialization: string;
+    phone: string[];
+    bmdcNumber: string;
+    digitalSignature?: string;
 }
 
 export type StatusOption = {
-  key: string;
-  value: string;
-  startContent?: React.ReactNode;
-  children: React.ReactNode;
+    key: string;
+    value: string;
+    startContent?: React.ReactNode;
+    children: React.ReactNode;
 };

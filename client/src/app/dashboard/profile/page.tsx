@@ -63,7 +63,7 @@ const ProfilePage = () => {
   return (
     <>
       <Modal
-        className="bg-secondary-100"
+        className="bg-default "
         size="2xl"
         isOpen={open}
         onOpenChange={setOpen}
@@ -73,7 +73,7 @@ const ProfilePage = () => {
           {() => (
             <>
               <ModalHeader>Update Profile</ModalHeader>
-              <ModalBody>
+              <ModalBody >
                 <ProfileComponent doctor={Doctor} onProfileUpdate={handleProfileUpdate} />
               </ModalBody>
             </>
@@ -81,24 +81,23 @@ const ProfilePage = () => {
         </ModalContent>
       </Modal>
 
-      <div className="flex justify-between items-center mb-1">
+      <div className="flex justify-between items-center mb-4 ">
         <h1 className="text-3xl font-bold">Profile</h1>
         <Button
           startContent={<FaEdit />}
-          color="secondary"
-          className="flex items-center gap-2 bg-secondary-600 text-secondary-100"
+          className="flex items-center gap-2 bg-primary px-4"
           onClick={() => setOpen(true)}
         >
           Edit
         </Button>
       </div>
 
-      {Doctor ? (
-          <DoctorProfile doctor={Doctor} email={email || ""} />
+      <div>{Doctor ? (
+          <DoctorProfile doctor={Doctor} email={email || ""}/>
       ) : (
           <div>No doctor profile available</div>
       )}
-
+      </div>
     </>
   );
 };

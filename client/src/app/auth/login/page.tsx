@@ -212,7 +212,8 @@ export default function Login() {
 
             <Button
                 type="submit"
-                className="w-full bg-primary py-2 px-4 rounded-lg"
+                radius="sm"
+                className="w-full bg-primary py-2 px-4"
                 disabled={formik.isSubmitting}
             >
               {formik.isSubmitting ? "Logging in..." : "Login"}

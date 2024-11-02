@@ -30,9 +30,10 @@ const config: Config = {
                             DEFAULT: "#24ae7c",
                             foreground: "#fff",
                         },
-                        secondary: {
+                        secondary: { //blue
                             DEFAULT: "#152432",
-                            foreground: "#70a8db",
+                            foreground: "#79b5ec",
+                            100: "#79b5ec",
                         },
                         default: {
                             DEFAULT: "#1d2129",
