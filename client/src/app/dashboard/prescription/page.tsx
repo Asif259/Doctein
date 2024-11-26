@@ -23,7 +23,6 @@ import { useDashboardStore } from "@/store/dashboard-store";
 import { IAppointment, IPatient } from "@/types/dashboard";
 import { getAppointmentByPatientId } from "@/api/dashboard/appointmentAPI";
 import { extractDateAndTime } from "@/utilities/timeZone";
-import Link from "next/link";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import { useRouter } from "next/navigation";
 import DragAndDropInput from "@/app/dashboard/prescription/dnd-input";
@@ -154,8 +153,6 @@ export default function Page() {
         // toast.success("Snapshot uploaded successfully");
     };
 
-    const handleAddPrescription = () => {};
-
     return (
         <>
             <Modal isOpen={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -232,7 +229,7 @@ export default function Page() {
                 onOpenChange={setIsPatientModalOpen}
             >
                 <ModalContent>
-                    {(onClose) => (
+                    {() => (
                         <>
                             <ModalHeader>Add Prescription</ModalHeader>
                             <ModalBody>
@@ -348,8 +345,9 @@ export default function Page() {
                                             {appointment?.snapshot ? (
                                                 <Button
                                                     size="sm"
-                                                    variant="solid"
-                                                    className="bg-secondary-600 text-secondary-100"
+                                                    variant="bordered"
+                                                    color="success"
+                                                    className="hover:bg-success hover:text-white"
                                                     onClick={() => {
                                                         if (!appointment.key)
                                                             return;
@@ -366,8 +364,9 @@ export default function Page() {
                                             ) : (
                                                 <Button
                                                     size="sm"
-                                                    variant="solid"
-                                                    className="bg-secondary-600 text-secondary-100"
+                                                    variant="bordered"
+                                                    color="success"
+                                                    className="hover:bg-success hover:text-white"
                                                     onClick={() => {
                                                         if (!appointment.key)
                                                             return;
@@ -386,7 +385,8 @@ export default function Page() {
                                             <Button
                                                 size="sm"
                                                 variant="solid"
-                                                className="bg-secondary-600 text-secondary-100"
+                                                color="primary"
+                                                className="hover:bg-primary-700"
                                                 onClick={() =>
                                                     router.push(
                                                         `/dashboard/prescription/${appointment.key}`,
