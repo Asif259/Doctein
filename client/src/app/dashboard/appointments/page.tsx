@@ -321,8 +321,9 @@ export default function Page() {
                 </div>
                 <Button
                     startContent={<PlusIcon />}
-                    variant="solid"
-                    className="bg-secondary-600 text-secondary-100 rounded-md shadow-md hover:bg-secondary-700"
+                    variant="bordered"
+                    color="primary"
+                    className="rounded-md shadow-md hover:bg-primary hover:text-white"
                     onClick={() => {
                         setUpdateAppointment(null);
                         setOpen(true);

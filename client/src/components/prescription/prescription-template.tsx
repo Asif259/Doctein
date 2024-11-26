@@ -85,7 +85,7 @@ const PrescriptionTemplate = forwardRef<
             <div
                 ref={ref}
                 id="print-precription"
-                className={`${isPrint ? "w-[210mm] h-[297mm]" : "w-full h-full"} mx-auto p-8 bg-background rounded-lg shadow-lg print:shadow-none`}
+                className={`${isPrint ? "w-[210mm] h-[297mm]" : "w-full h-full"} mx-auto p-8 bg-white text-black rounded-lg shadow-lg print:shadow-none`}
             >
                 <PrescriptionModal
                     isOpen={modalOpen}
@@ -506,7 +506,6 @@ function Medication({
     id,
     medicationId, // TODO: medication name not showing after reloading the page. Fix it
     duration,
-    quantity,
     frequency,
     note,
     isEditable,
@@ -514,7 +513,6 @@ function Medication({
     id: number;
     medicationId: string;
     duration: string;
-    quantity?: string;
     frequency: string;
     note?: string;
     isEditable: boolean;
@@ -568,12 +566,40 @@ function Medication({
         });
     };
 
+    const calculateMedication = (): number | void => {
+        if (!frequency || !duration) return;
+        let count = 0;
+        frequency.split("+").forEach((item) => {
+            count += parseInt(item);
+        });
+        switch (duration) {
+            case "1 week":
+                return count * 7;
+            case "2 weeks":
+                return count * 14;
+            case "3 weeks":
+                return count * 21;
+            case "1 month":
+                return count * 30;
+            case "2 months":
+                return count * 60;
+            case "3 months":
+                return count * 90;
+            case "6 months":
+                return count * 180;
+            case "1 year":
+                return count * 365;
+            default:
+                return count * 30;
+        }
+    };
+
     return (
         <div className="flex flex-row justify-between">
             <div className="text-sm">
                 <p className="font-semibold">
                     {`${medication?.dosage_type} ${medication?.brand} ${medication?.strength}`}{" "}
-                    ---- {quantity || "40pcs"}
+                    ---- {calculateMedication()?.toString()} pcs
                 </p>
                 <p>
                     {frequency} ---- {duration}

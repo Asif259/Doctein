@@ -142,6 +142,13 @@ const getAppointmentById = async (
     const patient = await Patient.findById(appointment.patientId);
     if (!patient) return res.status(404).json({ data: "Patient not found" });
 
+    const appointments = await Appointment.find({
+      patientId: appointment.patientId,
+      date: {
+        $ne: null,
+      },
+    }).select("_id date note status");
+
     const response = {
       key: appointment._id,
       doctor: {
@@ -159,6 +166,7 @@ const getAppointmentById = async (
         age: patient.age,
         weight: patient.weight,
         phone: patient.phone,
+        history: appointments,
       },
       date: appointment.date,
       note: appointment.note,

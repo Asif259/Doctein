@@ -1,13 +1,20 @@
 import React from "react";
 import { Button, Checkbox, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
-import { patient } from "@/types/dashboard";
+import { IPatient } from "@/types/dashboard";
 import { savePatient, updatePatient } from "@/api/dashboard/patientAPI";
 import { useDashboardStore } from "@/store/dashboard-store";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import * as Yup from "yup";
 
-function PatientForm({ patient }: { patient?: patient | null }) {
+function PatientForm({
+    patient,
+    isPrescription,
+}: {
+    patient?: IPatient | null;
+    isPrescription?: boolean;
+}) {
     const router = useRouter();
     const { patients, addPatients } = useDashboardStore((state) => state);
     const formik = useFormik({
@@ -18,9 +25,15 @@ function PatientForm({ patient }: { patient?: patient | null }) {
             weight: patient?.weight || "",
             phone: patient?.phone || "",
             address: patient?.address || "",
-            instant: patient?.instant || false,
+            instant: patient?.instant || isPrescription || false,
         },
-        onSubmit: async (values: patient) => {
+        validationSchema: Yup.object({
+            name: Yup.string().required("Name is required"),
+            age: Yup.number().required("Age is required"),
+            weight: Yup.number().required("Weight is required"),
+            phone: Yup.string().required("Phone is required"),
+        }),
+        onSubmit: async (values: IPatient) => {
             const { name, age, weight, phone, address, instant } = values;
             try {
                 if (patient) {
@@ -67,22 +80,36 @@ function PatientForm({ patient }: { patient?: patient | null }) {
     });
     return (
         <form className="space-y-4" onSubmit={formik.handleSubmit}>
+            <div>
+                <Input
+                    isInvalid={formik.touched.name && !!formik.errors.name}
+                    errorMessage={formik.errors.name}
+                    label="Patient Name"
+                    placeholder="patient name"
+                    {...formik.getFieldProps("name")}
+                />
+            </div>
+            <div>
+                <Input
+                    type="number"
+                    isInvalid={formik.touched.age && !!formik.errors.age}
+                    errorMessage={formik.errors.age}
+                    label="Patient Age"
+                    placeholder="patient age"
+                    {...formik.getFieldProps("age")}
+                />
+            </div>
             <Input
-                label="Patient Name"
-                placeholder="patient name"
-                {...formik.getFieldProps("name")}
-            />
-            <Input
-                label="Patient Age"
-                placeholder="patient age"
-                {...formik.getFieldProps("age")}
-            />
-            <Input
+                type="number"
+                isInvalid={formik.touched.weight && !!formik.errors.weight}
+                errorMessage={formik.errors.weight}
                 label="Weight (kg)"
                 placeholder="patient weight"
                 {...formik.getFieldProps("weight")}
             />
             <Input
+                isInvalid={formik.touched.phone && !!formik.errors.phone}
+                errorMessage={formik.errors.phone}
                 label="Phone"
                 placeholder="phone number"
                 {...formik.getFieldProps("phone")}
@@ -93,7 +120,9 @@ function PatientForm({ patient }: { patient?: patient | null }) {
                 {...formik.getFieldProps("address")}
             />
             <Button
-                className="bg-secondary-600 text-secondary-100 mr-2"
+                variant="bordered"
+                color="primary"
+                className="mr-2"
                 type="submit"
             >
                 {!patient ? "Add Patient" : "Update Patient"}
