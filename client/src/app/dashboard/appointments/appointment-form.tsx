@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormik } from "formik";
-import { appointment, patient } from "@/types/dashboard";
+import { IAppointment, IPatient } from "@/types/dashboard";
 import toast from "react-hot-toast";
 import { extractDateAndTime, getDateString } from "@/utilities/timeZone";
 import { createAppointment } from "@/api/dashboard/appointmentAPI";
@@ -30,7 +30,7 @@ function AppointmentForm({ appointment }: { appointment?: any }) {
             note: appointment?.note || "",
             status: appointment?.status || "upcoming",
         },
-        onSubmit: async (values: appointment) => {
+        onSubmit: async (values: IAppointment) => {
             if (!selectedPatient) {
                 toast.error("Please select a patient");
                 return;
@@ -66,7 +66,7 @@ function AppointmentForm({ appointment }: { appointment?: any }) {
     const { appointments, addAppointments } = useDashboardStore(
         (state) => state,
     );
-    const [patients, setPatients] = React.useState<patient[]>([]);
+    const [patients, setPatients] = React.useState<IPatient[]>([]);
     const [search, setSearch] = React.useState<string>("");
     const [selectedPatient, setSelectedPatient] = React.useState<
         string | undefined
