@@ -24,13 +24,16 @@ function StaffTab() {
             id: 0,
             name: "",
             role: "",
+            phone: "",
+            address: "",
+            status: "active",
         },
         onSubmit: (values: staff) => {
             console.log(values);
-            addStaff(values);
+            // addStaff(values);
         },
     });
-    const { staffs, addStaff } = useDashboardStore((state) => state);
+    // const { staffs, addStaff } = useDashboardStore((state) => state);
     return (
         <>
             <Card className="mt-4 p-4">
@@ -68,21 +71,21 @@ function StaffTab() {
                     <h3 className="text-lg font-semibold">Prescription List</h3>
                 </CardHeader>
                 <CardBody>
-                    <Table aria-label="Prescription list">
-                        <TableHeader>
-                            <TableColumn>Patient Name</TableColumn>
-                            <TableColumn>Medication</TableColumn>
-                            <TableColumn>Dosage</TableColumn>
-                        </TableHeader>
-                        <TableBody>
-                            {staffs.map((staff: staff) => (
-                                <TableRow key={staff.id}>
-                                    <TableCell>{staff.name}</TableCell>
-                                    <TableCell>{staff.role}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                    {/*<Table aria-label="Prescription list">*/}
+                    {/*    <TableHeader>*/}
+                    {/*        <TableColumn>Patient Name</TableColumn>*/}
+                    {/*        <TableColumn>Medication</TableColumn>*/}
+                    {/*        <TableColumn>Dosage</TableColumn>*/}
+                    {/*    </TableHeader>*/}
+                    {/*<TableBody>*/}
+                    {/*    {staffs.map((staff: staff) => (*/}
+                    {/*        <TableRow key={staff.id}>*/}
+                    {/*            <TableCell>{staff.name}</TableCell>*/}
+                    {/*            <TableCell>{staff.role}</TableCell>*/}
+                    {/*        </TableRow>*/}
+                    {/*    ))}*/}
+                    {/*</TableBody>*/}
+                    {/*</Table>*/}
                 </CardBody>
             </Card>
         </>

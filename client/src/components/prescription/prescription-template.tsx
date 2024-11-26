@@ -303,7 +303,7 @@ export function Section({
     title: string;
     children: ReactNode;
     icon?: ReactNode;
-    isEditable: boolean;
+    isEditable?: boolean;
 }) {
     const { setModal, setModalOpen } = usePrescriptionStore(
         useShallow((state) => ({

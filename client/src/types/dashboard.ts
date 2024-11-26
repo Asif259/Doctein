@@ -27,6 +27,7 @@ export interface staff {
     id?: number;
     key?: string;
     name: string;
+    role?: string;
     phone: string;
     address: string;
     status: "active" | "inactive" | "vacation";

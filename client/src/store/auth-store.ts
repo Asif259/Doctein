@@ -1,24 +1,23 @@
 import { create } from "zustand";
-import { patient, staff } from "@/types/dashboard";
 
 interface AuthState {
-  isLoggedIn: boolean;
-  role: "doctor" | "patient" | "staff" | null;
-  isProfileCompleted: boolean;
-  login: () => void;
-  logout: () => void;
-  setRole: (role: AuthState["role"]) => void;
-  setIsProfile: (isProfileCompleted: boolean) => void;
+    isLoggedIn: boolean;
+    role: "doctor" | "patient" | "staff" | null;
+    isProfileCompleted: boolean;
+    login: () => void;
+    logout: () => void;
+    setRole: (role: AuthState["role"]) => void;
+    setIsProfile: (isProfileCompleted: boolean) => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
-  isLoggedIn: false,
-  role: null,
-  isProfileCompleted: false,
-  login: () => set({ isLoggedIn: true }),
-  logout: () => set({ isLoggedIn: false }),
-  setRole: (role: AuthState["role"]) => set({ role }),
-  setIsProfile: (isProfileCompleted: boolean) => set({ isProfileCompleted }),
+    isLoggedIn: false,
+    role: null,
+    isProfileCompleted: false,
+    login: () => set({ isLoggedIn: true }),
+    logout: () => set({ isLoggedIn: false }),
+    setRole: (role: AuthState["role"]) => set({ role }),
+    setIsProfile: (isProfileCompleted: boolean) => set({ isProfileCompleted }),
 }));
 
 export { useAuthStore };
