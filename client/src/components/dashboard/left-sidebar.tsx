@@ -19,9 +19,14 @@ function LeftSidebar() {
     const currentPath = usePathname();
     const router = useRouter();
     const handleLogout = async () => {
-        const res = await logoutUser();
-        console.log(res.message);
-        router.push("/auth/login");
+        try {
+            const res = await logoutUser();
+            if (!res?.success) return;
+            console.log(res?.message);
+            router.push("/auth/login");
+        } catch (error) {
+            console.error("Error logging out user:", error);
+        }
     };
     return (
         <Navbar
@@ -107,13 +112,12 @@ function LeftSidebar() {
                     </Link>
                 </NavbarItem>
             </NavbarContent>
-            <NavbarContent className="mb-4 !flex-grow-0 h-fit w-full">
+            <NavbarContent
+                onClick={handleLogout}
+                className="mb-4 !flex-grow-0 h-fit w-full cursor-pointer"
+            >
                 <NavbarItem className="text-red-600 hover:bg-red-500 border-danger-600 hover:text-white">
-                    <span
-                        onClick={handleLogout}
-                        color="danger"
-                        className="flex items-center cursor-pointer"
-                    >
+                    <span color="danger" className="flex items-center">
                         <LogOut className="w-5 h-5 mr-2" />
                         Logout
                     </span>

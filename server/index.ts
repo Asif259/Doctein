@@ -15,7 +15,9 @@ import authenticateToken from "./src/Middlewares/authenticate";
 import appointmentRoutes from "./src/Routes/appointmentRoutes";
 import authenticate from "./src/Middlewares/authenticate";
 
-dotenv.config();
+dotenv.config({
+  path: path.join(__dirname, ".env"),
+});
 
 const app = express();
 

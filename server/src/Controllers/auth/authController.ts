@@ -16,13 +16,15 @@ const validatePassword = (password: string): boolean => {
 
 // Register User
 export const registerUser = async (
-    req: Request,
-    res: Response,
+  req: Request,
+  res: Response,
 ): Promise<any> => {
   const { email, password, confirmPassword, role } = req.body;
 
   if (!validateEmail(email)) {
-    return res.status(400).json({ success: false, data: "Invalid email format" });
+    return res
+      .status(400)
+      .json({ success: false, data: "Invalid email format" });
   }
 
   if (!validatePassword(password)) {
@@ -33,7 +35,9 @@ export const registerUser = async (
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ success: false, data: "Passwords do not match" });
+    return res
+      .status(400)
+      .json({ success: false, data: "Passwords do not match" });
   }
 
   try {
@@ -41,9 +45,16 @@ export const registerUser = async (
 
     if (existingUser) {
       if (!existingUser.active) {
-        return res.status(200).json({ success: false, data: "User not active, resend OTP required", requireOtp: true });
+        return res.status(200).json({
+          success: false,
+          data: "User not active, resend OTP required",
+          requireOtp: true,
+        });
       }
-      return res.status(400).json({ success: false, data: "User already exists, Log in to your account" });
+      return res.status(400).json({
+        success: false,
+        data: "User already exists, Log in to your account",
+      });
     }
 
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
@@ -57,14 +68,16 @@ export const registerUser = async (
     });
     await user.save();
 
-    return res.status(201).json({ success: true, data: "User registered successfully", user });
+    return res
+      .status(201)
+      .json({ success: true, data: "User registered successfully", user });
   } catch (error) {
     console.error("Error registering user:", error);
-    return res.status(500).json({ success: false, data: "Error registering user", error });
+    return res
+      .status(500)
+      .json({ success: false, data: "Error registering user", error });
   }
 };
-
-
 
 // Login User
 export const loginUser = async (req: Request, res: Response): Promise<any> => {
@@ -101,7 +114,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
     }
 
     // Call the setAuthCookies function to handle token generation and cookie setting
-    req.body.user = user; // Pass the user data to the setAuthCookies middleware
+    req.headers.user = JSON.parse(JSON.stringify(user)); // Pass the user data to the authenticateToken middleware
 
     setAuthCookies(req, res); // Set access and refresh tokens as cookies
   } catch (error) {
@@ -144,8 +157,8 @@ export const isLoggedIn = (req: Request, res: Response): any => {
 };
 
 // Logout User
-export const logoutUser = (_req: any, res: Response): any => {
+export const logoutUser = (_req: Request, res: Response): any => {
   res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
-  res.json({ message: "Logged out successfully" });
+  // res.clearCookie("refreshToken");
+  res.json({ success: true, message: "Logged out successfully" });
 };

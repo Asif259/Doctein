@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../Helpers/tokenHelper";
+import { generateAccessToken } from "./tokenHelper";
 
 export const setAuthCookies = (req: Request, res: Response) => {
-  const { user } = req.body;
+  const { user } = req.headers;
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, data: "User not authenticated" });
+  }
   const accessToken = generateAccessToken(user);
-  const refreshToken = generateRefreshToken(user);
+  // const refreshToken = generateRefreshToken(user);
 
   // Set the access token as an HTTP-only cookie
   res.cookie("accessToken", accessToken, {
@@ -18,12 +20,12 @@ export const setAuthCookies = (req: Request, res: Response) => {
   });
 
   // Set the refresh token as an HTTP-only cookie
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   httpOnly: true,
+  //   secure: false,
+  //   sameSite: "lax",
+  //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  // });
 
   return res.json({ status: "success", data: "Login successful" });
 };
