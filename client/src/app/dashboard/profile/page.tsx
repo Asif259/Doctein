@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 import { getDoctor } from "@/api/dashboard/profileAPI";
 import DoctorProfile from "@/components/dashboard/profile/doctor-profile";
-import ProfileComponent from "@/components/profile-component";
+import ProfileComponent from "@/components/dashboard/profile/profile-component";
 import { Spinner, Button } from "@nextui-org/react";
 import { FaEdit } from "react-icons/fa";
 import { useProfileStore } from "@/store/profile-store";

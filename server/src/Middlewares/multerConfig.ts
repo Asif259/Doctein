@@ -9,6 +9,7 @@ const storage = multer.diskStorage({
     if (appointmentId) {
       return cb(null, path.join(__dirname + "../../../uploads/prescriptions/"));
     }
+
     cb(null, path.join(__dirname + "../../../uploads/"));
   },
   filename: function (req, file, cb) {
@@ -27,6 +28,15 @@ const storage = multer.diskStorage({
           Date.now().toString() +
           path.extname(file.originalname),
       );
+    }
+    else if(doctorId) {
+        cb(
+            null,
+            doctorId +
+            "-" +
+            Date.now().toString() +
+            path.extname(file.originalname),
+        );
     }
   },
 });

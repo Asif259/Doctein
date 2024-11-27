@@ -244,7 +244,7 @@ export default function Page() {
                 <Input
                     isClearable
                     type="search"
-                    variant="flat"
+                    variant="solid"
                     placeholder="Search prescriptions by name, phone, etc."
                     defaultValue=""
                     onChange={(e) => setSearch(e.target.value)}
@@ -253,8 +253,9 @@ export default function Page() {
                 />
                 <Button
                     startContent={<PlusIcon />}
-                    variant="bordered"
-                    className="border-primary text-primary hover:bg-primary hover:text-white"
+                    variant="solid"
+                    color="primary"
+                    className="hover:bg-primary hover:text-white"
                     onClick={() => setIsPatientModalOpen(true)}
                 >
                     Add Prescription

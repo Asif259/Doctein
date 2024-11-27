@@ -1,6 +1,7 @@
 import { Document, Schema, model } from "mongoose";
 
 interface IDoctor extends Document {
+  profileImage?: string;
   name: string;
   degrees: string[];
   designation: string;
@@ -11,6 +12,7 @@ interface IDoctor extends Document {
 }
 
 const doctorSchema = new Schema<IDoctor>({
+  profileImage: String,
   name: {
     type: String,
     required: true,

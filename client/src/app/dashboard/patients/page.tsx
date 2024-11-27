@@ -229,7 +229,7 @@ export default function Page() {
                     }}
                     startContent={<PlusIcon />}
                     className="hover:bg-primary hover:text-white"
-                    variant="bordered"
+                    variant="solid"
                     color="primary"
                 >
                     Add Patient

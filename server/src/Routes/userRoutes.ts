@@ -5,6 +5,7 @@ import * as staffController from "../Controllers/dashboard/staff"
 import authenticate from "../Middlewares/authenticate";
 import { doctorValidationRules } from "../Validators/doctorValidator";
 import { validate } from "../Middlewares/validate";
+import upload from "../Middlewares/multerConfig";
 
 const router = express.Router();
 
@@ -26,6 +27,11 @@ router.delete(
 router.post('/doctors', authenticate, doctorValidationRules, validate, doctorController.saveDoctor);
 router.get('/doctors', authenticate, doctorController.getDoctor);
 router.put('/doctors', authenticate, doctorValidationRules, validate, doctorController.updateDoctor);
+router.post(
+    "/doctors/upload/:doctorId",
+    upload.single("file"),
+    doctorController.uploadProfileImage,
+);
 
 //staffs
 router.post('/staffs', authenticate, staffController.saveStaff);

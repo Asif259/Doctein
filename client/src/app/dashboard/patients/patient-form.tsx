@@ -120,7 +120,7 @@ function PatientForm({
                 {...formik.getFieldProps("address")}
             />
             <Button
-                variant="bordered"
+                variant="solid"
                 color="primary"
                 className="mr-2"
                 type="submit"

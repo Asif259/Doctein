@@ -284,15 +284,16 @@ export default function Page() {
                     defaultValue=""
                     onChange={(e) => setSearch(e.target.value)}
                     onClear={() => setSearch("")}
-                    className="max-w-xs border border-gray-300 rounded-md shadow-sm"
+                    className="max-w-xs "
                 />
                 <div className="flex gap-4 items-center">
                     <Select
                         placeholder="Sort by status"
+                        variant="flat"
                         onChange={(e) =>
                             console.log("Sort by:", e.target.value)
                         }
-                        className="w-32 border border-gray-300 rounded-md shadow-sm"
+                        className="w-32 shadow-sm"
                     >
                         <SelectItem key="upcoming" value="upcoming">
                             Upcoming
@@ -306,10 +307,11 @@ export default function Page() {
                     </Select>
                     <Select
                         placeholder="Sort by"
+                        variant="flat"
                         onChange={(e) =>
                             console.log("Sort by:", e.target.value)
                         }
-                        className="w-32 border border-gray-300 rounded-md shadow-sm"
+                        className="w-32 shadow-sm"
                     >
                         <SelectItem key="date" value="date">
                             Date
@@ -321,9 +323,9 @@ export default function Page() {
                 </div>
                 <Button
                     startContent={<PlusIcon />}
-                    variant="bordered"
+                    variant="solid"
                     color="primary"
-                    className="rounded-md shadow-md hover:bg-primary hover:text-white"
+                    className="shadow-md hover:bg-primary hover:text-white"
                     onClick={() => {
                         setUpdateAppointment(null);
                         setOpen(true);

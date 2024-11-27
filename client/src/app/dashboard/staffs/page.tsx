@@ -192,8 +192,9 @@ export default function Page() {
                         setOpen(true);
                     }}
                     startContent={<PlusIcon/>}
-                    className="bg-secondary-600 text-secondary-100"
+                    className="hover:bg-primary hover:text-white"
                     variant="solid"
+                    color="primary"
                 >
                     Add Staff
                 </Button>

@@ -98,7 +98,7 @@ function StaffForm({staff, onClose}: {
                 ))}
             </Select>
 
-            <Button className="bg-secondary-600 text-secondary-100 mr-2" type="submit">
+            <Button className="hover:bg-primary hover:text-white mr-2" type="submit" variant="solid" color="primary">
                 {!staff ? "Add Staff" : "Update Staff"}
             </Button>
         </form>

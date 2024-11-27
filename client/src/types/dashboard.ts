@@ -35,6 +35,7 @@ export interface staff {
 
 export interface doctor {
     key?: string;
+    profileImage: string;
     name: string;
     degrees: string[];
     designation: string;

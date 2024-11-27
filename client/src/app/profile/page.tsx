@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import ProfileComponent from "@/components/profile-component";
+import ProfileComponent from "@/components/dashboard/profile/profile-component";
 import { getUserProfile } from "@/api/api";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
