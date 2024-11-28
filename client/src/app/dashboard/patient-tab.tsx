@@ -25,7 +25,7 @@ function PatientTab() {
                 addPatients(res.data);
             }
         })();
-    }, []);
+    }, [addPatients]);
 
     return (
         <>

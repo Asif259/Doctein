@@ -49,6 +49,7 @@ const PrescriptionTemplate = forwardRef<
         );
 
         useEffect(() => {
+            if (!appointmentId) return;
             (async () => {
                 const res = await getPrescriptionById(appointmentId);
                 if (res?.success) {
@@ -73,7 +74,7 @@ const PrescriptionTemplate = forwardRef<
                     });
                 }
             })();
-        }, []);
+        }, [appointmentId, prescription, setPrescription]);
 
         const handleAdd = () => {
             setModal({
@@ -538,14 +539,14 @@ function Medication({
         );
 
     useEffect(() => {
+        if (!medicationId) return;
         (async () => {
-            if (!medicationId) return;
             const res = await getMedicationById(medicationId);
             if (res?.success) {
                 setMedication(res.data);
             }
         })();
-    }, []);
+    }, [medicationId]);
 
     const handleEdit = (id: number) => {
         console.log("Edit Medication:", id, id);
@@ -623,5 +624,7 @@ function Medication({
         </div>
     );
 }
+
+PrescriptionTemplate.displayName = "PrescriptionTemplate";
 
 export default PrescriptionTemplate;

@@ -69,12 +69,19 @@ function Page({ params }: { params: { appointmentId: string } }) {
                 setPrescriptionHeader(res.data);
                 if (res.data?.patient?.history) {
                     setHistory(
-                        res.data?.patient?.history.map((h: any) => ({
-                            key: h._id,
-                            date: h.date,
-                            note: h.note,
-                            status: h.status,
-                        })),
+                        res.data?.patient?.history.map(
+                            (h: {
+                                _id: string;
+                                date: string;
+                                note: string;
+                                status: string;
+                            }) => ({
+                                key: h._id,
+                                date: h.date,
+                                note: h.note,
+                                status: h.status,
+                            }),
+                        ),
                     );
                 }
                 setLoading(false);
@@ -82,7 +89,12 @@ function Page({ params }: { params: { appointmentId: string } }) {
                 router.push("/prescription/404");
             }
         })();
-    }, []);
+    }, [
+        params.appointmentId,
+        resetPrescription,
+        router,
+        setPrescriptionHeader,
+    ]);
 
     // handle print prescriptions
     const handlePrint = () => {
@@ -94,7 +106,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
         if (isPrint && printableDiv.current) {
             printFn(() => printableDiv.current);
         }
-    }, [isPrint, printableDiv]);
+    }, [isPrint, printableDiv, printFn]);
 
     // handle save prescriptions to database
     const handleSave = async () => {

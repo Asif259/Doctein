@@ -1,31 +1,38 @@
 "use client";
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import {Card, CardBody, CardHeader, Avatar, Button, Chip} from "@nextui-org/react";
-import {Plus, Minus} from "lucide-react";
-import React, {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {parsePhoneNumberFromString} from "libphonenumber-js";
-import toast from "react-hot-toast";
 import {
-    saveDoctor,
-    updateDoctor,
-} from "@/api/dashboard/profileAPI";
-import {doctor} from "@/types/dashboard";
-import {useProfileStore} from "@/store/profile-store";
+    Card,
+    CardBody,
+    CardHeader,
+    Avatar,
+    Button,
+    Chip,
+} from "@nextui-org/react";
+import { Plus, Minus } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
+import toast from "react-hot-toast";
+import { saveDoctor, updateDoctor } from "@/api/dashboard/profileAPI";
+import { doctor } from "@/types/dashboard";
+import { useProfileStore } from "@/store/profile-store";
 import GInput from "@/components/globals/GInput";
-import GAutoComplete, {Item} from "@/components/globals/GAutoComplete";
+import GAutoComplete, { Item } from "@/components/globals/GAutoComplete";
 import degrees from "@/data/degrees";
 import specializations from "@/data/specializations.json";
-import {useShallow} from "zustand/react/shallow";
+import { useShallow } from "zustand/react/shallow";
 
-
-const ProfileComponent = ({doctor, onProfileUpdate,}: {
-    doctor: doctor | null; onProfileUpdate: (doctor: doctor) => void;
+const ProfileComponent = ({
+    doctor,
+    onProfileUpdate,
+}: {
+    doctor: doctor | null;
+    onProfileUpdate: (doctor: doctor) => void;
 }) => {
     const router = useRouter();
     const [loading, setLoading] = useState<boolean>(false);
-    const {addDoctor} = useProfileStore(
+    const { addDoctor } = useProfileStore(
         useShallow((state) => ({
             addDoctor: state.addDoctor,
         })),
@@ -35,7 +42,6 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
     const [additionalPhones, setAdditionalPhones] = useState<string[]>(
         doctor?.phone.slice(1) || [],
     );
-
 
     const formik = useFormik({
         initialValues: {
@@ -62,17 +68,27 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                             "valid-phone",
                             "Phone number is not valid",
                             (value) => {
-                                const phoneNumber = parsePhoneNumberFromString(value || "", "BD");
-                                return phoneNumber ? phoneNumber.isValid() : false;
-                            }
+                                const phoneNumber = parsePhoneNumberFromString(
+                                    value || "",
+                                    "BD",
+                                );
+                                return phoneNumber
+                                    ? phoneNumber.isValid()
+                                    : false;
+                            },
                         )
-                        .required("Phone number is required")
+                        .required("Phone number is required"),
                 )
-                .test("unique-phones", "Phone numbers must be unique", (phones) =>
-                    phones ? new Set(phones).size === phones.length : true
+                .test(
+                    "unique-phones",
+                    "Phone numbers must be unique",
+                    (phones) =>
+                        phones ? new Set(phones).size === phones.length : true,
                 ),
             bmdcNumber: Yup.string().required("BMDC Number is required"),
-            digitalSignature: Yup.string().required("Digital signature is required"),
+            digitalSignature: Yup.string().required(
+                "Digital signature is required",
+            ),
         }),
         onSubmit: async (values: doctor) => {
             console.log(values);
@@ -134,7 +150,7 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
     });
 
     useEffect(() => {
-        console.log(formik.values)
+        console.log(formik.values);
     }, [formik]);
 
     const handleAdditionalPhoneChange = (index: number, value: string) => {
@@ -157,7 +173,7 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                 <Avatar
                     src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                     alt={formik.values.name}
-                    style={{height: "120px", width: "120px"}}
+                    style={{ height: "120px", width: "120px" }}
                     fallback={formik.values.name
                         .split(" ")
                         .map((n) => n[0])
@@ -165,7 +181,10 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                 />
             </CardHeader>
             <CardBody className="flex relative bg-default">
-                <form className="space-y-4 h-[80dvh]" onSubmit={formik.handleSubmit}>
+                <form
+                    className="space-y-4 h-[80dvh]"
+                    onSubmit={formik.handleSubmit}
+                >
                     <div className="flex space-x-14">
                         <div className="w-full space-y-6">
                             <GInput
@@ -180,7 +199,6 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                 errorMessage={
                                     formik.touched.name && formik.errors.name
                                 }
-
                             />
                             <GAutoComplete
                                 items={degrees as unknown as Item[]}
@@ -200,9 +218,17 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                         ]);
                                     }
                                 }}
-                                onBlur={() => formik.setFieldTouched("degrees", true)}
-                                isInvalid={!!formik.errors.degrees && formik.touched.degrees}
-                                errorMessage={formik.touched.degrees && formik.errors.degrees}
+                                onBlur={() =>
+                                    formik.setFieldTouched("degrees", true)
+                                }
+                                isInvalid={
+                                    !!formik.errors.degrees &&
+                                    formik.touched.degrees
+                                }
+                                errorMessage={
+                                    formik.touched.degrees &&
+                                    formik.errors.degrees
+                                }
                             />
 
                             {formik.values.degrees.length > 0 && (
@@ -224,7 +250,11 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                                             ),
                                                         );
                                                     }}
-                                                    className="bg-warning-500 text-black cursor-pointer">{degrees.find(d => d.key === degree)?.label || degree}
+                                                    className="bg-warning-500 text-black cursor-pointer"
+                                                >
+                                                    {degrees.find(
+                                                        (d) => d.key === degree,
+                                                    )?.label || degree}
                                                 </Chip>
                                             </div>
                                         ),
@@ -246,7 +276,10 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                     formik.touched.phone && formik.errors.phone
                                 }
                                 endContent={
-                                    <Plus className="size-4 cursor-pointer" onClick={handleAddPhone}/>
+                                    <Plus
+                                        className="size-4 cursor-pointer"
+                                        onClick={handleAddPhone}
+                                    />
                                 }
                             />
 
@@ -276,19 +309,23 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                             formik.errors.phone
                                         }
                                         endContent={
-                                            <Minus className="size-4 text-danger cursor-pointer" onClick={() => {
-                                                const updatedPhones =
-                                                    additionalPhones.filter(
-                                                        (_, i) => i !== index,
+                                            <Minus
+                                                className="size-4 text-danger cursor-pointer"
+                                                onClick={() => {
+                                                    const updatedPhones =
+                                                        additionalPhones.filter(
+                                                            (_, i) =>
+                                                                i !== index,
+                                                        );
+                                                    setAdditionalPhones(
+                                                        updatedPhones,
                                                     );
-                                                setAdditionalPhones(updatedPhones);
-                                            }}/>
+                                                }}
+                                            />
                                         }
                                     />
-
                                 </div>
                             ))}
-
                         </div>
                         <div className="w-full space-y-6">
                             <GInput
@@ -316,10 +353,13 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                                 onSelectionChange={(selectedSpecialization) => {
                                     const sp = specializations.find(
                                         (s) => s.key === selectedSpecialization,
-                                    )
-                                    console.log(selectedSpecialization)
+                                    );
+                                    console.log(selectedSpecialization);
                                     if (sp) {
-                                        formik.setFieldValue("specialization", sp.value);
+                                        formik.setFieldValue(
+                                            "specialization",
+                                            sp.value,
+                                        );
                                     }
                                 }}
                                 isInvalid={
@@ -365,9 +405,14 @@ const ProfileComponent = ({doctor, onProfileUpdate,}: {
                         </div>
                     </div>
 
-                        <Button radius="sm" type="submit" isLoading={loading} className="w-full bg-primary text-white">
-                            {doctor ? "Update Profile" : "Save Profile"}
-                        </Button>
+                    <Button
+                        radius="sm"
+                        type="submit"
+                        isLoading={loading}
+                        className="w-full bg-primary text-white"
+                    >
+                        {doctor ? "Update Profile" : "Save Profile"}
+                    </Button>
                 </form>
             </CardBody>
         </Card>

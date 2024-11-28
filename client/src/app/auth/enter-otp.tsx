@@ -7,7 +7,15 @@ import toast from "react-hot-toast";
 import { Input, Button } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
-export default function EnterOTP({email, from, onSuccess,}: { email?: string; from?: string; onSuccess: (email: string) => void; }) {
+export default function EnterOTP({
+    email,
+    from,
+    onSuccess,
+}: {
+    email?: string;
+    from?: string;
+    onSuccess: (email: string) => void;
+}) {
     const [resendTimer, setResendTimer] = useState<number>(120);
     const router = useRouter();
 
@@ -24,7 +32,7 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
                 toast.success("OTP resent successfully");
                 setResendTimer(120); // Reset timer to 120 seconds
             }
-        } catch (err: any) {
+        } catch {
             toast.error("Failed to resend OTP. Please try again.");
         }
     };
@@ -43,8 +51,8 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
             otp: Yup.string()
                 .required()
                 .matches(/^[0-9]+$/, "OTP must be only digits")
-                .min(6, 'OTP must be exactly 6 digits')
-                .max(6, 'OTP must be exactly 6 digits')
+                .min(6, "OTP must be exactly 6 digits")
+                .max(6, "OTP must be exactly 6 digits"),
         }),
         onSubmit: async (values, { setSubmitting }) => {
             if (!email) return;
@@ -69,13 +77,11 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
                     }
                 }
             } catch {
-
                 toast.error("Invalid OTP. Please try again.");
             } finally {
                 setSubmitting(false);
             }
-        }
-
+        },
     });
 
     return (
@@ -107,7 +113,9 @@ export default function EnterOTP({email, from, onSuccess,}: { email?: string; fr
                         {formik.isSubmitting ? "Verifying..." : "Verify OTP"}
                     </Button>
                     {resendTimer > 0 ? (
-                        <p className="text-neutral">Resend OTP in {resendTimer}s</p>
+                        <p className="text-neutral">
+                            Resend OTP in {resendTimer}s
+                        </p>
                     ) : (
                         <Button
                             onClick={handleResendOtp}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useCallback, useEffect} from "react";
+import React, { useCallback, useEffect } from "react";
 import {
     Table,
     TableHeader,
@@ -16,25 +16,25 @@ import {
     ModalBody,
     ModalContent,
 } from "@nextui-org/react";
-import {EditIcon, PlusIcon, TrashIcon} from "lucide-react";
-import {deleteStaff, getStaffs} from "@/api/dashboard/staffAPI";
-import {staff} from "@/types/dashboard";
-import {useDashboardStore} from "@/store/dashboard-store";
+import { EditIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { deleteStaff, getStaffs } from "@/api/dashboard/staffAPI";
+import { staff } from "@/types/dashboard";
+import { useDashboardStore } from "@/store/dashboard-store";
 import StaffForm from "@/app/dashboard/staffs/staff-form";
 import toast from "react-hot-toast";
 
 const columns = [
-    {name: "NAME", uid: "name"},
-    {name: "PHONE", uid: "phone"},
-    {name: "ADDRESS", uid: "address"},
-    {name: "STATUS", uid: "status"},
-    {name: "ACTIONS", uid: "actions"},
+    { name: "NAME", uid: "name" },
+    { name: "PHONE", uid: "phone" },
+    { name: "ADDRESS", uid: "address" },
+    { name: "STATUS", uid: "status" },
+    { name: "ACTIONS", uid: "actions" },
 ];
 
 export default function Page() {
     const [search, setSearch] = React.useState("");
     const [filteredStaffs, setFilteredStaffs] = React.useState<staff[]>([]);
-    const {staffs, addStaffs} = useDashboardStore((state) => state);
+    const { staffs, addStaffs } = useDashboardStore((state) => state);
     const [open, setOpen] = React.useState<boolean>(false);
     const [updateStaff, setUpdateStaff] = React.useState<staff | null>(null);
 
@@ -61,7 +61,7 @@ export default function Page() {
                 toast.success("Staff deleted successfully");
             }
         },
-        [addStaffs]
+        [addStaffs],
     );
 
     const renderCell = React.useCallback(
@@ -72,31 +72,37 @@ export default function Page() {
                 case "name":
                     return (
                         <div className="flex flex-col">
-                            <p className="text-bold text-sm capitalize">{cellValue}</p>
+                            <p className="text-bold text-sm capitalize">
+                                {cellValue}
+                            </p>
                         </div>
                     );
                 case "phone":
                     return (
                         <div className="flex flex-col">
-                            <p className="text-bold text-sm capitalize">{cellValue}</p>
+                            <p className="text-bold text-sm capitalize">
+                                {cellValue}
+                            </p>
                         </div>
                     );
                 case "address":
                     return (
                         <div className="flex flex-col">
-                            <p className="text-bold text-sm capitalize">{cellValue}</p>
+                            <p className="text-bold text-sm capitalize">
+                                {cellValue}
+                            </p>
                         </div>
                     );
                 case "actions":
                     return (
                         <div className="relative flex justify-center items-center gap-2">
                             <Tooltip content="Edit user">
-                <span
-                    onClick={() => handleUpdate(staff)}
-                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                >
-                  <EditIcon className="size-5 text-warning-500"/>
-                </span>
+                                <span
+                                    onClick={() => handleUpdate(staff)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <EditIcon className="size-5 text-warning-500" />
+                                </span>
                             </Tooltip>
                             <Tooltip
                                 content="Delete user"
@@ -104,12 +110,12 @@ export default function Page() {
                                     content: "bg-danger-500 text-white",
                                 }}
                             >
-                <span
-                    onClick={() => handleDelete(staff)}
-                    className="text-lg text-danger cursor-pointer active:opacity-50"
-                >
-                  <TrashIcon className="size-5"/>
-                </span>
+                                <span
+                                    onClick={() => handleDelete(staff)}
+                                    className="text-lg text-danger cursor-pointer active:opacity-50"
+                                >
+                                    <TrashIcon className="size-5" />
+                                </span>
                             </Tooltip>
                         </div>
                     );
@@ -117,11 +123,11 @@ export default function Page() {
                     return cellValue;
             }
         },
-        [handleDelete]
+        [handleDelete],
     );
 
     useEffect(() => {
-        const fetchStaffs = async () => {
+        (async () => {
             try {
                 const res = await getStaffs();
                 if (res?.success) {
@@ -130,13 +136,13 @@ export default function Page() {
                 } else {
                     Error("Failed to fetch staffs");
                 }
-            } catch (error: any) {
-                console.error(error.message);
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    console.error("Failed to fetch staffs:", error.message);
+                }
                 toast.error("Error fetching staffs");
             }
-        };
-
-        fetchStaffs();
+        })();
     }, [addStaffs]);
 
     useEffect(() => {
@@ -151,10 +157,11 @@ export default function Page() {
         }
 
         const searchValue = search.toLowerCase();
-        const filtered = staffs.filter((user) =>
-            user.name.toLowerCase().includes(searchValue) ||
-            user.phone.toLowerCase().includes(searchValue) ||
-            user.address.toLowerCase().includes(searchValue)
+        const filtered = staffs.filter(
+            (user) =>
+                user.name.toLowerCase().includes(searchValue) ||
+                user.phone.toLowerCase().includes(searchValue) ||
+                user.address.toLowerCase().includes(searchValue),
         );
 
         setFilteredStaffs(filtered);
@@ -162,13 +169,23 @@ export default function Page() {
 
     return (
         <>
-            <Modal className="p-5" size="lg" isOpen={open} onOpenChange={setOpen}>
+            <Modal
+                className="p-5"
+                size="lg"
+                isOpen={open}
+                onOpenChange={setOpen}
+            >
                 <ModalContent>
                     {() => (
                         <>
-                            <ModalHeader>{updateStaff ? "Update Staff" : "Add Staff"}</ModalHeader>
+                            <ModalHeader>
+                                {updateStaff ? "Update Staff" : "Add Staff"}
+                            </ModalHeader>
                             <ModalBody>
-                                <StaffForm staff={updateStaff} onClose={() => setOpen(false)}/>
+                                <StaffForm
+                                    staff={updateStaff}
+                                    onClose={() => setOpen(false)}
+                                />
                             </ModalBody>
                         </>
                     )}
@@ -191,7 +208,7 @@ export default function Page() {
                         setUpdateStaff(null);
                         setOpen(true);
                     }}
-                    startContent={<PlusIcon/>}
+                    startContent={<PlusIcon />}
                     className="hover:bg-primary hover:text-white"
                     variant="solid"
                     color="primary"
@@ -202,14 +219,18 @@ export default function Page() {
             <Table aria-label="Example table with custom cells">
                 <TableHeader columns={columns}>
                     {(column) => (
-                        <TableColumn key={column.uid}>{column.name}</TableColumn>
+                        <TableColumn key={column.uid}>
+                            {column.name}
+                        </TableColumn>
                     )}
                 </TableHeader>
                 <TableBody items={filteredStaffs}>
                     {(item: staff) => (
                         <TableRow key={item.id}>
                             {(columnKey) => (
-                                <TableCell>{renderCell(item, columnKey)}</TableCell>
+                                <TableCell>
+                                    {renderCell(item, columnKey)}
+                                </TableCell>
                             )}
                         </TableRow>
                     )}

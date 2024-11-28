@@ -1,11 +1,8 @@
 import React, { useState, DragEvent, ChangeEvent } from "react";
 import { Card, Button } from "@nextui-org/react";
 import Image from "next/image";
-import { doctor } from "@/types/dashboard";
 
-const DragAndDropFileUpload = ({onClose,}: {
-    onClose: () => void;
-}) => {
+const DragAndDropFileUpload = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
 
@@ -103,7 +100,7 @@ const DragAndDropFileUpload = ({onClose,}: {
 
             {selectedFile && <p>Selected File: {selectedFile.name}</p>}
 
-            <Button onClick={} disabled={!selectedFile} className="mt-4">
+            <Button disabled={!selectedFile} className="mt-4">
                 Upload
             </Button>
         </Card>

@@ -5,8 +5,13 @@ import { Input, Button } from "@nextui-org/react";
 import { resetPassword } from "@/api/api";
 import toast from "react-hot-toast";
 
-
-export default function ResetPassword({ email, onSuccess }:{email: string; onSuccess: () => void;}) {
+export default function ResetPassword({
+    email,
+    onSuccess,
+}: {
+    email: string;
+    onSuccess: () => void;
+}) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const formik = useFormik({
@@ -32,8 +37,10 @@ export default function ResetPassword({ email, onSuccess }:{email: string; onSuc
                     toast.success("Password reset successfully!");
                     onSuccess();
                 }
-            } catch (error: any) {
-                toast.error(error?.response?.data?.message || "Failed to reset password. Please try again.");
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(error.message);
+                }
             } finally {
                 setIsSubmitting(false);
             }
@@ -47,7 +54,10 @@ export default function ResetPassword({ email, onSuccess }:{email: string; onSuc
                     label="New Password"
                     type="password"
                     {...formik.getFieldProps("password")}
-                    isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                    isInvalid={
+                        formik.touched.password &&
+                        Boolean(formik.errors.password)
+                    }
                     errorMessage={
                         formik.touched.password && formik.errors.password
                             ? formik.errors.password
@@ -65,7 +75,8 @@ export default function ResetPassword({ email, onSuccess }:{email: string; onSuc
                         Boolean(formik.errors.confirmPassword)
                     }
                     errorMessage={
-                        formik.touched.confirmPassword && formik.errors.confirmPassword
+                        formik.touched.confirmPassword &&
+                        formik.errors.confirmPassword
                             ? formik.errors.confirmPassword
                             : undefined
                     }
@@ -80,5 +91,4 @@ export default function ResetPassword({ email, onSuccess }:{email: string; onSuc
             </Button>
         </form>
     );
-};
-
+}

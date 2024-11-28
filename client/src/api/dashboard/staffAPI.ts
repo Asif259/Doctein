@@ -1,13 +1,14 @@
 import axios from "@/config/axios";
 import { staff } from "@/types/dashboard";
+import { AxiosError } from "axios";
 
 // Add a new staff
 export const saveStaff = async (staff: staff) => {
     try {
         const response = await axios.post(`/staffs`, staff);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -21,7 +22,7 @@ export const getStaffs = async (query?: string) => {
         const response = await axios.get(url);
         return response.data;
     } catch (error: unknown) {
-        // throw new Error(error.response?.data?.data);
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -31,8 +32,7 @@ export const getStaffById = async (id: string) => {
         const response = await axios.get(`/staffs/${id}`);
         return response.data;
     } catch (error: unknown) {
-        console.log(error)
-        // throw new Error(error.response?.data?.data);
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -41,12 +41,10 @@ export const updateStaff = async (staffId: string, data: staff) => {
     try {
         const res = await axios.put(`staffs/${staffId}`, data);
         return res.data;
-    } catch (error) {
-        console.error("Error updating staff:", error);
-        throw error;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
-
 
 // Delete a staff by ID
 export const deleteStaff = async (id: string | undefined) => {
@@ -54,8 +52,7 @@ export const deleteStaff = async (id: string | undefined) => {
     try {
         const response = await axios.delete(`/staffs/${id}`);
         return response.data;
-    } catch (error: any) {
-        console.error("Error deleting staff:", error);
-        throw error;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };

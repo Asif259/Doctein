@@ -38,11 +38,10 @@ export default function Page() {
     const [filteredPatients, setFilteredPatients] = React.useState<IPatient[]>(
         [],
     );
-    const { patients, addPatients, resetPatients } = useDashboardStore(
+    const { patients, addPatients } = useDashboardStore(
         useShallow((state) => ({
             patients: state.patients,
             addPatients: state.addPatients,
-            resetPatients: state.resetPatients,
         })),
     );
     const [open, setOpen] = React.useState<boolean>(false);
@@ -164,7 +163,7 @@ export default function Page() {
                 addPatients(res?.data);
             }
         })();
-    }, []);
+    }, [addPatients]);
 
     useEffect(() => {
         console.log("Patients:", patients);
@@ -185,7 +184,7 @@ export default function Page() {
         );
 
         setFilteredPatients(filtered);
-    }, [search]);
+    }, [search, patients]);
 
     return (
         <>
@@ -244,7 +243,7 @@ export default function Page() {
                     )}
                 </TableHeader>
                 <TableBody items={filteredPatients}>
-                    {(item: any) => (
+                    {(item: IPatient) => (
                         <TableRow key={item.key}>
                             {(columnKey) => (
                                 <TableCell>

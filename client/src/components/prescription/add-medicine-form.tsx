@@ -11,6 +11,7 @@ const AddMedicineForm = ({ onClose }: { onClose: () => void }) => {
         },
         onSubmit: (values) => {
             console.log(values);
+            onClose();
         },
     });
 

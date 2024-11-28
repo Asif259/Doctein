@@ -74,7 +74,8 @@ export default function Customer() {
                     What Doctors Using <strong>Docten</strong> Are Saying
                 </div>
                 <div className="text-gray-600 mx-auto">
-                    Here's what some of our customers say about our platform.
+                    Here`&apos;s what some of our customers say about our
+                    platform.
                 </div>
             </div>
 
@@ -97,7 +98,7 @@ export default function Customer() {
                             </CardHeader>
                             <CardBody className="p-2">
                                 <div className="font-medium text-gray-800 mb-6">
-                                    "{obj.quote}"
+                                    &quot;{obj.quote}&quot;
                                 </div>
                             </CardBody>
                             <CardFooter className="flex items-center">

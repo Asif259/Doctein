@@ -1,13 +1,14 @@
 import axios from "@/config/axios";
 import { IPatient } from "@/types/dashboard";
+import { AxiosError } from "axios";
 
 // Add a new patient
 export const savePatient = async (patient: IPatient) => {
     try {
         const response = await axios.post(`/patients`, patient);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -20,8 +21,8 @@ export const getPatients = async (query?: string) => {
         }
         const response = await axios.get(url);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -30,8 +31,8 @@ export const getPatientById = async (id: string) => {
     try {
         const response = await axios.get(`/patients/${id}`);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -44,8 +45,8 @@ export const updatePatient = async (
     try {
         const response = await axios.put(`/patients/${id}`, patient);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -55,7 +56,7 @@ export const deletePatient = async (id: string | undefined) => {
     try {
         const response = await axios.delete(`/patients/${id}`);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };

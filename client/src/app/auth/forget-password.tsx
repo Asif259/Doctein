@@ -6,8 +6,11 @@ import { sendOtp } from "@/api/api";
 import toast from "react-hot-toast";
 import React from "react";
 
-
-export default function ForgotPassword({ onSuccess }: { onSuccess: (email: string) => void; }) {
+export default function ForgotPassword({
+    onSuccess,
+}: {
+    onSuccess: (email: string) => void;
+}) {
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -25,19 +28,22 @@ export default function ForgotPassword({ onSuccess }: { onSuccess: (email: strin
                     toast.success("OTP sent successfully!");
                     onSuccess(values.email);
                 } else {
-                    toast.error(response.data || "Failed to send OTP. Please try again.");
+                    toast.error(
+                        response.data ||
+                            "Failed to send OTP. Please try again.",
+                    );
                     setErrors({ email: response.data || "Error sending OTP." });
                 }
-            } catch (error: any) {
-                toast.error(`Error sending OTP: ${error.message}`);
-                setErrors({ email: error.message });
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    toast.error(`Error sending OTP: ${error.message}`);
+                    setErrors({ email: error.message });
+                }
             } finally {
                 setSubmitting(false);
             }
         },
-
     });
-
 
     return (
         <div className="space-y-4">
@@ -51,7 +57,9 @@ export default function ForgotPassword({ onSuccess }: { onSuccess: (email: strin
                         label="Enter your email"
                         type="email"
                         {...formik.getFieldProps("email")}
-                        isInvalid={formik.touched.email && Boolean(formik.errors.email)}
+                        isInvalid={
+                            formik.touched.email && Boolean(formik.errors.email)
+                        }
                     />
                     {formik.touched.email && formik.errors.email ? (
                         <p className="text-red-500">{formik.errors.email}</p>

@@ -161,7 +161,7 @@ function MedicationForm({
                 formik.setValues(item);
             }
         }
-    }, [data]);
+    }, [data, formik, id]);
 
     // search medication
     const searchMedication = async (search: string) => {
@@ -351,7 +351,7 @@ function InstructionForm({
                 formik.setValues(item);
             }
         }
-    }, [data]);
+    }, [data, formik, id]);
 
     const handleSubmit = () => {
         formik.handleSubmit();
@@ -414,7 +414,7 @@ function ComplaintForm({
                 formik.setValues(item);
             }
         }
-    }, [data]);
+    }, [data, formik, id]);
 
     const handleSubmit = () => {
         formik.handleSubmit();
@@ -481,7 +481,7 @@ function HistoryForm({
                 formik.setValues(item);
             }
         }
-    }, [data]);
+    }, [data, formik, id]);
 
     const handleSubmit = () => {
         formik.handleSubmit();
@@ -545,7 +545,7 @@ function DiagnosisForm({
                 formik.setValues(item);
             }
         }
-    }, [data]);
+    }, [data, formik, id]);
 
     const handleSubmit = () => {
         formik.handleSubmit();
@@ -609,7 +609,7 @@ function InvestigationForm({
                 formik.setValues(item);
             }
         }
-    }, []);
+    }, [data, formik, id]);
 
     const handleSubmit = () => {
         formik.handleSubmit();

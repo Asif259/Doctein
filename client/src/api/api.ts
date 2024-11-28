@@ -1,4 +1,5 @@
 import axios from "@/config/axios";
+import { AxiosError } from "axios";
 
 // Register a new user
 export const registerUser = async (
@@ -15,8 +16,8 @@ export const registerUser = async (
             role,
         });
         return response.data;
-    } catch (error: any) {
-        return error.response?.data;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -28,8 +29,8 @@ export const loginUser = async (email: string, password: string) => {
             password,
         });
         return response.data;
-    } catch (error: any) {
-        return error.response?.data;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -41,8 +42,8 @@ export const authenticateUser = async () => {
             return response.data;
         }
         return false;
-    } catch (e) {
-        return false;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -53,8 +54,8 @@ export const sendOtp = async (email: string) => {
             email,
         });
         return response.data;
-    } catch (error: any) {
-        return error.response?.data;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -66,9 +67,8 @@ export const verifyOtp = async (email: string, otp: string) => {
             otp,
         });
         return response.data;
-    } catch (error: any) {
-        console.log(error);
-        return error.response?.data;
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -77,9 +77,8 @@ export const activateUser = async (email: string) => {
     try {
         const response = await axios.post("/activate", { email });
         return response.data;
-    } catch (error: any) {
-        console.log(error);
-        return error.response?.data?.message || "Failed to activate user";
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -91,9 +90,8 @@ export const resetPassword = async (email: string, newPassword: string) => {
             newPassword,
         });
         return response.data;
-    } catch (error: any) {
-        console.log(error);
-        return error.response?.data?.data || "Failed to reset password";
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -102,9 +100,8 @@ export const getUserProfile = async () => {
     try {
         const response = await axios.get(`/profile`);
         return response.data;
-    } catch (error: any) {
-        console.log(error);
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -113,8 +110,7 @@ export const logoutUser = async () => {
     try {
         const response = await axios.get(`/logout`);
         return response.data;
-    } catch (error: any) {
-        console.log(error);
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };

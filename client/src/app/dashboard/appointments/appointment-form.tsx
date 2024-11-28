@@ -19,7 +19,17 @@ import {
 } from "@nextui-org/react";
 import { CalendarIcon, ClockIcon, NotebookPenIcon } from "lucide-react";
 
-function AppointmentForm({ appointment }: { appointment?: any }) {
+export interface AppointmentFormProps extends IAppointment {
+    patientId?: string;
+    age?: number;
+    weight?: number;
+}
+
+function AppointmentForm({
+    appointment,
+}: {
+    appointment?: AppointmentFormProps;
+}) {
     const formik = useFormik({
         initialValues: {
             id: 0,

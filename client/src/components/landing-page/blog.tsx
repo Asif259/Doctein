@@ -76,7 +76,7 @@ export default function Blog() {
                 Learn From The Blogs
             </div>
             <div className="text-md text-center text-gray-600">
-                Here's what some of our customers say about our platform.
+                Here&apos;s what some of our customers say about our platform.
             </div>
 
             <CardContainer className="grid grid-cols-2">

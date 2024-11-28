@@ -1,22 +1,9 @@
 "use client";
 
 import React from "react";
-import {
-    Button,
-    Card,
-    CardBody,
-    CardHeader,
-    Input,
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-} from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { staff } from "@/types/dashboard";
-import { useDashboardStore } from "@/store/dashboard-store";
 
 function StaffTab() {
     const formik = useFormik({

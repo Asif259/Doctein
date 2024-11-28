@@ -1,12 +1,14 @@
 import axios from "@/config/axios";
+import { AxiosError } from "axios";
+import { IAppointment } from "@/types/dashboard";
 
 // Get all appointments
 export const getAppointments = async () => {
     try {
         const response = await axios.get("/appointments/");
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -15,8 +17,8 @@ export const getAppointmentByPatientId = async (patientId: string) => {
     try {
         const response = await axios.get(`/appointments/patient/${patientId}`);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -26,8 +28,8 @@ export const getAppointmentById = async (appointmentId: string | undefined) => {
     try {
         const response = await axios.get(`/appointments/${appointmentId}`);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -40,15 +42,15 @@ export const createAppointment = async (appointment: {
     try {
         const response = await axios.post(`/appointments`, appointment);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
 // Update an appointment by ID
 export const updateAppointment = async (
     appointmentId: string | undefined,
-    appointment: any,
+    appointment: IAppointment,
 ) => {
     if (!appointmentId) return;
     try {
@@ -57,8 +59,8 @@ export const updateAppointment = async (
             appointment,
         );
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -68,8 +70,8 @@ export const deleteAppointment = async (appointmentId: string | undefined) => {
     try {
         const response = await axios.delete(`/appointments/${appointmentId}`);
         return response.data;
-    } catch (error: any) {
-        // throw new Error(error.response?.data?.data);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };
 
@@ -87,7 +89,7 @@ export const changeAppointmentStatus = async (
             },
         );
         return response.data;
-    } catch (error: any) {
-        console.log(error);
+    } catch (error: unknown) {
+        if (error instanceof AxiosError) return error.response?.data;
     }
 };

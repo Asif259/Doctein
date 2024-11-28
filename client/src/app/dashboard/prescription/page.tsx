@@ -108,7 +108,7 @@ export default function Page() {
         );
 
         setFilteredPatients(filtered);
-    }, [search]);
+    }, [search, patients]);
 
     useEffect(() => {
         (async () => {
@@ -120,7 +120,7 @@ export default function Page() {
                 }
             }
         })();
-    }, []);
+    }, [addPatients]);
 
     useEffect(() => {
         setFilteredPatients(patients);
@@ -149,6 +149,7 @@ export default function Page() {
     }, [selectedAppointment]);
 
     const handleUploadSnapshot = (_appointmentId: string | undefined) => {
+        console.log("Appointment ID:", _appointmentId);
         setIsModalOpen(true);
         // toast.success("Snapshot uploaded successfully");
     };
@@ -244,7 +245,7 @@ export default function Page() {
                 <Input
                     isClearable
                     type="search"
-                    variant="solid"
+                    variant="flat"
                     placeholder="Search prescriptions by name, phone, etc."
                     defaultValue=""
                     onChange={(e) => setSearch(e.target.value)}

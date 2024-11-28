@@ -46,14 +46,12 @@ export default function Page() {
     const [filteredAppointments, setFilteredAppointments] = React.useState<
         IAppointment[]
     >([]);
-    const { appointments, addAppointments, resetAppointments } =
-        useDashboardStore(
-            useShallow((state) => ({
-                appointments: state.appointments,
-                addAppointments: state.addAppointments,
-                resetAppointments: state.resetAppointments,
-            })),
-        );
+    const { appointments, addAppointments } = useDashboardStore(
+        useShallow((state) => ({
+            appointments: state.appointments,
+            addAppointments: state.addAppointments,
+        })),
+    );
     const [open, setOpen] = React.useState<boolean>(false);
     const [updateAppointment, setUpdateAppointment] =
         React.useState<IAppointment | null>(null);
@@ -222,7 +220,7 @@ export default function Page() {
         );
 
         setFilteredAppointments(filtered);
-    }, [search]);
+    }, [search, appointments]);
 
     useEffect(() => {
         (async () => {
@@ -246,7 +244,7 @@ export default function Page() {
                 }
             }
         })();
-    }, []);
+    }, [addAppointments]);
 
     useEffect(() => {
         console.log("Appointments:", appointments);
@@ -267,7 +265,11 @@ export default function Page() {
                             <ModalHeader>Add Appointment</ModalHeader>
                             <ModalBody>
                                 <AppointmentForm
-                                    appointment={updateAppointment}
+                                    appointment={
+                                        updateAppointment
+                                            ? updateAppointment
+                                            : undefined
+                                    }
                                 />
                             </ModalBody>
                         </>
