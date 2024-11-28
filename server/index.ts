@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
-import express = require("express");
-import cors = require("cors");
-import hpp = require("hpp");
-import bodyParser = require("body-parser");
-import mongoose = require("mongoose");
-import dotenv = require("dotenv");
+import express from "express";
+import cors from "cors";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 
 import authRouter from "./src/Routes/authRoutes";
 import userRouter from "./src/Routes/userRoutes";
 import prescriptionRouter from "./src/Routes/prescription";
-import authenticateToken from "./src/Middlewares/authenticate";
 import appointmentRoutes from "./src/Routes/appointmentRoutes";
 import authenticate from "./src/Middlewares/authenticate";
 
@@ -25,6 +23,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   cors({
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: [
+      "content-type",
+      "authorization",
+      "access-control-allow-origin",
+    ],
     origin: process.env.CLIENT_URL,
     credentials: true,
   }),
@@ -32,7 +36,6 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(hpp({ checkBody: true, checkQuery: true }));
 
 const MONGODB_CONNECTION = process.env.MONGODB_CONNECTION || "";
 mongoose
@@ -50,7 +53,8 @@ app.use("/api/v1", authenticate, appointmentRoutes);
 app.use("/api/v1", authenticate, prescriptionRouter);
 
 // Dummy route to test middleware
-app.get("/", authenticateToken, (_req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
   res.send("Hello World!");
 });
-export = app;
+
+export default app;

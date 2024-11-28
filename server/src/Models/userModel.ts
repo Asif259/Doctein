@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
@@ -13,8 +13,8 @@ export interface IUser extends Document {
     attempt: number;
     lastReset: Date | string | null;
   };
-  
-  active: boolean; 
+
+  active: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     active: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<IUser>("User", userSchema);
