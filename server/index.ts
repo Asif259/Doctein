@@ -13,9 +13,7 @@ import prescriptionRouter from "./src/Routes/prescription";
 import appointmentRoutes from "./src/Routes/appointmentRoutes";
 import authenticate from "./src/Middlewares/authenticate";
 
-dotenv.config({
-  path: path.join(__dirname, ".env"),
-});
+dotenv.config();
 
 const app = express();
 
