@@ -57,7 +57,7 @@ export const registerUser = async (
       });
     }
 
-    const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);
+    const saltRounds = parseInt(process.env.SALT_ROUNDS || "10");
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const user = new User({
@@ -74,13 +74,11 @@ export const registerUser = async (
       userId: user.userId,
       active: user.active,
     };
-    return res
-      .status(201)
-      .json({
-        success: true,
-        data: "User registered successfully",
-        user: response,
-      });
+    return res.status(201).json({
+      success: true,
+      data: "User registered successfully",
+      user: response,
+    });
   } catch (error) {
     console.error("Error registering user:", error);
     return res

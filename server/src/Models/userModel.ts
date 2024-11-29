@@ -13,8 +13,8 @@ export interface IUser extends Document {
     attempt: number;
     lastReset: Date | string | null;
   };
-
   active: boolean;
+  isProfile: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema<IUser>(
       lastReset: { type: Date, default: null },
     },
     active: { type: Boolean, default: false },
+    isProfile: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

@@ -59,14 +59,14 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
       new Date().getTime() -
       new Date((user.reset.lastReset as Date)?.toString()).getTime();
 
-      if (timeSinceLastOtp < otpSendInterval) {
-        const remainingTime = otpSendInterval - timeSinceLastOtp; // Remaining time in milliseconds
-        return res.status(403).json({
-          success: false,
-          data: `Please wait ${Math.ceil(remainingTime / 1000)} seconds before requesting a new OTP.`,
-          remainingTime, 
-        });
-      }
+    if (timeSinceLastOtp < otpSendInterval) {
+      const remainingTime = otpSendInterval - timeSinceLastOtp; // Remaining time in milliseconds
+      return res.status(403).json({
+        success: false,
+        data: `Please wait ${Math.ceil(remainingTime / 1000)} seconds before requesting a new OTP.`,
+        remainingTime,
+      });
+    }
 
     const otp = generateOtp();
     user.reset.otp = otp;
@@ -121,6 +121,13 @@ const verifyOtp = async (req: Request, res: Response): Promise<any> => {
         .json({ success: false, data: "Invalid or expired OTP" });
     }
 
+    // Reset user's OTP and activate the account
+    user.reset.otp = null;
+    user.reset.attempt = 0;
+    user.reset.lastReset = null;
+    user.active = true;
+    await user.save();
+
     return res
       .status(200)
       .json({ success: true, data: "OTP verified successfully" });
@@ -142,7 +149,10 @@ const resetPassword = async (req: Request, res: Response): Promise<any> => {
 
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
-      return res.status(400).json({ success: false, data: "New password must be different from the current password" });
+      return res.status(400).json({
+        success: false,
+        data: "New password must be different from the current password",
+      });
     }
 
     const saltRounds = parseInt(process.env.SALT_ROUNDS || "10", 10);

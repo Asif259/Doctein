@@ -100,7 +100,11 @@ export default function Login() {
                         } else if (userRole === "doctor" && !userId) {
                             router.push("/profile");
                         } else if (userRole === "patient") {
-                            router.push("/dashboard");
+                            // router.push("/dashboard");
+                            toast.error(
+                                "Patient dashboard is not available yet.",
+                            );
+                            return;
                         }
 
                         toast.success("Login successful!");
