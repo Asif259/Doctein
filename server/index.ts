@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
+import rateLimit from "express-rate-limit";
 
 import authRouter from "./src/Routes/authRoutes";
 import userRouter from "./src/Routes/userRoutes";
@@ -18,6 +19,18 @@ dotenv.config();
 const app = express();
 
 // Middleware
+app.use(
+  rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    limit: 100, // Limit each IP to 100 requests per `window` (15 minutes)
+    standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+    message: {
+      status: 429,
+      message: "Too many requests, please try again later.",
+    },
+  }),
+);
 app.use(bodyParser.json());
 app.use(
   cors({
