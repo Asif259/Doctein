@@ -35,7 +35,7 @@ function LeftSidebar() {
                 wrapper: "flex flex-col items-between h-full",
                 brand: "flex-grow-0 items-center justify-start h-16",
                 content: "flex flex-col w-full",
-                item: "flex items-center w-full px-4 py-2 mb-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded",
+                item: "flex items-center w-full px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white rounded",
             }}
         >
             <NavbarContent className="mt-4 items-start">

@@ -14,8 +14,8 @@ import {
 import { useDashboardStore } from "@/store/dashboard-store";
 import { IAppointment } from "@/types/dashboard";
 import { getAppointments } from "@/api/dashboard/appointmentAPI";
-import { extractDateAndTime } from "@/utilities/timeZone";
 import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
+import moment from "moment";
 
 function AppointmentTab() {
     const { appointments, addAppointments } = useDashboardStore(
@@ -30,12 +30,12 @@ function AppointmentTab() {
                 console.log("Appointment fetched successfully");
                 addAppointments(
                     res.data.map((appointment: IAppointment) => {
-                        const { date } = appointment;
-                        const extractDate = extractDateAndTime(date);
                         return {
                             ...appointment,
-                            date: extractDate.date,
-                            time: extractDate.time,
+                            date: moment(appointment.date).format(
+                                "DD MMM YYYY",
+                            ),
+                            time: moment(appointment.date).format("hh:mm A"),
                         };
                     }),
                 );

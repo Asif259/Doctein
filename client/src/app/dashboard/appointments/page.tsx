@@ -28,9 +28,9 @@ import {
     getAppointments,
 } from "@/api/dashboard/appointmentAPI";
 import toast from "react-hot-toast";
-import { extractDateAndTime } from "@/utilities/timeZone";
 import AppointmentForm from "@/app/dashboard/appointments/appointment-form";
 import { useShallow } from "zustand/react/shallow";
+import moment from "moment";
 
 const columns = [
     { name: "PATIENT NAME", uid: "patientName" },
@@ -230,12 +230,14 @@ export default function Page() {
                 if (res.data) {
                     const appointments = res.data.map(
                         (appointment: IAppointment) => {
-                            const { date } = appointment;
-                            const extractDate = extractDateAndTime(date);
                             return {
                                 ...appointment,
-                                date: extractDate.date,
-                                time: extractDate.time,
+                                date: moment(appointment.date).format(
+                                    "DD MMM YYYY",
+                                ),
+                                time: moment(appointment.date).format(
+                                    "hh:mm A",
+                                ),
                             };
                         },
                     );

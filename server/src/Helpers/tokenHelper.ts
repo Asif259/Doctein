@@ -5,12 +5,15 @@ dotenv.config({
 });
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
-// const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || "";
+const expiration = parseInt(process.env.TOKEN_EXPIRATION || "3");
 
 // Generate Access Token
 export const generateAccessToken = (user: any) => {
+  console.log(expiration);
   const payload = { email: user.email, userId: user._id };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "2h" });
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: `${expiration}d`,
+  });
 };
 
 // Generate Refresh Token

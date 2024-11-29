@@ -18,6 +18,7 @@ import { savePrescription } from "@/api/dashboard/prescriptionAPI";
 import toast from "react-hot-toast";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
+import moment from "moment";
 
 function Page({ params }: { params: { appointmentId: string } }) {
     const router = useRouter();
@@ -77,7 +78,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
                                 status: string;
                             }) => ({
                                 key: h._id,
-                                date: h.date,
+                                date: moment(h.date).format("DD MMM YYYY"),
                                 note: h.note,
                                 status: h.status,
                             }),
@@ -130,20 +131,42 @@ function Page({ params }: { params: { appointmentId: string } }) {
 
     return (
         <div>
-            <div className="flex flex-row justify-between items-center mb-5 bg-secondary-600 p-3 rounded-md">
+            <div className="flex flex-row justify-between items-center mb-5 p-3 rounded-md">
                 <h1 className="font-black text-2xl">Prescription App</h1>
                 <div className="flex flex-row gap-3">
                     {isEditable ? (
                         <>
-                            <Button onClick={() => handleSave()}>Save</Button>
-                            <Button onClick={() => setEditable(false)}>
+                            <Button
+                                variant="bordered"
+                                color="success"
+                                onClick={() => handleSave()}
+                            >
+                                Save
+                            </Button>
+                            <Button
+                                variant="bordered"
+                                color="warning"
+                                onClick={() => setEditable(false)}
+                            >
                                 Preview
                             </Button>
                         </>
                     ) : (
-                        <Button onClick={() => setEditable(true)}>Edit</Button>
+                        <Button
+                            variant="bordered"
+                            color="primary"
+                            onClick={() => setEditable(true)}
+                        >
+                            Edit
+                        </Button>
                     )}
-                    <Button onClick={handlePrint}>Print</Button>
+                    <Button
+                        className="animate-pulse"
+                        color="success"
+                        onClick={handlePrint}
+                    >
+                        Print
+                    </Button>
                 </div>
             </div>
             <div className="flex flex-row gap-3">
@@ -186,6 +209,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
                         </CardBody>
                     </Card>
                 </div>
+                {/* TODO: Make sure to handle multiple pages of prescriptions both in uploads and app */}
                 <div className="w-3/4">
                     <PrescriptionTemplate
                         isEditable={isEditable}

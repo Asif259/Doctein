@@ -74,7 +74,7 @@ const PrescriptionTemplate = forwardRef<
                     });
                 }
             })();
-        }, [appointmentId, prescription, setPrescription]);
+        }, [appointmentId]);
 
         const handleAdd = () => {
             setModal({

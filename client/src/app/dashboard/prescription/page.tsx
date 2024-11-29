@@ -22,13 +22,13 @@ import { PlusIcon } from "lucide-react";
 import { useDashboardStore } from "@/store/dashboard-store";
 import { IAppointment, IPatient } from "@/types/dashboard";
 import { getAppointmentByPatientId } from "@/api/dashboard/appointmentAPI";
-import { extractDateAndTime } from "@/utilities/timeZone";
 import { getPatients } from "@/api/dashboard/patientAPI";
 import { useRouter } from "next/navigation";
 import DragAndDropInput from "@/app/dashboard/prescription/dnd-input";
 import { useShallow } from "zustand/react/shallow";
 import Image from "next/image";
 import PatientForm from "@/app/dashboard/patients/patient-form";
+import moment from "moment";
 
 const patientCols = [
     { name: "PATIENT NAME", uid: "patientName" },
@@ -78,12 +78,14 @@ export default function Page() {
                 if (res.data) {
                     const appointments = res.data.map(
                         (appointment: IAppointment) => {
-                            const { date } = appointment;
-                            const extractDate = extractDateAndTime(date);
                             return {
                                 ...appointment,
-                                date: extractDate.date,
-                                time: extractDate.time,
+                                date: moment(appointment.date).format(
+                                    "DD MMM YYYY",
+                                ),
+                                time: moment(appointment.date).format(
+                                    "hh:mm A",
+                                ),
                             };
                         },
                     );

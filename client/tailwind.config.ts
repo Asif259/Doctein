@@ -1,5 +1,5 @@
-import {nextui} from "@nextui-org/react";
-import type {Config} from "tailwindcss";
+import { nextui } from "@nextui-org/react";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
     content: [
@@ -20,9 +20,11 @@ const config: Config = {
                 },
                 dark: {
                     layout: {
-                        // radius: {
-                        //     small: "0.22rem"
-                        // }
+                        radius: {
+                            small: "0.22rem",
+                            medium: "0.44rem",
+                            large: "0.66rem",
+                        },
                     },
                     colors: {
                         background: "#1d2129",
@@ -30,7 +32,8 @@ const config: Config = {
                             DEFAULT: "#24ae7c",
                             foreground: "#fff",
                         },
-                        secondary: { //blue
+                        secondary: {
+                            //blue
                             DEFAULT: "#152432",
                             foreground: "#79b5ec",
                             100: "#79b5ec",
@@ -45,9 +48,9 @@ const config: Config = {
                             500: "#1a1d21",
                         },
                         warning: {
-                            DEFAULT: "#3e1716",
-                            foreground: "#f37877",
-                            100: "#383e47"
+                            DEFAULT: "#e2a84b",
+                            foreground: "#1d2129",
+                            100: "#383e47",
                         },
                         danger: {
                             100: "#3e1716",

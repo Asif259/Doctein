@@ -79,7 +79,7 @@ function PatientForm({
         },
     });
     return (
-        <form className="space-y-4" onSubmit={formik.handleSubmit}>
+        <form className="space-y-4 max-w-md" onSubmit={formik.handleSubmit}>
             <div>
                 <Input
                     isInvalid={formik.touched.name && !!formik.errors.name}

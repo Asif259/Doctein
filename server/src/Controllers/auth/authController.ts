@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { setAuthCookies } from "../../Helpers/authVerify"; // Import the middleware
-import User from "../../Models/userModel";
+import User, { IUser } from "../../Models/userModel";
 
 const validateEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,9 +68,19 @@ export const registerUser = async (
     });
     await user.save();
 
+    const response = {
+      email: user.email,
+      role: user.role,
+      userId: user.userId,
+      active: user.active,
+    };
     return res
       .status(201)
-      .json({ success: true, data: "User registered successfully", user });
+      .json({
+        success: true,
+        data: "User registered successfully",
+        user: response,
+      });
   } catch (error) {
     console.error("Error registering user:", error);
     return res
@@ -129,36 +139,59 @@ export const activateUser = async (
   req: Request,
   res: Response,
 ): Promise<any> => {
+  const user = req.headers.user as unknown as IUser;
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, data: "User not authenticated" });
+  }
   try {
-    const { email } = req.body;
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id, email: user.email },
+      { active: true },
+      { new: true },
+    );
 
-    const user = await User.findOneAndUpdate({ email }, { active: true });
-
-    if (!user) {
+    if (!updatedUser) {
       return res.status(404).json({ success: false, data: "User not found" });
     }
 
-    return res
-      .status(200)
-      .json({ success: true, data: "User activated successfully", user });
+    const response = {
+      email: updatedUser.email,
+      role: updatedUser.role,
+      userId: updatedUser.userId,
+      active: updatedUser.active,
+    };
+    return res.status(200).json({
+      success: true,
+      data: "User activated successfully",
+      user: response,
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, data: "Server error" });
+    return res
+      .status(500)
+      .json({ success: false, data: "Something went wrong" });
   }
 };
 
 export const isLoggedIn = (req: Request, res: Response): any => {
-  const { user } = req.headers;
+  const user = req.headers.user as unknown as IUser;
   if (!user) {
     return res
       .status(401)
       .json({ success: false, message: "User not logged in" });
   }
-  return res.json({ success: true, data: user });
+  const response = {
+    email: user.email,
+    role: user.role,
+    userId: user.userId,
+    active: user.active,
+  };
+  return res.json({ success: true, data: response });
 };
 
 // Logout User
 export const logoutUser = (_req: Request, res: Response): any => {
   res.clearCookie("accessToken");
-  // res.clearCookie("refreshToken");
   res.json({ success: true, message: "Logged out successfully" });
 };

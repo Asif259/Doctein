@@ -30,6 +30,7 @@ export const loginUser = async (email: string, password: string) => {
         });
         return response.data;
     } catch (error: unknown) {
+        console.log(error);
         if (error instanceof AxiosError) return error.response?.data;
     }
 };

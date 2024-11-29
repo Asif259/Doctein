@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { usePrescriptionStore } from "@/store/prescription-store";
-import { extractDateAndTime } from "@/utilities/timeZone";
+import moment from "moment";
 
 function PrescriptionHeader() {
     const prescriptionHeader = usePrescriptionStore(
@@ -16,7 +16,10 @@ function PrescriptionHeader() {
 
     useEffect(() => {
         if (!prescriptionHeader) return;
-        const { date, time } = extractDateAndTime(prescriptionHeader.date);
+        const { date, time } = {
+            date: moment(prescriptionHeader.date).format("DD MMM YYYY"),
+            time: moment(prescriptionHeader.date).format("hh:mm A"),
+        };
         setDateTime({ date, time });
     }, [prescriptionHeader]);
 
@@ -24,6 +27,32 @@ function PrescriptionHeader() {
         <>
             <div className="flex justify-between items-start mb-6">
                 <div>
+                    <h1 className="text-2xl font-bold text-green-600">
+                        {prescriptionHeader?.doctor.name}
+                    </h1>
+                    <p className="text-sm text-gray-600">
+                        {prescriptionHeader?.doctor.degrees.map((degree) => (
+                            <span key={degree}>{degree}</span>
+                        ))}
+                    </p>
+                    <p className="text-sm font-semibold text-green-600">
+                        {prescriptionHeader?.doctor.designation},{" "}
+                        {prescriptionHeader?.doctor.specialization}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                        Popular diagnostic center and hospital, Mirpur 10
+                    </p>
+                    <p className="text-sm text-gray-600">
+                        Email: {prescriptionHeader?.doctor.email}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                        Cell: {prescriptionHeader?.doctor.phone.join(", ")}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                        BMDC: {prescriptionHeader?.doctor.bmdcNumber}
+                    </p>
+                </div>
+                <div className="text-right">
                     <h1 className="text-2xl font-bold text-green-600">
                         {prescriptionHeader?.doctor.name}
                     </h1>

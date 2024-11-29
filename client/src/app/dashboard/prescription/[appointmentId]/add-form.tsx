@@ -22,7 +22,6 @@ import {
     Medication,
 } from "@/types/prescription";
 import { useShallow } from "zustand/react/shallow";
-import { CalendarIcon } from "lucide-react";
 import { getMedication } from "@/api/dashboard/medicationAPI";
 import { Key } from "@react-types/shared";
 import AddMedicineForm from "@/components/prescription/add-medicine-form";
@@ -655,10 +654,8 @@ function FollowUpForm({
         <form className="space-y-4">
             <h2 className="text-lg font-semibold">Add Follow Up</h2>
             <Input
-                endContent={
-                    <CalendarIcon className="place-items-baseline" size={18} />
-                }
                 label="Date"
+                type="date"
                 {...formik.getFieldProps("followUpDate")}
             />
             <FormButton onClose={onClose} handleSubmit={handleSubmit} />

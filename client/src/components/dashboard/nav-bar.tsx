@@ -19,7 +19,7 @@ export default function NavBar() {
     return (
         <Navbar
             classNames={{
-                base: "w-full text-white px-6",
+                base: "w-full bg-secondary text-white px-6",
                 wrapper: "flex mx-auto items-center justify-between w-full",
             }}
         >
@@ -33,9 +33,8 @@ export default function NavBar() {
                 <Input
                     type="text"
                     placeholder="Search..."
-                    radius="sm"
-                    variant="bordered"
-                    className="px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary-600"
+                    variant="flat"
+                    className="px-4 py-2 focus:outline-none focus:ring-2"
                     onChange={(e) => console.log(e.target.value)}
                 />
                 <BiSolidChat className="text-2xl cursor-pointer" />

@@ -1,5 +1,11 @@
 import { ReactNode, Suspense } from "react";
 import { Spinner } from "@nextui-org/react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Register | Dochub",
+    description: "Authentication page",
+};
 
 const Layout = ({
     children,
