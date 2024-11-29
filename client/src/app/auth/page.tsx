@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function Login() {
     const router = useRouter();
@@ -28,7 +29,10 @@ export default function Login() {
                 {/* Right Section Patient*/}
                 <div
                     className="w-1/2 bg-green-500 flex flex-col items-center justify-center cursor-pointer hover:bg-green-600"
-                    onClick={() => handleRoleSelection("patient")}
+                    // onClick={() => handleRoleSelection("patient")}
+                    onClick={() =>
+                        toast.success("Patient Features are coming soon!")
+                    }
                 >
                     <h2 className="text-white text-3xl font-bold">
                         Register as Patient
