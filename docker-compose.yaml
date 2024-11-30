@@ -1,8 +1,10 @@
 services:
   nextjs:
     build:
+
       context: ./client
       dockerfile: Dockerfile
+    container_name: nextjs
     ports:
       - "3000:3000"
     env_file:
@@ -19,6 +21,7 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+    container_name: express
     ports:
       - "5000:5000"
     env_file:

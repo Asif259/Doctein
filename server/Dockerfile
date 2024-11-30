@@ -23,4 +23,4 @@ RUN npm run build
 # RUN cp .env ./build
 
 # Start the Express application
-CMD ["pm2", "start", "npm"]
+CMD ["npm", "start"]
