@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { setAuthCookies } from "../../Helpers/authVerify"; // Import the middleware
 import User, { IUser } from "../../Models/userModel";
 

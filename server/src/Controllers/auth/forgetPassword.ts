@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import nodemailer from "nodemailer";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import User from "../../Models/userModel";
 
 // Configure Nodemailer transporter

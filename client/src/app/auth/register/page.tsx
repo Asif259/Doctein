@@ -100,8 +100,8 @@ export default function Register() {
     });
 
     return (
-        <div className="min-h-screen flex justify-between items-center bg-default">
-            <div className="w-full flex-1 pl-28 p-8">
+        <div className="min-h-screen flex justify-center lg:justify-between items-center">
+            <div className="lg:flex-1 flex flex-col items-center">
                 <h2 className="text-2xl font-semibold text-white">
                     Register as {role}
                 </h2>
@@ -110,7 +110,7 @@ export default function Register() {
                 </p>
 
                 <form
-                    className="space-y-4 max-w-lg"
+                    className="space-y-4 max-w-sm"
                     onSubmit={formik.handleSubmit}
                 >
                     <div>
@@ -241,15 +241,18 @@ export default function Register() {
                 </p>
             </div>
 
-            <div className="relative flex-1 w-full bg-white h-full">
+            <div className="hidden lg:flex justify-center flex-1 object-fill bg-white">
                 <Image
                     classNames={{
-                        wrapper: "w-full max-w-xl p-0",
-                        img: "w-full p-0",
+                        wrapper: "w-full flex justify-end",
+                        img: "w-full p-0 object-fill rounded-none",
                     }}
                     alt="NextUI hero Image"
                     src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg"
-                    height={720}
+                    width={0}
+                    height={0}
+                    className="object-fill"
+                    style={{ width: "100%", height: "auto" }} // optional
                 />
             </div>
 

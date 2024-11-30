@@ -1,0 +1,49 @@
+services:
+  nextjs:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./client/.env
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:5000/api/v1
+      - NEXT_PUBLIC_API_STATIC_URL=http://backend:5000/uploads
+    depends_on:
+      - express
+    networks:
+      - app-network
+
+  express:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./server/.env
+#    depends_on:
+#      - mongo
+    networks:
+      - app-network
+
+#  mongo:
+#    image: mongo:6
+#    container_name: mongo
+#    ports:
+#      - "27017:27017"
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: "askarihasib"
+#      MONGO_INITDB_ROOT_PASSWORD: "Idontknw@010"
+#    volumes:
+#      - mongo-data:/data/db
+#    networks:
+#      - app-network
+
+#volumes:
+#  mongo-data:
+
+networks:
+  app-network:
+    driver: bridge

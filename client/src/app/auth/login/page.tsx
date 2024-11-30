@@ -144,8 +144,8 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex justify-between items-center bg-default">
-            <div className="w-full flex-1 pl-28 p-8">
+        <div className="min-h-screen flex justify-center lg:justify-between items-center bg-default">
+            <div className="lg:w-full lg:flex-1 lg:pl-28 p-8">
                 <h2 className="text-2xl font-semibold text-white">Login</h2>
                 <p className="text-default-300">
                     Enter your credentials to login
@@ -251,7 +251,7 @@ export default function Login() {
                 </p>
             </div>
 
-            <div className="relative flex-1 w-full bg-white h-full">
+            <div className="hidden lg:flex relative flex-1 w-full bg-white h-full">
                 <Image
                     classNames={{
                         wrapper: "w-full max-w-xl p-0",

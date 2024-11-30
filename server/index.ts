@@ -40,7 +40,11 @@ app.use(
       "authorization",
       "access-control-allow-origin",
     ],
-    origin: process.env.CLIENT_URL,
+    origin: [
+      "http://localhost:3000",
+      "http://frontend:3000",
+      "http://20.6.131.175:3000",
+    ],
     credentials: true,
   }),
 );
