@@ -62,8 +62,9 @@ function Page({ params }: { params: { appointmentId: string } }) {
     // handle appointment ID from params
     useEffect(() => {
         resetPrescription();
+        const appointmentId = params.appointmentId;
+        if (!appointmentId) return;
         (async () => {
-            const appointmentId = params.appointmentId;
             const res = await getAppointmentById(appointmentId);
             if (res?.success) {
                 console.log("Appointment:", res.data);
@@ -90,12 +91,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
                 router.push("/prescription/404");
             }
         })();
-    }, [
-        params.appointmentId,
-        resetPrescription,
-        router,
-        setPrescriptionHeader,
-    ]);
+    }, [params.appointmentId, setPrescriptionHeader]);
 
     // handle print prescriptions
     const handlePrint = () => {
@@ -107,7 +103,7 @@ function Page({ params }: { params: { appointmentId: string } }) {
         if (isPrint && printableDiv.current) {
             printFn(() => printableDiv.current);
         }
-    }, [isPrint, printableDiv, printFn]);
+    }, [isPrint, printableDiv]);
 
     // handle save prescriptions to database
     const handleSave = async () => {

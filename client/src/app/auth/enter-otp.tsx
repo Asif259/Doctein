@@ -85,14 +85,16 @@ export default function EnterOTP({
     });
 
     return (
-        <div className="space-y-4">
-            <p className="text-default">Enter the OTP sent to your email</p>
+        <div className="space-y-4 pb-5">
+            <p className="text-sm">Enter the OTP sent to your email</p>
 
             <form className="space-y-4" onSubmit={formik.handleSubmit}>
                 <Input
                     label="Enter your OTP"
                     type="text"
                     name="otp"
+                    variant="bordered"
+                    color="default"
                     value={formik.values.otp}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}

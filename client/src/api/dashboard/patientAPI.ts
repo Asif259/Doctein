@@ -17,7 +17,8 @@ export const getPatients = async (query?: string) => {
     try {
         let url = `/patients`;
         if (query) {
-            url = `/patients?search=${query}`;
+            if (query === "prescription") url = "/patients?prescription=true";
+            else url = `/patients?search=${query}`;
         }
         const response = await axios.get(url);
         return response.data;

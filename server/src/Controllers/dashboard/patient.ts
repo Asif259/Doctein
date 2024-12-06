@@ -4,17 +4,16 @@ import Patient, { IPatient } from "../../Models/profile/patient";
 import Appointment from "../../Models/dashboard/appointment";
 
 const savePatient = async (req: Request, res: Response): Promise<any> => {
-  const { name, age, weight, phone, address, user, instant, doctorId } =
-    req.body as {
-      name: string;
-      age: string;
-      weight: string;
-      phone: string;
-      address: string;
-      instant: boolean;
-      user: IUser;
-      doctorId: string;
-    };
+  const { name, age, weight, phone, address, instant, doctorId } = req.body as {
+    name: string;
+    age: string;
+    weight: string;
+    phone: string;
+    address: string;
+    instant: boolean;
+    user: IUser;
+    doctorId: string;
+  };
 
   try {
     console.log("Doctor ID:", doctorId);
@@ -62,11 +61,12 @@ const savePatient = async (req: Request, res: Response): Promise<any> => {
 };
 
 const getPatients = async (req: Request, res: Response): Promise<any> => {
-  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
-  const { search } = req.query as {
+  const { doctorId } = req.body as { user: IUser; doctorId: string };
+  const { search, prescription } = req.query as {
     limit?: string;
     page?: string;
     search?: string;
+    prescription?: string;
   };
   try {
     console.log("Doctor ID:", doctorId);
@@ -91,6 +91,20 @@ const getPatients = async (req: Request, res: Response): Promise<any> => {
         );
       });
     }
+
+    if (prescription) {
+      // filter patients with distinct phone numbers
+      const uniquePatients = new Map();
+      const uniqueAppointments = [];
+      for (const appointment of appointments) {
+        const patient = appointment.patientId as any;
+        if (!uniquePatients.has(patient.phone)) {
+          uniquePatients.set(patient.phone, true);
+          uniqueAppointments.push(appointment);
+        }
+      }
+      appointments = uniqueAppointments;
+    }
     const response = appointments.map((appointment) => {
       const patientId = appointment.patientId as unknown as IPatient;
       return {
@@ -113,7 +127,7 @@ const getPatients = async (req: Request, res: Response): Promise<any> => {
 };
 
 const getPatient = async (req: Request, res: Response): Promise<any> => {
-  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { doctorId } = req.body as { user: IUser; doctorId: string };
   const { patientId } = req.params as any;
   try {
     console.log("Doctor ID:", doctorId);
@@ -150,7 +164,7 @@ const getPatient = async (req: Request, res: Response): Promise<any> => {
 };
 
 const updatePatient = async (req: Request, res: Response): Promise<any> => {
-  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { doctorId } = req.body as { user: IUser; doctorId: string };
   const { patientId } = req.params;
   const { name, age, weight, phone, address } = req.body as {
     name: string;
@@ -206,7 +220,7 @@ const updatePatient = async (req: Request, res: Response): Promise<any> => {
 };
 
 const deletePatient = async (req: Request, res: Response): Promise<any> => {
-  const { user, doctorId } = req.body as { user: IUser; doctorId: string };
+  const { doctorId } = req.body as { user: IUser; doctorId: string };
   const { patientId } = req.params;
   try {
     if (!doctorId) return res.status(403).json({ data: "Unauthorized" });

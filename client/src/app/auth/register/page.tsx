@@ -102,143 +102,147 @@ export default function Register() {
     return (
         <div className="min-h-screen flex justify-center lg:justify-between items-center">
             <div className="lg:flex-1 flex flex-col items-center">
-                <h2 className="text-2xl font-semibold text-white">
-                    Register as {role}
-                </h2>
-                <p className="mb-6 text-default-300">
-                    Enter your credentials to register as a {role}
-                </p>
+                <div>
+                    <h2 className="text-2xl font-semibold text-white">
+                        Register as {role}
+                    </h2>
+                    <p className="mb-6 text-default-300">
+                        Enter your credentials to register as a {role}
+                    </p>
 
-                <form
-                    className="space-y-4 max-w-sm"
-                    onSubmit={formik.handleSubmit}
-                >
-                    <div>
-                        <GInput
-                            label="Email address"
-                            placeholder="Enter your email"
-                            type="email"
-                            {...formik.getFieldProps("email")}
-                            isInvalid={
-                                formik.touched.email &&
-                                Boolean(formik.errors.email)
-                            }
-                            errorMessage={
-                                formik.touched.email && formik.errors.email
-                                    ? formik.errors.email
-                                    : undefined
-                            }
-                            classNames={{
-                                label: "text-default-300",
-                                input: ["placeholder:text-default-400"],
-                                inputWrapper: [
-                                    "bg-default-500",
-                                    "hover:bg-default-200",
-                                ],
-                            }}
-                        />
-                    </div>
-
-                    <div className="relative">
-                        <GInput
-                            label="Password"
-                            placeholder="Enter your password"
-                            {...formik.getFieldProps("password")}
-                            isInvalid={
-                                formik.touched.password &&
-                                Boolean(formik.errors.password)
-                            }
-                            errorMessage={
-                                formik.touched.password &&
-                                formik.errors.password
-                                    ? formik.errors.password
-                                    : undefined
-                            }
-                            classNames={{
-                                label: "text-default-300",
-                                input: ["placeholder:text-default-400"],
-                                inputWrapper: [
-                                    "bg-default-500",
-                                    "hover:bg-default-200",
-                                ],
-                            }}
-                            endContent={
-                                <Button
-                                    className="focus:outline-none bg-default-500 hover:bg-default-200"
-                                    type="button"
-                                    onClick={toggleVisibility}
-                                    aria-label="toggle password visibility"
-                                >
-                                    {isVisible ? (
-                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    ) : (
-                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    )}
-                                </Button>
-                            }
-                            type={isVisible ? "text" : "password"}
-                        />
-                    </div>
-
-                    <div className="relative">
-                        <Input
-                            label="Confirm Password"
-                            placeholder="Re-enter your password"
-                            {...formik.getFieldProps("confirmPassword")}
-                            isInvalid={
-                                formik.touched.confirmPassword &&
-                                Boolean(formik.errors.confirmPassword)
-                            }
-                            errorMessage={
-                                formik.touched.confirmPassword &&
-                                formik.errors.confirmPassword
-                                    ? formik.errors.confirmPassword
-                                    : undefined
-                            }
-                            classNames={{
-                                label: "text-default-300",
-                                input: ["placeholder:text-default-400"],
-                                inputWrapper: [
-                                    "bg-default-500",
-                                    "hover:bg-default-200",
-                                ],
-                            }}
-                            endContent={
-                                <Button
-                                    className="focus:outline-none bg-default-500 hover:bg-default-200"
-                                    type="button"
-                                    onClick={toggleConfirmVisibility}
-                                    aria-label="toggle password visibility"
-                                >
-                                    {isVisible ? (
-                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    ) : (
-                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    )}
-                                </Button>
-                            }
-                            type={isVisible ? "text" : "password"}
-                        />
-                    </div>
-
-                    <Button
-                        type="submit"
-                        className="w-full py-2 px-4 rounded-lg bg-primary"
-                        disabled={formik.isSubmitting}
+                    <form
+                        className="space-y-4 max-w-sm"
+                        onSubmit={formik.handleSubmit}
                     >
-                        {formik.isSubmitting ? "Registering..." : "Register"}
-                    </Button>
-                </form>
+                        <div>
+                            <GInput
+                                label="Email address"
+                                placeholder="Enter your email"
+                                type="email"
+                                {...formik.getFieldProps("email")}
+                                isInvalid={
+                                    formik.touched.email &&
+                                    Boolean(formik.errors.email)
+                                }
+                                errorMessage={
+                                    formik.touched.email && formik.errors.email
+                                        ? formik.errors.email
+                                        : undefined
+                                }
+                                classNames={{
+                                    label: "text-default-300",
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
+                                }}
+                            />
+                        </div>
 
-                <p className="mt-6 text-default-300">
-                    Already have an account?
-                    <Link
-                        href={`/auth/login`}
-                        className="text-primary hover:underline ml-1"
-                    >
-                        Login
-                    </Link>
-                </p>
+                        <div className="relative">
+                            <GInput
+                                label="Password"
+                                placeholder="Enter your password"
+                                {...formik.getFieldProps("password")}
+                                isInvalid={
+                                    formik.touched.password &&
+                                    Boolean(formik.errors.password)
+                                }
+                                errorMessage={
+                                    formik.touched.password &&
+                                    formik.errors.password
+                                        ? formik.errors.password
+                                        : undefined
+                                }
+                                classNames={{
+                                    label: "text-default-300",
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
+                                }}
+                                endContent={
+                                    <Button
+                                        className="focus:outline-none bg-default-500 hover:bg-default-200"
+                                        type="button"
+                                        onClick={toggleVisibility}
+                                        aria-label="toggle password visibility"
+                                    >
+                                        {isVisible ? (
+                                            <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        ) : (
+                                            <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        )}
+                                    </Button>
+                                }
+                                type={isVisible ? "text" : "password"}
+                            />
+                        </div>
+
+                        <div className="relative">
+                            <Input
+                                label="Confirm Password"
+                                placeholder="Re-enter your password"
+                                {...formik.getFieldProps("confirmPassword")}
+                                isInvalid={
+                                    formik.touched.confirmPassword &&
+                                    Boolean(formik.errors.confirmPassword)
+                                }
+                                errorMessage={
+                                    formik.touched.confirmPassword &&
+                                    formik.errors.confirmPassword
+                                        ? formik.errors.confirmPassword
+                                        : undefined
+                                }
+                                classNames={{
+                                    label: "text-default-300",
+                                    input: ["placeholder:text-default-400"],
+                                    inputWrapper: [
+                                        "bg-default-500",
+                                        "hover:bg-default-200",
+                                    ],
+                                }}
+                                endContent={
+                                    <Button
+                                        className="focus:outline-none bg-default-500 hover:bg-default-200"
+                                        type="button"
+                                        onClick={toggleConfirmVisibility}
+                                        aria-label="toggle password visibility"
+                                    >
+                                        {isVisible ? (
+                                            <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        ) : (
+                                            <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                                        )}
+                                    </Button>
+                                }
+                                type={isVisible ? "text" : "password"}
+                            />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            className="w-full py-2 px-4 rounded-lg bg-primary"
+                            disabled={formik.isSubmitting}
+                        >
+                            {formik.isSubmitting
+                                ? "Registering..."
+                                : "Register"}
+                        </Button>
+                    </form>
+
+                    <p className="mt-6 text-default-300">
+                        Already have an account?
+                        <Link
+                            href={`/auth/login`}
+                            className="text-primary hover:underline ml-1"
+                        >
+                            Login
+                        </Link>
+                    </p>
+                </div>
             </div>
 
             <div className="hidden lg:flex justify-center flex-1 object-fill bg-white">

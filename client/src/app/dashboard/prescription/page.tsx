@@ -115,7 +115,7 @@ export default function Page() {
     useEffect(() => {
         (async () => {
             // Fetch patients
-            const res = await getPatients();
+            const res = await getPatients("prescription");
             if (res?.success) {
                 if (res.data) {
                     addPatients(res.data);
@@ -304,17 +304,6 @@ export default function Page() {
                 <div className="flex-1">
                     {selectedPatient ? (
                         <Table
-                            selectionMode="single"
-                            onSelectionChange={(key) => {
-                                const set = new Set(key);
-                                setSelectedAppointment({
-                                    key: set.values().next().value as string,
-                                    date: "",
-                                    phone: "",
-                                    time: "",
-                                    status: "",
-                                });
-                            }}
                             classNames={{
                                 base: "h-full",
                                 wrapper: "lg:rounded-l-none h-full",

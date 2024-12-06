@@ -24,12 +24,13 @@ const PrescriptionTemplate = forwardRef<
 >(
     (
         {
-            isPrint = false,
+            isPrint,
             isEditable = false,
             appointmentId,
         }: { isPrint?: boolean; isEditable: boolean; appointmentId: string },
         ref,
     ) => {
+        console.log("PrescriptionTemplate", appointmentId);
         const {
             setModal,
             modalOpen,
@@ -49,7 +50,8 @@ const PrescriptionTemplate = forwardRef<
         );
 
         useEffect(() => {
-            if (!appointmentId) return;
+            console.log(isPrint, appointmentId);
+            if (!appointmentId || isPrint !== undefined) return;
             (async () => {
                 const res = await getPrescriptionById(appointmentId);
                 if (res?.success) {
