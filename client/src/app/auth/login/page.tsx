@@ -144,126 +144,86 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex justify-center lg:justify-between items-center bg-default">
-            <div className="flex flex-col items-center  lg:flex-1">
-                <div>
-                    <h2 className="text-2xl font-semibold text-white">Login</h2>
-                    <p className="text-default-300">
-                        Enter your credentials to login
-                    </p>
-                    <form
-                        className="mt-4 space-y-4 max-w-lg w-full"
-                        onSubmit={formik.handleSubmit}
-                    >
-                        <div className="mb-4">
-                            <GInput
-                                placeholder="Enter your email"
-                                type="email"
-                                label="Email"
-                                {...formik.getFieldProps("email")}
-                                isInvalid={
-                                    formik.touched.email &&
-                                    Boolean(formik.errors.email)
-                                }
-                                errorMessage={
-                                    formik.touched.email && formik.errors.email
-                                        ? formik.errors.email
-                                        : undefined
-                                }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-300",
-                                    ],
-                                }}
-                            />
-                        </div>
-                        <div className="relative">
-                            <GInput
-                                placeholder="Enter your password"
-                                label="Password"
-                                {...formik.getFieldProps("password")}
-                                isInvalid={
-                                    formik.touched.password &&
-                                    Boolean(formik.errors.password)
-                                }
-                                errorMessage={
-                                    formik.touched.password &&
-                                    formik.errors.password
-                                        ? formik.errors.password
-                                        : undefined
-                                }
-                                classNames={{
-                                    label: "text-default-300",
-                                    input: ["placeholder:text-default-400"],
-                                    inputWrapper: [
-                                        "bg-default-500",
-                                        "hover:bg-default-200",
-                                    ],
-                                }}
-                                endContent={
-                                    <Button
-                                        className="focus:outline-none bg-default-500 hover:bg-default-200"
-                                        type="button"
-                                        onClick={toggleVisibility}
-                                        aria-label="toggle password visibility"
-                                    >
-                                        {isVisible ? (
-                                            <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
-                                        ) : (
-                                            <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
-                                        )}
-                                    </Button>
-                                }
-                                type={isVisible ? "text" : "password"}
-                            />
-                        </div>
-
-                        <div className="mb-4 mt-2 text-neutral">
-                            <Link
-                                className="text-neutral text-sm hover:underline hover:text-primary cursor-pointer"
-                                onClick={handleForgetPassword}
-                            >
-                                Forgot your password?
-                            </Link>
-                        </div>
-
-                        <Button
-                            type="submit"
-                            radius="sm"
-                            className="w-full bg-primary py-2 px-4"
-                            disabled={formik.isSubmitting}
-                        >
-                            {formik.isSubmitting ? "Logging in..." : "Login"}
-                        </Button>
-                    </form>
-
-                    <p className="mt-4 text-neutral">
-                        Don&#39;t have an account?
-                        <a
-                            href={`/auth`}
-                            className="text-primary hover:underline ml-1"
-                        >
-                            Register
-                        </a>
-                    </p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18181b] to-[#23272f]">
+            <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl bg-[#23272f] border border-[#2a2d34] flex flex-col items-center">
+                <img src="/google.png" alt="google Logo" className="w-16 h-16 mb-4" />
+                <h2 className="text-3xl font-bold text-white mb-2">Sign in to Dochub</h2>
+                <p className="text-default-400 mb-6 text-center">Enter your credentials to access your account</p>
+                <button type="button" className="w-full flex items-center justify-center gap-2 py-2 mb-4 rounded-lg bg-white hover:bg-gray-200 text-[#611f69] font-semibold transition">
+                    <img src="/google.png" alt="google" className="w-6 h-6" />
+                    <span>Continue with Google</span>
+                </button>
+                <div className="w-full flex items-center gap-2 mb-4">
+                    <div className="flex-1 h-px bg-[#35373e]" />
+                    <span className="text-default-400 text-xs">or</span>
+                    <div className="flex-1 h-px bg-[#35373e]" />
                 </div>
+                <form className="space-y-4 w-full" onSubmit={formik.handleSubmit}>
+                    <GInput
+                        placeholder="Enter your email"
+                        type="email"
+                        label="Email"
+                        {...formik.getFieldProps("email")}
+                        isInvalid={formik.touched.email && Boolean(formik.errors.email)}
+                        errorMessage={formik.touched.email && formik.errors.email ? formik.errors.email : undefined}
+                        classNames={{
+                            label: "text-default-300",
+                            input: ["placeholder:text-default-400"],
+                            inputWrapper: ["bg-[#18181b] border border-[#35373e] focus-within:border-primary"],
+                        }}
+                    />
+                    <div className="relative">
+                        <GInput
+                            placeholder="Enter your password"
+                            label="Password"
+                            {...formik.getFieldProps("password")}
+                            isInvalid={formik.touched.password && Boolean(formik.errors.password)}
+                            errorMessage={formik.touched.password && formik.errors.password ? formik.errors.password : undefined}
+                            classNames={{
+                                label: "text-default-300",
+                                input: ["placeholder:text-default-400"],
+                                inputWrapper: ["bg-[#18181b] border border-[#35373e] focus-within:border-primary"],
+                            }}
+                            endContent={
+                                <Button
+                                    className="focus:outline-none bg-transparent hover:bg-[#23272f]"
+                                    type="button"
+                                    onClick={toggleVisibility}
+                                    aria-label="toggle password visibility"
+                                >
+                                    {isVisible ? (
+                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
+                                    ) : (
+                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
+                                    )}
+                                </Button>
+                            }
+                            type={isVisible ? "text" : "password"}
+                        />
+                    </div>
+                    <div className="flex justify-end">
+                        <button
+                            type="button"
+                            className="text-sm text-primary hover:underline focus:outline-none"
+                            onClick={handleForgetPassword}
+                        >
+                            Forgot your password?
+                        </button>
+                    </div>
+                    <Button
+                        type="submit"
+                        radius="sm"
+                        className="w-full bg-primary py-2 px-4 font-semibold text-white rounded-lg hover:bg-primary/90 transition"
+                        disabled={formik.isSubmitting}
+                    >
+                        {formik.isSubmitting ? "Logging in..." : "Login"}
+                    </Button>
+                </form>
+                <p className="mt-6 text-default-400 text-center">
+                    Don&#39;t have an account?
+                    <a href={`/auth`} className="text-primary hover:underline ml-1">Register</a>
+                </p>
             </div>
-
-            <div className="hidden lg:flex relative flex-1 w-full bg-white h-screen">
-                <Image
-                    classNames={{
-                        wrapper: "w-full max-w-xl p-0",
-                        img: "w-full p-0",
-                    }}
-                    alt="NextUI hero Image"
-                    src="https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg"
-                    height={720}
-                />
-            </div>
-
             <CustomModal
                 isOpen={modalVisible}
                 onClose={() => setModalVisible(false)}

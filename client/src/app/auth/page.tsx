@@ -1,46 +1,82 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { Button } from "@nextui-org/react";
 
-export default function Login() {
+export default function RoleSelection() {
     const router = useRouter();
+    const [selectedRole, setSelectedRole] = useState<"doctor" | "patient" | null>(null);
 
-    const handleRoleSelection = (selectedRole: "doctor" | "patient") => {
-        router.push(`/auth/register?role=${selectedRole}`);
+    const handleSelect = (role: "doctor" | "patient") => {
+        setSelectedRole(role);
+    };
+
+    const handleContinue = () => {
+        if (selectedRole) {
+            router.push(`/auth/register?role=${selectedRole}`);
+        }
     };
 
     return (
-        <div className="h-[100dvh] flex justify-center items-center">
-            <div className="h-[90dvh] flex flex-col md:flex-row w-10/12 bg-white rounded-xl shadow-lg overflow-hidden">
-                {/* Left Section - Doctor */}
-                <div
-                    className="flex-1 bg-primary flex flex-col items-center justify-center cursor-pointer hover:bg-opacity-75"
-                    onClick={() => handleRoleSelection("doctor")}
-                >
-                    <h2 className="text-white text-xl md:text-3xl font-bold">
-                        Register as Doctor
-                    </h2>
-                    <p className="text-white text-sm md:text-base mt-4">
-                        Click here to log in as a Doctor
-                    </p>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18181b] to-[#23272f]">
+            <div className="flex flex-col items-center">
+                <h1 className="text-3xl font-semibold mb-10 text-black">
+                    Join as a client or freelancer
+                </h1>
+
+                <div className="flex gap-8 mb-6">
+                    <div
+                        onClick={() => handleSelect("doctor")}
+                        className={`w-72 p-6 border rounded-xl cursor-pointer transition ${
+                            selectedRole === "doctor"
+                                ? "border-primary bg-primary/10"
+                                : "border-gray-300 hover:border-primary"
+                        }`}
+                    >
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl">👨‍⚕️</span>
+                            <div className="text-left">
+                                <h2 className="text-lg font-medium text-black">
+                                    I'm a client, hiring for a project
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        onClick={() => handleSelect("patient")}
+                        className={`w-72 p-6 border rounded-xl cursor-pointer transition ${
+                            selectedRole === "patient"
+                                ? "border-green-600 bg-green-600/10"
+                                : "border-gray-300 hover:border-green-600"
+                        }`}
+                    >
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl">💼</span>
+                            <div className="text-left">
+                                <h2 className="text-lg font-medium text-black">
+                                    I'm a freelancer, looking for work
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Right Section Patient*/}
-                <div
-                    className="flex-1 bg-green-500 flex flex-col items-center justify-center cursor-pointer hover:bg-green-600"
-                    // onClick={() => handleRoleSelection("patient")}
-                    onClick={() =>
-                        toast.success("Patient Features are coming soon!")
-                    }
+                <Button
+                    className="w-64 text-white bg-black rounded-md"
+                    isDisabled={!selectedRole}
+                    onClick={handleContinue}
                 >
-                    <h2 className="text-white text-xl md:text-3xl font-bold">
-                        Register as Patient
-                    </h2>
-                    <p className="text-white text-sm md:text-base mt-4">
-                        Click here to log in as a Patient
-                    </p>
-                </div>
+                    Create Account
+                </Button>
+
+                <p className="text-sm text-gray-600 mt-4">
+                    Already have an account?{" "}
+                    <a href="/auth/login" className="text-primary hover:underline">
+                        Log In
+                    </a>
+                </p>
             </div>
         </div>
     );
