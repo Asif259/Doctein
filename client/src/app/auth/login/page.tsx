@@ -11,6 +11,7 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 import React, { useEffect, useState } from "react";
 import { Image, Button, Spinner, Link } from "@nextui-org/react";
+import NextLink from "next/link";
 import toast from "react-hot-toast";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import ForgetPassword from "../forget-password";
@@ -35,11 +36,16 @@ export default function Login() {
 
     useEffect(() => {
         (async () => {
-            const authData = await authenticateUser();
-            if (authData?.success) {
-                login();
+            try {
+                const authData = await authenticateUser();
+                if (authData?.success) {
+                    login();
+                }
+            } catch (error) {
+                console.error("Authentication check failed:", error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         })();
     }, [login]);
 
@@ -66,6 +72,18 @@ export default function Login() {
 
                 if (loginResponse?.status === "success") {
                     const userProfile = await getUserProfile();
+
+                    if (!userProfile || !userProfile.data) {
+                        toast.error(
+                            "Failed to get user profile. Please try again.",
+                        );
+                        setStatus({
+                            success: false,
+                            message: "Failed to get user profile.",
+                        });
+                        return;
+                    }
+
                     const {
                         email,
                         role: userRole,
@@ -144,85 +162,148 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#18181b] to-[#23272f]">
-            <div className="w-full max-w-md p-8 rounded-2xl shadow-2xl bg-[#23272f] border border-[#2a2d34] flex flex-col items-center">
-                <img src="/google.png" alt="google Logo" className="w-16 h-16 mb-4" />
-                <h2 className="text-3xl font-bold text-white mb-2">Sign in to Dochub</h2>
-                <p className="text-default-400 mb-6 text-center">Enter your credentials to access your account</p>
-                <button type="button" className="w-full flex items-center justify-center gap-2 py-2 mb-4 rounded-lg bg-white hover:bg-gray-200 text-[#611f69] font-semibold transition">
-                    <img src="/google.png" alt="google" className="w-6 h-6" />
-                    <span>Continue with Google</span>
-                </button>
-                <div className="w-full flex items-center gap-2 mb-4">
-                    <div className="flex-1 h-px bg-[#35373e]" />
-                    <span className="text-default-400 text-xs">or</span>
-                    <div className="flex-1 h-px bg-[#35373e]" />
-                </div>
-                <form className="space-y-4 w-full" onSubmit={formik.handleSubmit}>
-                    <GInput
-                        placeholder="Enter your email"
-                        type="email"
-                        label="Email"
-                        {...formik.getFieldProps("email")}
-                        isInvalid={formik.touched.email && Boolean(formik.errors.email)}
-                        errorMessage={formik.touched.email && formik.errors.email ? formik.errors.email : undefined}
-                        classNames={{
-                            label: "text-default-300",
-                            input: ["placeholder:text-default-400"],
-                            inputWrapper: ["bg-[#18181b] border border-[#35373e] focus-within:border-primary"],
-                        }}
-                    />
-                    <div className="relative">
-                        <GInput
-                            placeholder="Enter your password"
-                            label="Password"
-                            {...formik.getFieldProps("password")}
-                            isInvalid={formik.touched.password && Boolean(formik.errors.password)}
-                            errorMessage={formik.touched.password && formik.errors.password ? formik.errors.password : undefined}
-                            classNames={{
-                                label: "text-default-300",
-                                input: ["placeholder:text-default-400"],
-                                inputWrapper: ["bg-[#18181b] border border-[#35373e] focus-within:border-primary"],
-                            }}
-                            endContent={
-                                <Button
-                                    className="focus:outline-none bg-transparent hover:bg-[#23272f]"
-                                    type="button"
-                                    onClick={toggleVisibility}
-                                    aria-label="toggle password visibility"
-                                >
-                                    {isVisible ? (
-                                        <IoEyeOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    ) : (
-                                        <IoEyeOffOutline className="text-2xl text-default-400 pointer-events-none" />
-                                    )}
-                                </Button>
-                            }
-                            type={isVisible ? "text" : "password"}
-                        />
+        <div className="min-h-screen flex items-center justify-center bg-primary/5 relative overflow-hidden py-12 px-4">
+            {/* Background decoration */}
+            <div className="absolute inset-0">
+                <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+                <div className="absolute top-40 right-10 w-72 h-72 bg-primary/30 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+            </div>
+
+            <div className="relative z-10 w-full max-w-md">
+                <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-8 md:p-10">
+                    {/* Logo and Header */}
+                    <div className="flex flex-col items-center mb-8">
+                        <div className="flex items-center gap-2 mb-4">
+                            <div className="p-2 bg-primary rounded-lg shadow-lg">
+                                <img
+                                    src="/Logo.png"
+                                    alt="Doctein Logo"
+                                    className="w-6 h-6"
+                                />
+                            </div>
+                            <NextLink href="/" className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
+                                Doctein
+                            </NextLink>
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            Welcome Back
+                        </h2>
+                        <p className="text-gray-600 text-center">
+                            Sign in to your account to continue
+                        </p>
                     </div>
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            className="text-sm text-primary hover:underline focus:outline-none"
-                            onClick={handleForgetPassword}
-                        >
-                            Forgot your password?
-                        </button>
-                    </div>
-                    <Button
-                        type="submit"
-                        radius="sm"
-                        className="w-full bg-primary py-2 px-4 font-semibold text-white rounded-lg hover:bg-primary/90 transition"
-                        disabled={formik.isSubmitting}
+
+                    {/* Google Sign In */}
+                    <button
+                        type="button"
+                        className="w-full flex items-center justify-center gap-3 py-3 mb-6 rounded-xl bg-white border-2 border-gray-200 hover:border-primary hover:shadow-md text-gray-700 font-semibold transition-all duration-200"
                     >
-                        {formik.isSubmitting ? "Logging in..." : "Login"}
-                    </Button>
-                </form>
-                <p className="mt-6 text-default-400 text-center">
-                    Don&#39;t have an account?
-                    <a href={`/auth`} className="text-primary hover:underline ml-1">Register</a>
-                </p>
+                        <img
+                            src="/Logo.png"
+                            alt="google"
+                            className="w-5 h-5"
+                        />
+                        <span>Continue with Google</span>
+                    </button>
+
+                    <div className="w-full flex items-center gap-3 mb-6">
+                        <div className="flex-1 h-px bg-gray-200" />
+                        <span className="text-gray-500 text-sm">or</span>
+                        <div className="flex-1 h-px bg-gray-200" />
+                    </div>
+                    <form
+                        className="space-y-4 w-full"
+                        onSubmit={formik.handleSubmit}
+                    >
+                        <GInput
+                            placeholder="Enter your email"
+                            type="email"
+                            label="Email"
+                            {...formik.getFieldProps("email")}
+                            isInvalid={
+                                formik.touched.email &&
+                                Boolean(formik.errors.email)
+                            }
+                            errorMessage={
+                                formik.touched.email && formik.errors.email
+                                    ? formik.errors.email
+                                    : undefined
+                            }
+                            classNames={{
+                                label: "!text-black font-medium",
+                                input: ["placeholder:text-gray-400"],
+                                inputWrapper: [
+                                    "bg-gray-50 border border-gray-200 focus-within:border-primary focus-within:bg-white",
+                                ],
+                            }}
+                        />
+                        <div className="relative">
+                            <GInput
+                                placeholder="Enter your password"
+                                label="Password"
+                                {...formik.getFieldProps("password")}
+                                isInvalid={
+                                    formik.touched.password &&
+                                    Boolean(formik.errors.password)
+                                }
+                                errorMessage={
+                                    formik.touched.password &&
+                                    formik.errors.password
+                                        ? formik.errors.password
+                                        : undefined
+                                }
+                                classNames={{
+                                    label: "text-black font-medium",
+                                    input: ["placeholder:text-gray-400"],
+                                    inputWrapper: [
+                                        "bg-gray-50 border border-gray-200 focus-within:border-primary focus-within:bg-white",
+                                    ],
+                                }}
+                                endContent={
+                                    <Button
+                                        className="focus:outline-none bg-transparent hover:bg-gray-100"
+                                        type="button"
+                                        onClick={toggleVisibility}
+                                        aria-label="toggle password visibility"
+                                    >
+                                        {isVisible ? (
+                                            <IoEyeOutline className="text-xl text-gray-400 pointer-events-none" />
+                                        ) : (
+                                            <IoEyeOffOutline className="text-xl text-gray-400 pointer-events-none" />
+                                        )}
+                                    </Button>
+                                }
+                                type={isVisible ? "text" : "password"}
+                            />
+                        </div>
+                        <div className="flex justify-end">
+                            <button
+                                type="button"
+                                className="text-sm text-primary hover:text-primary/80 hover:underline focus:outline-none font-medium transition-colors"
+                                onClick={handleForgetPassword}
+                            >
+                                Forgot your password?
+                            </button>
+                        </div>
+                        <Button
+                            type="submit"
+                            size="lg"
+                            className="w-full bg-primary text-white font-semibold py-6 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
+                            disabled={formik.isSubmitting}
+                        >
+                            {formik.isSubmitting ? "Signing in..." : "Sign In"}
+                        </Button>
+                    </form>
+                    <p className="mt-6 text-gray-600 text-center">
+                        Don&#39;t have an account?{" "}
+                        <a
+                            href={`/auth`}
+                            className="text-primary font-semibold hover:text-primary/80 hover:underline ml-1 transition-colors"
+                        >
+                            Create Account
+                        </a>
+                    </p>
+                </div>
             </div>
             <CustomModal
                 isOpen={modalVisible}

@@ -10,15 +10,9 @@ const config: Config = {
     plugins: [
         nextui({
             prefix: "tw-",
-            defaultTheme: "dark",
+            defaultTheme: "light",
             themes: {
                 light: {
-                    layout: {},
-                    colors: {
-                        background: "#f9f9f9",
-                    },
-                },
-                dark: {
                     layout: {
                         radius: {
                             small: "0.22rem",
@@ -27,7 +21,7 @@ const config: Config = {
                         },
                     },
                     colors: {
-                        background: "#1d2129",
+                        background: "#ffffff",
                         primary: {
                             DEFAULT: "#24ae7c",
                             foreground: "#fff",
@@ -39,21 +33,21 @@ const config: Config = {
                             100: "#79b5ec",
                         },
                         default: {
-                            DEFAULT: "#1d2129",
-                            foreground: "#fff",
-                            100: "#292f3a",
-                            200: "#3f3f46",
-                            300: "#abb7c4",
-                            400: "#5f6872",
-                            500: "#1a1d21",
+                            DEFAULT: "#ffffff",
+                            foreground: "#000000",
+                            100: "#f9fafb",
+                            200: "#f3f4f6",
+                            300: "#e5e7eb",
+                            400: "#d1d5db",
+                            500: "#9ca3af",
                         },
                         warning: {
                             DEFAULT: "#e2a84b",
                             foreground: "#1d2129",
-                            100: "#383e47",
+                            100: "#fef3c7",
                         },
                         danger: {
-                            100: "#3e1716",
+                            100: "#fee2e2",
                             500: "#f37877",
                         },
                     },

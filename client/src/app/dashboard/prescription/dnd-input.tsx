@@ -47,7 +47,7 @@ const DragAndDropFileUpload = ({
         }
     };
 
-    // Handle file upload (Mocked in this case)
+    // Handle file upload
     const handleUpload = async () => {
         console.log("DND", appointment?.key);
         if (selectedFile && appointment?.key) {
@@ -60,6 +60,13 @@ const DragAndDropFileUpload = ({
                 toast.success("Prescription uploaded successfully");
                 setAppointment({ ...appointment, snapshot: res.data });
                 onClose();
+            } else {
+                // Show error message from server
+                const errorMessage =
+                    res?.message ||
+                    res?.data ||
+                    "Failed to upload prescription";
+                toast.error(errorMessage);
             }
         }
     };
@@ -97,7 +104,10 @@ const DragAndDropFileUpload = ({
                                 <Image
                                     src={
                                         process.env.NEXT_PUBLIC_API_STATIC_URL +
-                                        appointment?.snapshot
+                                        appointment?.snapshot.replace(
+                                            /\\/g,
+                                            "/",
+                                        )
                                     }
                                     alt="Prescription"
                                     className="w-auto h-auto"
@@ -117,7 +127,7 @@ const DragAndDropFileUpload = ({
             <Button
                 onClick={handleUpload}
                 disabled={!selectedFile}
-                className="mt-4"
+                className="mt-4 bg-primary text-white hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/20"
             >
                 Upload
             </Button>

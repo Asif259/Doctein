@@ -9,15 +9,16 @@ const validateEmail = (email: string): boolean => {
 };
 
 const validatePassword = (password: string): boolean => {
-  console.log(password);
-  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/; // At least 6 characters, letters and numbers
+  // At least 6 characters, must contain at least one letter and one number
+  // Allows special characters
+  const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
   return passwordRegex.test(password);
 };
 
 // Register User
 export const registerUser = async (
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<any> => {
   const { email, password, confirmPassword, role } = req.body;
 
@@ -30,7 +31,7 @@ export const registerUser = async (
   if (!validatePassword(password)) {
     return res.status(400).json({
       success: false,
-      data: "Password must be at least 6 characters long and contain letters and numbers",
+      data: "Password must be at least 6 characters long and contain at least one letter and one number",
     });
   }
 
@@ -102,7 +103,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
   if (!validatePassword(password)) {
     return res.status(400).json({
       success: false,
-      data: "Password must be at least 6 characters long and contain letters and numbers",
+      data: "Password must be at least 6 characters long and contain at least one letter and one number",
     });
   }
 
@@ -135,7 +136,7 @@ export const loginUser = async (req: Request, res: Response): Promise<any> => {
 
 export const activateUser = async (
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<any> => {
   const user = req.headers.user as unknown as IUser;
   if (!user) {
@@ -147,7 +148,7 @@ export const activateUser = async (
     const updatedUser = await User.findOneAndUpdate(
       { _id: user._id, email: user.email },
       { active: true },
-      { new: true },
+      { new: true }
     );
 
     if (!updatedUser) {
@@ -186,6 +187,26 @@ export const isLoggedIn = (req: Request, res: Response): any => {
     active: user.active,
   };
   return res.json({ success: true, data: response });
+};
+
+// Refresh Token - Allows refreshing token if user has a valid refresh token or re-authenticate
+export const refreshToken = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const user = req.headers.user as unknown as IUser;
+  if (!user) {
+    return res
+      .status(401)
+      .json({ success: false, message: "User not authenticated" });
+  }
+
+  // Generate new token and set it as cookie
+  setAuthCookies(req, res);
+  return res.json({
+    success: true,
+    message: "Token refreshed successfully",
+  });
 };
 
 // Logout User

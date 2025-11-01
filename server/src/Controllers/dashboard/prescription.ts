@@ -240,7 +240,7 @@ const uploadPrescription = async (
       // Create a new prescription if it doesn't exist
       prescription = new Prescription({
         appointmentId,
-        snapshot: `\\prescriptions\\${req.file.filename}`,
+        snapshot: `/prescriptions/${req.file.filename}`,
       });
       await prescription.save();
     } else {
@@ -248,14 +248,16 @@ const uploadPrescription = async (
       const prevSnapshot = prescription.snapshot;
       if (prevSnapshot) {
         // Delete the previous snapshot
-        const path = `uploads${prevSnapshot}`;
+        // Handle both forward and backslash paths for backward compatibility
+        const normalizedPath = prevSnapshot.replace(/\\/g, "/");
+        const path = `uploads${normalizedPath}`;
         fs.unlink(path, (err) => {
           if (err) {
             console.error("Error deleting file:", err);
           }
         });
       }
-      prescription.snapshot = `\\prescriptions\\${req.file.filename}`;
+      prescription.snapshot = `/prescriptions/${req.file.filename}`;
       await prescription.save();
     }
 

@@ -73,10 +73,10 @@ export default function Page() {
         {analytics.map((item, index) => (
           <Card
             key={index}
-            className="bg-purple-400 border-purple-600"
+            className="bg-primary border-primary"
             classNames={{
-              header: "text-purple-900",
-              body: "text-purple-900",
+              header: "text-white",
+              body: "text-white",
             }}
           >
             <CardHeader className="flex justify-between items-center">

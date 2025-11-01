@@ -2,15 +2,28 @@ import { Request, Response } from "express";
 import nodemailer from "nodemailer";
 import bcrypt from "bcryptjs";
 import User from "../../Models/userModel";
+import dotenv from "dotenv";
+dotenv.config();
 
-// Configure Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "ashrafulasif260@gmail.com",
-    pass: "ucii ijkj xvsg ivzn",
-  },
-});
+// Configure Nodemailer transporter using environment variables
+const getTransporter = () => {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPassword = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPassword) {
+    throw new Error(
+      "Email configuration missing: EMAIL_USER and EMAIL_PASSWORD must be set in environment variables"
+    );
+  }
+
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: emailUser,
+      pass: emailPassword,
+    },
+  });
+};
 
 // Helper function to generate OTP (6-digit)
 const generateOtp = () => {
@@ -63,7 +76,9 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
       const remainingTime = otpSendInterval - timeSinceLastOtp; // Remaining time in milliseconds
       return res.status(403).json({
         success: false,
-        data: `Please wait ${Math.ceil(remainingTime / 1000)} seconds before requesting a new OTP.`,
+        data: `Please wait ${Math.ceil(
+          remainingTime / 1000
+        )} seconds before requesting a new OTP.`,
         remainingTime,
       });
     }
@@ -74,8 +89,19 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
     user.reset.lastReset = new Date();
     await user.save();
 
+    // Get email configuration
+    const emailUser = process.env.EMAIL_USER;
+    if (!emailUser) {
+      console.error("EMAIL_USER environment variable is not set");
+      return res.status(500).json({
+        success: false,
+        data: "Email configuration error. Please contact support.",
+      });
+    }
+
+    const transporter = getTransporter();
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: emailUser, // Use the same email as authenticated user
       to: email,
       subject: "DocHub verification OTP",
       html: `
@@ -98,9 +124,28 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
     return res
       .status(200)
       .json({ success: true, data: "OTP sent successfully" });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error sending OTP:", error);
-    return res.status(500).json({ success: false, data: "Error sending OTP" });
+
+    // Provide more specific error messages
+    if (error.code === "EAUTH") {
+      return res.status(500).json({
+        success: false,
+        data: "Email authentication failed. Please check email credentials.",
+      });
+    }
+
+    if (error.message?.includes("Email configuration missing")) {
+      return res.status(500).json({
+        success: false,
+        data: "Email service is not properly configured. Please contact support.",
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      data: "Error sending OTP. Please try again later.",
+    });
   }
 };
 

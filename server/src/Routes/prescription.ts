@@ -3,6 +3,7 @@ import express from "express";
 import * as prescriptionController from "../Controllers/dashboard/prescription";
 import * as medicationController from "../Controllers/dashboard/medicine";
 import upload from "../Middlewares/multerConfig";
+import { multerErrorHandler } from "../Middlewares/multerErrorHandler";
 
 const router = express.Router();
 
@@ -23,6 +24,7 @@ router.delete(
 router.post(
   "/prescription/upload/:appointmentId",
   upload.single("file"),
+  multerErrorHandler,
   prescriptionController.uploadPrescription,
 );
 

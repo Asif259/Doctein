@@ -272,6 +272,10 @@ export default function Page() {
                                             ? updateAppointment
                                             : undefined
                                     }
+                                    onClose={() => {
+                                        setOpen(false);
+                                        setUpdateAppointment(null);
+                                    }}
                                 />
                             </ModalBody>
                         </>

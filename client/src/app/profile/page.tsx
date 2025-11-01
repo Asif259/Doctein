@@ -3,24 +3,46 @@ import { useEffect, useState } from "react";
 import ProfileComponent from "@/components/dashboard/profile/profile-component";
 import { getUserProfile } from "@/api/api";
 import { useRouter } from "next/navigation";
-import { Spinner } from "@nextui-org/react";
+import { Button, Spinner } from "@nextui-org/react";
 import toast from "react-hot-toast";
 import { useAuthStore } from "@/store/auth-store";
 import { useProfileStore } from "@/store/profile-store";
-import { logoutUser } from "@/api/api";
-import { LogOut } from "lucide-react";
+import { doctor } from "@/types/dashboard";
 
 const ProfilePage = () => {
-    const { Doctor, addDoctor } = useProfileStore((state) => state);
+    const { Doctor, addDoctor, onProfileUpdate } = useProfileStore(
+        (state) => state,
+    );
     const [loading, setLoading] = useState(true);
     const router = useRouter();
     const setIsProfile = useAuthStore((state) => state.setIsProfile);
     const setRole = useAuthStore((state) => state.setRole);
 
-    const handleLogout = async () => {
-        const res = await logoutUser();
-        console.log(res.message);
-        router.push("/auth/login");
+    const handleProfileUpdate = async (updatedDoctor: doctor) => {
+        // Update the store
+        if (onProfileUpdate) {
+            onProfileUpdate(updatedDoctor);
+        }
+
+        // If profile was successfully saved and user doesn't have userId yet,
+        // fetch updated user profile and redirect to dashboard
+        if (updatedDoctor.key) {
+            try {
+                const response = await getUserProfile();
+                if (response.success && response.data) {
+                    if (
+                        response.data?.role === "doctor" &&
+                        response.data?.userId
+                    ) {
+                        setIsProfile(true);
+                        setRole("doctor");
+                        router.push("/dashboard");
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching updated profile:", error);
+            }
+        }
     };
 
     useEffect(() => {
@@ -70,17 +92,12 @@ const ProfilePage = () => {
     }
 
     return (
-        <div className="relative h-dvh bg-default flex items-center justify-center p-4">
-            <div
-                onClick={handleLogout}
-                className="absolute top-4 right-4 flex items-center cursor-pointer bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition-all duration-200"
-            >
-                <LogOut className="w-5 h-5 mr-2" />
-                <span>Logout</span>
-            </div>
-
-            <div className="shadow-lg bg-default w-full max-w-3xl">
-                <ProfileComponent doctor={Doctor} onProfileUpdate={() => {}} />
+        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+            <div className="w-full max-w-4xl xl:max-w-5xl">
+                <ProfileComponent
+                    doctor={Doctor}
+                    onProfileUpdate={handleProfileUpdate}
+                />
             </div>
         </div>
     );

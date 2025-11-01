@@ -9,13 +9,14 @@ const router = Router();
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 router.get("/authenticate", authenticateToken, authController.isLoggedIn);
+router.post("/refresh-token", authenticateToken, authController.refreshToken);
 router.get("/logout", authenticateToken, authController.logoutUser);
 router.post("/activate", authenticateToken, authController.activateUser);
 router.get("/profile", authenticateToken, userController.getUserProfile); // Get user profile
 router.get(
   "/dashboard/metrics",
   authenticateToken,
-  userController.getDashboard,
+  userController.getDashboard
 ); // Get user dashboard
 
 // Password Reset Routes
@@ -23,7 +24,7 @@ router.post("/forgot-password/send-otp", forgetPassController.sendOtp); // Send 
 router.post("/forgot-password/verify-otp", forgetPassController.verifyOtp); // Verify OTP
 router.post(
   "/forgot-password/reset-password",
-  forgetPassController.resetPassword,
+  forgetPassController.resetPassword
 ); // Reset Password
 
 export default router;

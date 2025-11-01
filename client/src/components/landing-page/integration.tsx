@@ -1,99 +1,144 @@
 import React from "react";
-import { Button, Image } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
+import {
+    ArrowRight,
+    Activity,
+    Pill,
+    TestTube,
+    CreditCard,
+    Calendar,
+    Video,
+    Sparkles,
+} from "lucide-react";
 import SectionContainer from "@/components/landing-page/section-container";
-import CardContainer from "@/components/landing-page/card-container";
 
 interface Integration {
-    image: string;
+    icon: React.ComponentType<{ className?: string }>;
     name: string;
     description: string;
+    color: string;
 }
 
 const integrations: Integration[] = [
     {
-        image: "slack.png",
-        name: "Shopify integration",
+        icon: Activity,
+        name: "EHR Systems",
         description:
-            "Scale your entire business with the best ranked commerce platform",
+            "Seamlessly integrate with major Electronic Health Record systems for comprehensive patient data management",
+        color: "text-blue-600",
     },
     {
-        image: "slack.png",
-        name: "Slack integration",
+        icon: Pill,
+        name: "Pharmacy Networks",
         description:
-            "With Metafi's integration for Slack, your team can seamlessly send messages to a Metafi database",
+            "Connect with pharmacy networks for instant prescription delivery and medication tracking",
+        color: "text-purple-600",
     },
     {
-        image: "slack.png",
-        name: "Zapier integration",
+        icon: TestTube,
+        name: "Lab Integrations",
         description:
-            "Connect Apps and Automate Workflows with Zapier — No Coding Required.",
+            "Automate lab result management and seamlessly sync test results with patient records",
+        color: "text-green-600",
     },
     {
-        image: "slack.png",
-        name: "Google integration",
+        icon: CreditCard,
+        name: "Payment Gateways",
         description:
-            "Comprehensive tools to connect applications (Google Cloud and others).",
+            "Accept payments securely with integrated payment processing for appointments and services",
+        color: "text-indigo-600",
     },
     {
-        image: "slack.png",
-        name: "Okta integration",
+        icon: Calendar,
+        name: "Calendar Systems",
         description:
-            "Scale & flexibility with the broadest & deepest set of integrations",
+            "Sync with Google Calendar, Outlook, and other calendar systems for seamless scheduling",
+        color: "text-orange-600",
     },
     {
-        image: "slack.png",
-        name: "Stripe integration",
+        icon: Video,
+        name: "Telemedicine",
         description:
-            "Work faster and smarter by integrating directly with Notion, right in the app.",
+            "Connect with leading telemedicine platforms for virtual consultations and remote care",
+        color: "text-red-600",
     },
 ];
 
 export default function IntegrationsSection() {
     return (
-        <SectionContainer className="grid-cols-3 space-y-5">
-            <div className="flex flex-col justify-center items-center gap-2">
-                <div className="font-semibold text-primary text-xl">
-                    Integrations
+        <SectionContainer className="space-y-12 md:space-y-14 lg:space-y-16 py-8 md:py-12 lg:py-16">
+            {/* Header */}
+            <div className="text-center space-y-6 max-w-4xl mx-auto">
+                <div className="inline-flex items-center gap-2.5 px-5 py-2.5 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-full border border-primary/20 backdrop-blur-sm shadow-sm">
+                    <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+                    <span className="text-sm font-bold text-primary uppercase tracking-wider">
+                        Integrations
+                    </span>
                 </div>
-                <div className="text-5xl font-medium flex flex-col gap-5 max-w-xl text-center">
-                    Make Payments Easier with 50+ Integrations
-                </div>
+                <h2 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold leading-tight tracking-tight">
+                    <span className="bg-gradient-to-r from-primary via-primary/80 to-primary bg-clip-text text-transparent">
+                        Connect with 50+
+                    </span>
+                    <br />
+                    <span className="text-gray-900">Healthcare Platforms</span>
+                </h2>
+                <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                    Streamline your practice operations with seamless
+                    integrations. Connect with EHR systems, pharmacies, labs,
+                    and more.
+                </p>
             </div>
 
-            <CardContainer className="grid grid-cols-3 gap-5">
-                {integrations.map((integration, index) => (
-                    <div
-                        key={index}
-                        className="flex flex-col gap-3 justify-center items-center rounded-2xl h-52"
-                    >
-                        <Image
-                            width={50}
-                            alt={integration.name}
-                            src={integration.image}
-                        />
-                        <p className="font-medium text-xl text-center">
-                            {integration.name}
-                        </p>
-                        <p className="px-6 text-center text-gray-600">
-                            {integration.description}
-                        </p>
-                    </div>
-                ))}
-            </CardContainer>
-
-            <div className="text-center text-gray-600 max-w-3xl mx-auto">
-                Streamline your business operations with seamless integrations.
-                Connect with Xero, WooCommerce, Zapier, Stripe, Shopify,
-                QuickBooks, and many other platforms.
+            {/* Integration Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                {integrations.map((integration, index) => {
+                    const IconComponent = integration.icon;
+                    return (
+                        <div key={index} className="relative group">
+                            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/20 to-primary/10 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                            <div className="relative bg-white border-2 border-gray-200/80 rounded-2xl p-6 lg:p-8 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-1 cursor-pointer h-full flex flex-col">
+                                <div className="flex items-start gap-4 mb-5">
+                                    <div
+                                        className={`relative flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:scale-110 transition-transform duration-300`}
+                                    >
+                                        <IconComponent
+                                            className={`w-7 h-7 ${integration.color} group-hover:scale-110 transition-transform duration-300`}
+                                        />
+                                        <div className="absolute inset-0 rounded-2xl bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors duration-300 leading-tight pt-1">
+                                        {integration.name}
+                                    </h3>
+                                </div>
+                                <p className="text-gray-600 leading-relaxed mb-6 flex-1">
+                                    {integration.description}
+                                </p>
+                                <div className="flex items-center text-primary opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 pt-4 border-t-2 border-gray-100">
+                                    <span className="text-sm font-semibold mr-2">
+                                        Learn more
+                                    </span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
-            <div className="text-center">
+            {/* CTA */}
+            <div className="text-center space-y-6 pt-8">
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Streamline your business operations with seamless
+                    integrations. Connect with EHR systems, pharmacy networks,
+                    lab systems, payment gateways, and many other healthcare
+                    platforms.
+                </p>
                 <Button
-                    className="bg-black text-white"
                     size="lg"
-                    variant="solid"
+                    className="group bg-gradient-to-r from-primary to-primary/90 text-white font-bold px-8 py-6 text-lg rounded-2xl shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:scale-105"
                 >
                     See All Integrations
+                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
             </div>
         </SectionContainer>

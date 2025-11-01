@@ -6,6 +6,7 @@ import authenticate from "../Middlewares/authenticate";
 import { doctorValidationRules } from "../Validators/doctorValidator";
 import { validate } from "../Middlewares/validate";
 import upload from "../Middlewares/multerConfig";
+import { multerErrorHandler } from "../Middlewares/multerErrorHandler";
 
 const router = express.Router();
 
@@ -30,6 +31,7 @@ router.put('/doctors', authenticate, doctorValidationRules, validate, doctorCont
 router.post(
     "/doctors/upload/:doctorId",
     upload.single("file"),
+    multerErrorHandler,
     doctorController.uploadProfileImage,
 );
 

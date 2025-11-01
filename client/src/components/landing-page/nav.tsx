@@ -7,63 +7,100 @@ import {
     NavbarContent,
     NavbarItem,
 } from "@nextui-org/react";
-import { SettingsIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const Nav = () => {
     const router = useRouter();
     return (
         <Navbar
+            maxWidth="xl"
             classNames={{
-                base: "w-full py-2",
-                wrapper: "max-w-full flex justify-around items-center",
+                base: "w-full py-3 bg-transparent",
+                wrapper: "max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8",
             }}
+            isBlurred={false}
         >
-            <NavbarBrand>
-                <SettingsIcon className="size-10 bg-black rounded-full text-white p-2" />
-                <p className="ml-2 font-me text-2xl">Docten</p>
+            <NavbarBrand className="gap-2">
+                <div className="flex items-center gap-2">
+                    <div className="bg-primary rounded-lg shadow-lg">
+                        <Image
+                            src="/Logo.png"
+                            alt="Doctein Logo"
+                            width={20}
+                            height={20}
+                            className="w-10 h-10 rounded-lg"
+                        />
+                    </div>
+                    <Link href="/" className="text-2xl font-bold text-primary">
+                        Doctein
+                    </Link>
+                </div>
             </NavbarBrand>
-            <NavbarContent className="gap-4" justify="center">
+            <NavbarContent className="hidden md:flex gap-6" justify="center">
                 <NavbarItem>
-                    <Link color="foreground" href="#">
+                    <Link 
+                        href="#features" 
+                        className="text-gray-700 hover:text-primary font-medium transition-colors duration-200"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                    >
                         Features
                     </Link>
                 </NavbarItem>
-                <NavbarItem isActive>
-                    <Link href="#" color="foreground">
-                        Solutions
+                <NavbarItem>
+                    <Link 
+                        href="#testimonials" 
+                        className="text-gray-700 hover:text-primary font-medium transition-colors duration-200"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("testimonials")?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                    >
+                        Testimonials
                     </Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Customers
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="#">
-                        Resources
-                    </Link>
-                </NavbarItem>
-                <NavbarItem>
-                    <Link color="foreground" href="#">
+                    <Link 
+                        href="#pricing" 
+                        className="text-gray-700 hover:text-primary font-medium transition-colors duration-200"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                    >
                         Pricing
                     </Link>
                 </NavbarItem>
-            </NavbarContent>
-            <NavbarContent justify="end">
                 <NavbarItem>
+                    <Link 
+                        href="#faq" 
+                        className="text-gray-700 hover:text-primary font-medium transition-colors duration-200"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+                        }}
+                    >
+                        FAQ
+                    </Link>
+                </NavbarItem>
+            </NavbarContent>
+            <NavbarContent justify="end" className="gap-3">
+                <NavbarItem className="hidden sm:flex">
                     <Button
                         onClick={() => router.push("/auth/login")}
                         variant="bordered"
-                        className="rounded-lg hover:bg-gray-200"
+                        className="rounded-lg border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 font-medium"
                     >
                         Login
                     </Button>
                 </NavbarItem>
                 <NavbarItem>
                     <Button
-                        variant="solid"
-                        className="bg-black text-white rounded-lg hover:bg-gray-900"
+                        onClick={() => router.push("/auth/register")}
+                        className="bg-primary text-white rounded-lg hover:shadow-lg transition-all duration-200 font-medium px-6"
                     >
                         Get Started
                     </Button>

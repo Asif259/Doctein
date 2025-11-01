@@ -1,28 +1,39 @@
-import React from "react";
-import { Metadata } from "next";
+"use client";
+
+import React, { useState } from "react";
 import NavBar from "@/components/dashboard/nav-bar";
 import LeftSidebar from "@/components/dashboard/left-sidebar";
 import WithAuth from "@/components/auth/withAuth";
 
-export const metadata: Metadata = {
-    title: "Dashboard | Dochub",
-    description: "Coming soon",
-};
-
 function DashboardLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    const handleMenuToggle = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+
+    const handleSidebarClose = () => {
+        setIsSidebarOpen(false);
+    };
+
     return (
         <WithAuth>
-            <div className="dark bg-background h-dvh flex flex-col">
-                <header className="h-[9dvh] flex justify-between">
-                    <NavBar />
+            <div className="bg-background h-dvh flex flex-col overflow-hidden">
+                <header className="flex justify-between">
+                    <NavBar onMenuToggle={handleMenuToggle} />
                 </header>
-                <div className="flex flex-row h-[91dvh]">
-                    <LeftSidebar />
-                    <main className="flex-grow overflow-y-scroll">
+                <div className="flex flex-row h-[calc(100vh-4rem)] relative">
+                    <div className="sidebar-container">
+                        <LeftSidebar
+                            isOpen={isSidebarOpen}
+                            onClose={handleSidebarClose}
+                        />
+                    </div>
+                    <main className="flex-grow overflow-y-auto md:ml-0">
                         <div className="flex">
-                            <main className="flex-1 overflow-y-auto p-7">
+                            <main className="flex-1 overflow-y-auto p-4 sm:p-7">
                                 {children}
                             </main>
                         </div>

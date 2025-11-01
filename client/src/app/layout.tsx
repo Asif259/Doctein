@@ -16,7 +16,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" className={`${inter.variable} ${robotoMono.variable}`}>
+        <html lang="en" className={`${inter.variable} ${robotoMono.variable}`} data-theme="light">
             <body className="antialiased">
                 <Toaster position="bottom-right" />
                 <NextUIProvider>

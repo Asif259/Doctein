@@ -11,9 +11,11 @@ import * as Yup from "yup";
 function PatientForm({
     patient,
     isPrescription,
+    onClose,
 }: {
     patient?: IPatient | null;
     isPrescription?: boolean;
+    onClose?: () => void;
 }) {
     const router = useRouter();
     const { patients, addPatients } = useDashboardStore((state) => state);
@@ -51,6 +53,10 @@ function PatientForm({
                         );
                         addPatients(updatedPatients);
                         toast.success("Patient updated successfully");
+                        formik.resetForm();
+                        if (onClose) {
+                            onClose();
+                        }
                         return;
                     }
                 }
@@ -66,12 +72,16 @@ function PatientForm({
                 if (res?.success) {
                     addPatients([...patients, res.data]);
                     toast.success("Patient saved successfully");
+                    formik.resetForm();
 
                     // for instant patients redirect to prescriptions app on patient save
-                    if (instant && res?.data?.appointmentId)
+                    if (instant && res?.data?.appointmentId) {
                         router.push(
                             `/dashboard/prescription/${res.data.appointmentId}`,
                         );
+                    } else if (onClose) {
+                        onClose();
+                    }
                 }
             } catch (error) {
                 console.error("Error saving patient:", error);

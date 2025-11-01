@@ -27,9 +27,20 @@ export interface AppointmentFormProps extends IAppointment {
 
 function AppointmentForm({
     appointment,
+    onClose,
 }: {
     appointment?: AppointmentFormProps;
+    onClose?: () => void;
 }) {
+    const { appointments, addAppointments } = useDashboardStore(
+        (state) => state,
+    );
+    const [patients, setPatients] = React.useState<IPatient[]>([]);
+    const [search, setSearch] = React.useState<string>("");
+    const [selectedPatient, setSelectedPatient] = React.useState<
+        string | undefined
+    >(appointment ? appointment.patientId : undefined);
+
     const formik = useFormik({
         initialValues: {
             id: 0,
@@ -70,17 +81,15 @@ function AppointmentForm({
                     ]);
                 }
                 toast.success("Appointment created successfully");
+                formik.resetForm();
+                setSelectedPatient(undefined);
+                setPatients([]);
+                if (onClose) {
+                    onClose();
+                }
             }
         },
     });
-    const { appointments, addAppointments } = useDashboardStore(
-        (state) => state,
-    );
-    const [patients, setPatients] = React.useState<IPatient[]>([]);
-    const [search, setSearch] = React.useState<string>("");
-    const [selectedPatient, setSelectedPatient] = React.useState<
-        string | undefined
-    >(appointment ? appointment.patientId : undefined);
 
     const handleSearch = async () => {
         if (!search) return;

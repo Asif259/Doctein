@@ -203,7 +203,13 @@ export default function Page() {
                                     : "Add Patient"}
                             </ModalHeader>
                             <ModalBody>
-                                <PatientForm patient={updatePatient} />
+                                <PatientForm
+                                    patient={updatePatient}
+                                    onClose={() => {
+                                        setOpen(false);
+                                        setUpdatePatient(null);
+                                    }}
+                                />
                             </ModalBody>
                         </>
                     )}
