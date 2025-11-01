@@ -20,7 +20,7 @@ function DashboardLayout({
 
     return (
         <WithAuth>
-            <div className="bg-background h-dvh flex flex-col overflow-hidden">
+            <div className="bg-gray-100 h-dvh flex flex-col overflow-hidden">
                 <header className="flex justify-between">
                     <NavBar onMenuToggle={handleMenuToggle} />
                 </header>
