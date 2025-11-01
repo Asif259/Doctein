@@ -155,11 +155,11 @@ export default function Register() {
                     {/* Logo and Header */}
                     <div className="flex flex-col items-center mb-8">
                         <div className="flex items-center gap-2 mb-4">
-                            <div className="p-2 bg-primary rounded-lg shadow-lg">
+                            <div className="shadow-lg">
                                 <img
                                     src="/Logo.png"
                                     alt="Doctein Logo"
-                                    className="w-6 h-6"
+                                    className="w-10 h-10 rounded-lg"
                                 />
                             </div>
                             <Link href="/" className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity">
