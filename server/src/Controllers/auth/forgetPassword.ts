@@ -103,7 +103,7 @@ const sendOtp = async (req: Request, res: Response): Promise<any> => {
     const mailOptions = {
       from: emailUser, // Use the same email as authenticated user
       to: email,
-      subject: "DocHub verification OTP",
+      subject: "Doctein verification OTP",
       html: `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; background-color: #f4f4f4; border-radius: 8px;">
     <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
